@@ -1,0 +1,39 @@
+.Button {
+  display: block;
+  width: 17em;
+  margin-top: 1em;
+  height: 2.25em;
+  border: none; 
+  background-color: #7E57FF;
+  border-radius: 5px;
+  font-size: 1em;
+  font-weight: bold;
+  color: white;
+  padding-top: 1em;
+  cursor: pointer;
+  user-select: none;
+  text-align: left;
+}
+
+.Button[isdisabled='true'] {
+  background-color: #BFC6D1;
+}
+
+.Button[issmall='true'] {
+  height: 1.75em;
+  padding-top: 0.5em;
+  width: auto;
+  padding-left: 1em;
+  padding-right: 1em;
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+
+.ButtonText {
+  text-align: center;
+}
+
+.Button:hover {
+  background-color: #A78DFF;
+}
+

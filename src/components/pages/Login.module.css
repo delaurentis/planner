@@ -1,0 +1,76 @@
+.Login {
+  padding-left: 2em;
+  background: white;
+  height: 1000px;
+}
+
+.LoginContent {
+  padding-top: 4em;
+}
+
+.LoginNonFullscreenWrapper {
+  background: white;
+  margin-top: -4em;
+  padding-left: 2em;
+  height: 70em;
+}
+
+.LoginParagraph {
+  padding-top: 0.5em;
+  padding-bottom: 1.25em;
+  max-width: 24em;
+  line-height: 1.5em;
+}
+
+.LoginInput {
+  display: block;
+  padding: 1em;
+  font-size: 1em;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  width: 15em;
+  background: rgba(0,0,0,0);
+  border: 1px solid rgba(0,0,0,0.5);
+}
+
+.LoginInput:focus {
+  margin-top: -1px;
+  margin-left: -1px;
+  margin-right: -1px;
+  margin-bottom: -1px;
+  border: 2px solid #7E57FF;
+}
+
+.LoginButton {
+  display: inline-block;
+  padding-left: 1em;
+}
+
+.LoginScreenshot {
+  margin-bottom: 1em;
+  width: 1000px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.01), 0 1px 2px rgba(0,0,0,0.033), 0 2px 8px rgba(0,0,0,0.033), 0 2px 16px rgba(0,0,0,0.033), 0 4px 32px rgba(0,0,0,0.066);
+}
+
+.LoginInstructions {
+  margin-top: 4em;
+  font-size: 0.9em;
+}
+
+.LoginTitle {
+  padding-left: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+  "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",sans-serif;
+  font-size: 2.5em;
+}
+
+.LoginAlternate {
+  width: 17em;
+  text-align: center;
+  padding-top: 1.25em;
+  font-weight: bold;
+  cursor: pointer;
+}

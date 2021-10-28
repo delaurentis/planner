@@ -1,0 +1,175 @@
+.Listing {
+  text-align: left;
+  padding-top: 0.75em;
+  border-top: 1px solid rgba(0, 0, 0, 0.07);
+  padding-bottom: 0.75em;
+  font-weight: 400;
+  font-size: 0.95em;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  background-color: white;
+  transition: background-color 1s linear;
+  min-height: 1.9em;
+}
+
+.Listing[highlighted='true'] {
+  background-color: #EFEBFF;
+}
+
+.Listing[new='true'] {
+  animation: glow 3s;
+}
+
+@keyframes glow {
+  0% { background-color: white; }
+  20% { background-color: #CEFAE6; }
+  80% { background-color: #CEFAE6; }
+  100% { background-color: white; }
+}
+
+.Listing[highlighted='true'][new='true'] {
+  background-color: #EFEBFF;
+  animation: glowFromPurple 3s;
+}
+
+@keyframes glowFromPurple {
+  0% { background-color: #EFEBFF; }
+  20% { background-color: #CEFAE6; }
+  80% { background-color: #CEFAE6; }
+  100% { background-color: #EFEBFF; }
+}
+
+.Icon, .Close {
+  padding-left: 20px;
+  width: 30px;
+  font-size: 1.2em;
+  display: inline-block;
+  cursor: pointer;
+  user-select: none;
+}
+
+.Close  {
+  height: 1em;
+  margin-top: -0.4em;
+  vertical-align: middle;
+  overflow: visible;
+}
+
+.Close svg {
+  fill: rgba(0,0,0,0.2);
+}
+
+.Close:hover svg {
+  fill: rgba(0,0,0,0.3);
+}
+
+.Icon:hover {
+  animation: growIcon 0.75s ease-in-out;
+}
+
+@keyframes growIcon {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.IconAndTitle {
+  white-space: nowrap;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+}
+
+.Link {
+  display: inline-block;
+  color: black;
+  text-decoration: none;
+  white-space: normal;
+  cursor: pointer;
+}
+
+.Link:hover {
+  color: #7E57FF;
+}
+
+.Chips {
+  margin-top: 0.5em;
+  margin-left: 50px;
+  justify-self: right;
+  align-self: right;
+  margin-right: 2em;
+  text-align: right;
+}
+
+.Extra {
+  margin-top: 0.5em;
+  margin-left: 50px;
+  justify-self: right;
+  align-self: right;
+  margin-right: 2em;
+  text-align: right;
+}
+
+.Input {
+  border: none;
+  width: 50em;
+  outline: none;
+  font-size: 1em;
+}
+
+.Button {
+  position: absolute;
+  right: 1em;
+}
+
+.Radio {
+  position: absolute;
+  right: 8.2em;
+}
+
+.EnvironmentOptions {
+  margin-right: 1em;
+}
+
+@media only screen and (max-width: 1024px) {
+  .Chips {
+    display: none;
+  }
+
+  .Input {
+    max-width: 400px;
+  }
+}
+
+
+@media only screen and (max-width: 480px) {
+  .Chips {
+    display: none;
+  }
+
+  .Icon {
+    vertical-align: top;
+  }
+
+  .Link {
+    max-width: 300px;
+  }
+
+  .Input {
+    border: none;
+    width: 50em;
+    max-width: 300px;
+    outline: none;
+    font-size: 1em;
+  }
+  
+  
+}
+
+

@@ -1,0 +1,13 @@
+.Options {
+  position: absolute;
+  right: 7em;
+  top: 0em;
+  padding-top: 1em;
+}
+
+.Button {
+  position: absolute;
+  right: 1em;
+  top: 0em;
+  padding-top: 0.7em;
+}

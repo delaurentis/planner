@@ -1,0 +1,34 @@
+.Action {
+  display: inline-block;
+/*  background-color: #ffffff;
+  box-shadow: 1px 1px 10px rgba(0,0,0,0.1);*/
+  border-radius: 3px;
+  line-height: 1.8em;
+  margin-left: 1em;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  vertical-align: middle;
+}
+
+.ActionIcon {
+  width: 30px;
+  font-size: 1.2em;
+  display: inline-block;
+}
+
+.ActionName {
+  font-size: 0.9em;
+  color: #777777;
+  vertical-align: top;
+}
+
+.Action:hover .ActionName {
+  color: black;
+}
+
+@media only screen and (max-width: 480px) {
+  .ActionName {
+    display: none;
+  } 
+}

@@ -1,0 +1,48 @@
+
+.BottomPane {
+  border: none;
+  position: fixed;
+  top: 100vh;
+  left: 0; 
+  width: 100vw; 
+  height: 100vh;
+  overflow: scroll;
+  transition: height 0.3s linear, top 0.3s linear;
+}
+
+.BottomPane[split='true'] {
+  border: none;
+  border-top: 1px solid #e5e5e5; 
+  position: fixed;
+  top: 50vh;
+  left: 0; 
+  width: 100vw; 
+  height: 100vh;
+}
+
+.PaneContent {
+  position: relative;
+}
+
+.BottomClose {
+  position: absolute;
+  width: 100%;
+  top: 1em;
+  right: 1em;
+  width: 2em;
+  height: 2em;
+  z-index: 1000;
+  opacity: 0.35;
+  cursor: pointer;
+}
+
+.TopPane {
+  height: 100vh;
+  overflow: scroll;
+  transition: height 0.3s linear;
+}
+
+.TopPane[split='true'] {
+  height: 50vh;
+  overflow: scroll;
+}

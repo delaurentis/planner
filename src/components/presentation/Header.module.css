@@ -1,0 +1,48 @@
+.Header {
+  background: white;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  width: 100%;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  padding-left: 1.25em;
+  padding-top: 0.7em;
+  padding-bottom: 0.7em;
+  box-shadow: rgba(0, 0, 0, 0.01) 0px 1px 1px 0px, rgba(0, 0, 0, 0.03) 0px 1px 2px 0px, rgba(0, 0, 0, 0.03) 0px 2px 8px 0px, rgba(0, 0, 0, 0.03) 0px 2px 16px 0px, rgba(0, 0, 0, 0.067) 0px 4px 32px 0px;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.HeaderLogo {
+  display: inline-block;
+  line-height: 1.25em;
+  vertical-align: middle;
+  padding-right: 1.5em;
+  transition: margin-left 1s ease-in-out, opacity 1s ease-in-out;
+  margin-left: 0;
+  opacity: 1;
+  min-width: 185px;
+  transform: translate3d(0,0,0);
+}
+
+.HeaderContent {
+  display: inline-block;
+}
+
+@media only screen and (max-width: 480px) {
+  .HeaderContent {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 480px) {
+  .HeaderLogo[hiding=true]{
+    /*transform: translateX(-500px);*/
+    margin-left: -13em;
+    opacity: 0;
+  }
+}
+
+
+

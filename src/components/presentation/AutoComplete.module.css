@@ -1,0 +1,37 @@
+.AutoComplete {
+  text-align: left;
+}
+
+.Title {
+  margin-left: 2em;
+}
+
+.Subtitle {
+  margin-left: 2em;
+  margin-bottom: 1.5em;
+}
+
+.Input {
+  border: 1px solid rgba(0,0,0,0.1);
+  width: calc(100% - 6.25em);
+  outline: none;
+  font-size: 1em;
+  text-align: left;
+  margin-left: 2em;
+  padding: 1em;
+}
+
+.Content {
+  overflow-y: scroll;
+  position: absolute;
+  top: 9em;
+  left: 0em;
+  right: 0em;
+  bottom: 0em;
+}
+
+.Content[subtitled='true'] {
+  top: 12em;
+}
+
+
