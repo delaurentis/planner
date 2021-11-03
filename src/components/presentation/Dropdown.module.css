@@ -1,0 +1,18 @@
+.Dropdown {
+  background: white;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 10px;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.01), 0 1px 2px rgba(0,0,0,0.033), 0 2px 8px rgba(0,0,0,0.033), 0 2px 16px rgba(0,0,0,0.033), 0 4px 32px rgba(0,0,0,0.066);
+  position: absolute;
+  top: 2.75em;
+  min-width: 6em;
+  min-height: 10em;
+  left: 0em;
+  z-index: 1000;
+  max-height: 45em;
+  text-align: left;
+}
+
+.DropdownContent {
+  position: relative;
+}

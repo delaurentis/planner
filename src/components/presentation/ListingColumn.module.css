@@ -1,0 +1,29 @@
+.ListingColumn {
+  text-align: left;
+  display: inline-block;
+  color: black;
+  vertical-align: middle;
+}
+
+.ListingColumn[variety='icon'] { width: 1.5em; font-size: 1.2em; }
+.ListingColumn[variety='number'] { width: 2em; font-size: 0.9em; }
+.ListingColumn[variety='tiny'] { width: 2.5em; font-size: 0.9em; }
+.ListingColumn[variety='bigNumber'] { width: 3em; font-size: 0.9em; }
+.ListingColumn[variety='small'] { width: 5em; font-size: 0.9em; }
+.ListingColumn[variety='medium'] { width: 7em; font-size: 0.9em;}
+.ListingColumn[variety='large'] { width: 10em; font-size: 0.9em; }
+.ListingColumn[variety='halfspace'] { width: 0.5em; }
+.ListingColumn[variety='whitespace'] { width: 1em; }
+.ListingColumn[variety='widespace'] { width: 2em; }
+.ListingColumn[variety='unlimited'] { width: auto; font-size: 0.9em; }
+
+.ListingColumn[alignment='left'] { text-align: left; }
+.ListingColumn[alignment='right'] { text-align: right; }
+.ListingColumn[alignment='center'] { text-align: center; }
+
+.ListingColumn[coloring='red'] { color: #FE5E7A; }
+.ListingColumn[coloring='green'] { color: #46DB96; }
+.ListingColumn[coloring='black'] { color: black; }
+.ListingColumn[coloring='gray'] { color: #909AA6; }
+.ListingColumn[coloring='yellow'] { color: #E1A200; }
+

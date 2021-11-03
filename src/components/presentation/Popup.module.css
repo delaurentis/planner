@@ -1,0 +1,44 @@
+.Popup {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.25s linear;
+}
+
+.PopupShowing {
+  opacity: 1;
+}
+
+.PopupCard {
+  background: white;
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+  width: 600px;
+  bottom: 2em;
+  top: 2em;
+  border-radius: 10px;
+  /*box-shadow: 0px 1px 10px rgba(0,0,0,0.1);*/
+  box-shadow: 0 1px 1px rgba(0,0,0,0.01), 0 1px 2px rgba(0,0,0,0.033), 0 2px 8px rgba(0,0,0,0.033), 0 2px 16px rgba(0,0,0,0.033), 0 4px 32px rgba(0,0,0,0.066);
+  z-index: 1002;
+}
+
+.CloseButton {
+  position: absolute;
+  top: 1.5em;
+  right: 2em;
+  z-index: 1003;
+  opacity: 0.15;
+  cursor: pointer;
+}
+
+.CloseButton:hover {
+  opacity: 0.3;
+}

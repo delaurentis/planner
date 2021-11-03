@@ -1,0 +1,10 @@
+.Caret {
+  width: 1em;
+  height: 1.5em;
+  padding-top: 0em;
+  margin-left: 0.5em;
+  margin-right: 0em;
+  margin-top: -0.25em;
+  vertical-align: top;
+  display: inline-block;
+}

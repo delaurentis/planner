@@ -1,0 +1,10 @@
+.Week {
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  display: inline-block;
+}
+
+.Week + .Week {
+  margin-left: 0.5em;
+}
