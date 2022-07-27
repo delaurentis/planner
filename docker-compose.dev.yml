@@ -7,7 +7,7 @@ services:
     container_name: planner-dev
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     volumes:
       - '.:/app:delegated'
       - '/app/node_modules'

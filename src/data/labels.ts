@@ -1,8 +1,9 @@
 import { Priority, Label, Diff } from './types';
 import { priorityFromLabel } from './priorities';
+import e from 'express';
 
 export const officialLabelNames = {
-  bug: 'Debug 🐞'
+  bug: '🐞 Bug'
 }
 
 export const primaryLabelForEpic = (epic: any): Label => {
@@ -53,13 +54,21 @@ export const primaryLabelForIssue = (issue: any): Label => {
   }
   
 }
-
+  
 export const primaryLabelForDiff = (diff: Diff): Label => {
   const isBugFix =  diff.title.toUpperCase().includes('[FIX]');
-  if ( isBugFix ) {
-    return { icon: '🐞', name: 'Bug' };
+  if ( diff.isApproved ) {
+    return { icon: '👍', name: 'Approved' };
   }
-  return { icon: '🎉', name: 'Feature' };
+  else if ( diff.isDraft ) {
+    return { icon: '🖊', name: 'Draft' };
+  }
+  else {
+    if ( isBugFix ) {
+      return { icon: '🐞', name: 'Bug' };
+    }
+    return { icon: '👓', name: 'Feature' };
+  }
 }
 
 interface OrderingsMap {

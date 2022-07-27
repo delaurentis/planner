@@ -125,7 +125,7 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
   const fixesOptions = {...optionForUser('fixes'), title: titleForFixedIssues()};
   const diffsOption = {...optionForUser('diffs'), title: titleForDiffs()};
   const userOptions = team?.usernames.map((username: string) => optionForUser(username)) || [];
-  const variableOptions = team?.hideUserTabs ? [noneOption, fixesOptions, diffsOption, linksOption] : [noneOption, fixesOptions, diffsOption, linksOption].concat(userOptions);
+  const variableOptions = team?.hideUserTabs ? [noneOption, diffsOption, linksOption] : [noneOption, diffsOption, linksOption].concat(userOptions);
 
   // Put all of our groups together
   return <OptionChips options={[mainOptions, variableOptions]}/>

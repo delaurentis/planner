@@ -80,7 +80,8 @@ const OptionChip: React.FC<OptionChipProps> = (props) => {
                            isblank: `${props.option.isBlank}`,
                            issmall: `${props.option.isSmall}`,
                            isiconic: `${props.option.isIconOnly}`,
-                           isdimmable: `${props.option.isDimmable}`};
+                           isdimmable: `${props.option.isDimmable}`,
+                           ismultiselectable: `${props.option.isMultiSelectable}`,};
 
   return (
     <span className={styles.Chip} { ...optionalStyles } onClick={handleClick}>

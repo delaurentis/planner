@@ -12,16 +12,22 @@ import { Issue as IssueType,
          Team } from 'data/types';
 import Listing from 'components/presentation/Listing';
 import Chip from 'components/presentation/Chip';
+import IconStats from 'components/presentation/IconStats';
 import IssueEpic from './IssueEpic';
 import IssueAssignee from './IssueAssignee';
 import IssueMilestone from './IssueMilestone';
 import IssueEnvironment from './IssueEnvironment';
 import IssueResolution from './IssueResolution';
+import IssueFlags from './IssueFlags';
+import IssueEstimate from './IssueEstimate';
 import IssueSchedule from './IssueSchedule';
 import { useApolloClient } from '@apollo/client';
 import { ISSUE_WITH_EPIC_FRAGMENT } from 'data/queries';
 import { environmentFromLabelNames } from 'data/environments';
 import { resolutionsFromLabelNames } from 'data/resolutions';
+import { flagsFromLabelNames } from 'data/flags';
+import IssueMilestones from './IssueMilestones';
+import OptionChip from 'components/presentation/OptionChip';
 
 interface IssueProps {
   issue?: IssueType;
@@ -32,6 +38,7 @@ interface IssueProps {
   epics?: EpicType[];
   team?: Team;
   defaultCategory?: string;
+  stats?: any[];
   onUpdateIssue?(update: any, issue?: IssueType): void;
 }
 
@@ -56,7 +63,7 @@ const Issue: React.FC<IssueProps> = (props) => {
 
   // Create our label objects which will become clickable URLs
   const labels: LabelType[] = labelNames.map((name: string) => {
-    return { name, url: `https://gitlab.companyname.com/groups/team/-/issues?label_name=${name}` };
+    return { name, url: `https://gitlab.com/groups/team/-/issues?label_name=${name}` };
   });
 
   // Filter out the day labels from what we display, and extract them into their own lisrt
@@ -120,32 +127,50 @@ const Issue: React.FC<IssueProps> = (props) => {
   }
 
   // Figure out what goes in the right column
-  const extra = (): React.ReactNode | undefined => {
-    if ( isBug && (needsResolution || props.extraColumn === 'Resolution') ) {
-      return <IssueResolution issue={issue} 
+  const extras = (): React.ReactNode[] | undefined => {
+    if ( props.stats ) {
+      return [<IconStats stats={props.stats}/>];
+    }
+    else if ( isBug && (needsResolution || props.extraColumn === 'Resolution') ) {
+      return [<IssueResolution issue={issue} 
                               resolutions={resolutions} 
                               onUpdate={(update) => handleUpdate(update, issue)}
                               onClosePrompt={() => setNeedsResolution(false)}
-                              isPrompt={needsResolution}/>
+                              isPrompt={needsResolution}/>]
     }
     else if ( isBug && props.extraColumn === 'Environment' ) {
-      return <IssueEnvironment issue={issue} 
+      return [<IssueEnvironment issue={issue} 
                                environment={environmentFromLabelNames(labelNames)} 
                                onUpdate={(update) => handleUpdate(update, issue)}
-                               isPrompt={false}/>
+                               isPrompt={false}/>]
+    }
+    else if ( props.extraColumn === 'Surprises' ) {
+      return [<IssueFlags issue={issue} 
+                          flags={flagsFromLabelNames(labelNames)}
+                          categories={['Surprises']}
+                          isIconOnly={false}
+                          onUpdate={(update) => handleUpdate(update, issue)}/>,
+              <IssueEstimate issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>]
+    }
+    else if ( props.extraColumn === 'Details' ) {
+      return [<IssueFlags issue={issue} 
+                          flags={flagsFromLabelNames(labelNames)}
+                          categories={['Details']}
+                          isIconOnly={false}
+                          onUpdate={(update) => handleUpdate(update, issue)}/>]
     }
     else if ( props.extraColumn === 'Epic' ) {
-      return <IssueEpic issue={issue} 
+      return [<IssueEpic issue={issue} 
                         epics={props.epics} 
-                        onUpdating={setUpdating}/>
+                        onUpdating={setUpdating}/>]
     }
     else if ( props.extraColumn === 'Assignee' ) {
-      return <IssueAssignee issue={issue} 
+      return [<IssueAssignee issue={issue} 
                             team={props.team}
-                            onUpdating={setUpdating}/>
+                            onUpdating={setUpdating}/>]
     }
     else if ( props.extraColumn === 'Sprint' ) {
-      return <IssueMilestone issue={issue} 
+      return [<IssueMilestone issue={issue} 
                              milestone={issue.milestone}
                              milestones={props.milestones}
                              onUpdating={(isUpdating) => {
@@ -158,22 +183,37 @@ const Issue: React.FC<IssueProps> = (props) => {
                                 handleUpdate({remove_labels: dayLabelNames.join(',')}, issue);
                               }
                              }}/>
+             ]
+
+             /* <a onClick={() => { alert('hello') }}><OptionChip option={{title: '⋯', name: 'more', isSmall: true}} /></a> */
+             /* <IssueMilestones milestone={issue.milestone}
+                               onCancel={() => {}}
+                               onSelectMilestone={(milestone: MilestoneType) => {
+                                handleUpdate({milestone_id: milestone.id}, issue);
+                               }}/>*/
     }
     else if ( props.extraColumn === 'Author' ) {
-      return <Chip size='small' url={`https://gitlab.companyname.com/groups/team/-/issues?author_username=${issue.author?.username}`}>
+      return [<Chip size='small' url={`https://gitlab.com/groups/team/-/issues?author_username=${issue.author?.username}`}>
               <span>{titleForUsername(issue.author?.username)}</span>
-             </Chip>;
+             </Chip>]
+    } 
+    else if ( props.extraColumn === 'Estimate' ) {
+      return [<IssueEstimate issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>]
     }
-    else if ( props.extraColumn === 'Days' ) {
+    else if ( props.extraColumn === 'Schedule' ) {
 
       // The schedule adds and removes labels under the hood,
       // and uses the same functionality as the actions in the popup menu
       // It's a slightly different beast than the other typeahead entries above
       // which use different API calls to update GitLab
-      return <IssueSchedule issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>
+      return [<IssueSchedule issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>, 
+              <IssueEstimate issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>]
     }
     return undefined;
   }
+
+  // The far right column always holds an estimate
+  const estimate = <IssueEstimate issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>;
 
   return (
     <div>
@@ -184,7 +224,7 @@ const Issue: React.FC<IssueProps> = (props) => {
             placeholder='New Issue'
             actions={possibleActions}
             labels={props.extraColumn === 'Labels' ? visibleLabels : undefined}
-            extra={extra()}
+            extras={extras()}
             isNew={isNew} 
             defaultCategory={props.defaultCategory}
             isEditing={props.isEditing}

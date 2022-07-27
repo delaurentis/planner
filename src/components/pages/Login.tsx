@@ -28,7 +28,7 @@ const AutoLogin: React.FC<AutoLoginProps> = (props) => {
       <h1>{props.vendor.instructionTitle}</h1>
       <div className={styles.LoginParagraph}>{props.vendor.instructionBody}</div>
       <div>
-        <Button onClick={redirectToVendor} title={`Login with ${props.vendor.name}`}/>
+        <span className={styles.DisabledLoginButton}><Button onClick={redirectToVendor} title={`Login with ${props.vendor.name}`}/></span>
         <div className={styles.LoginAlternate}>
           <a onClick={handleAlternateClick}>
             Use a developer token
@@ -88,7 +88,7 @@ const Login: React.FC<LoginProps> = (props) => {
   // If we're running locally, then manual mode is the 
   // only option since we can't redirect to localhost
   // const isRunningOnLocal = window.location.hostname === 'localhost';
-  const [isManual, setManual] = useState(false);
+  const [isManual, setManual] = useState(true);
   const chooseManual = () => setManual(true);
 
   const loginContent = () => 

@@ -1,12 +1,15 @@
 export const extraColumns = [
-  { title: 'Days', metadata: {}},
+  { title: 'Assignee', metadata: {}},
+  { title: 'Schedule', metadata: {}},
+  { title: 'Estimate', metadata: {}},
   { title: 'Sprint', metadata: {}},
   { title: 'Epic', metadata: {}},
-  { title: 'Labels', metadata: {}},
+  { title: 'Details', metadata: {}},
+  { title: 'Surprises', metadata: {}},
   { title: 'Environment', metadata: {}},
   { title: 'Resolution', metadata: {}},
-  { title: 'Assignee', metadata: {}},
-  { title: 'Author', metadata: {}}
+  { title: 'Labels', metadata: {}},
+  { title: 'Author', metadata: {}},
 ]
 
 export const extraDiffColumns = [

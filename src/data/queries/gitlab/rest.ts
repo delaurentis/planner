@@ -22,10 +22,19 @@ export const DELETE_ISSUE = gql`
 `;
 
 export const CREATE_ISSUE = gql`
-    mutation CreateIssue($projectId: ID!,$input: Any!) {
+    mutation CreateIssue($projectId: ID!, $input: Any!) {
       createIssue(projectId: $projectId, input: $input) 
         @rest(type: "Issue", path: "/projects/{args.projectId}/issues", method: "POST") {
         NoResponse
+      }
+    }
+`;
+
+export const ESTIMATE_ISSUE = gql`
+    mutation EstimateIssue($projectId: ID!, $id: ID!, $estimate: Int!, $input: Any!) {
+      estimateIssue(projectId: $projectId, id: $id, input: $input)
+        @rest(type: "Issue", path: "/projects/{args.projectId}/issues/{args.id}/time_estimate", method: "POST") {
+          NoResponse
       }
     }
 `;

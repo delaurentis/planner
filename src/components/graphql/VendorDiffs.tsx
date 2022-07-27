@@ -23,7 +23,7 @@ const VendorDiffs: React.FC<VendorDiffsProps> = (props: VendorDiffsProps) => {
   const token:string | undefined = ((storedToken?.length || 0) > 0 && storedToken) || undefined;
   
   // Lookup the stored extra column
-  const extraColumn:string = window.localStorage.getItem('extraDiffsColumn') || 'Overview';
+  const extraColumn:string = window.localStorage.getItem('extraDiffColumn') || 'Overview';
 
   // Setup our cache with some initial data
   // That way we don't have to prop drill them down into the UI

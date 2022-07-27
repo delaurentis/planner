@@ -83,6 +83,7 @@ export interface Option {
   isDimmable?: boolean;
   isExpanded?: boolean;
   isExpandable?: boolean;
+  isMultiSelectable?: boolean;
   isBlank?: boolean;
   isSmall?: boolean;
   isIconOnly?: boolean;
@@ -112,6 +113,7 @@ export interface Issue {
   assignees?: any;
   state?: string;
   milestone?: Milestone;
+  humanTimeEstimate?: string;
 }
 
 export interface Epic {
@@ -135,6 +137,13 @@ export interface Resolution {
   icon: string;
   name: string;
   label: string;
+}
+
+export interface Flag {
+  icon: string;
+  name: string;
+  label: string;
+  category: string;
 }
 
 export interface Environment {
@@ -172,15 +181,17 @@ export interface Diff {
   author: string;
   url: string;
   isDraft: boolean;
+  isApproved: boolean;
   createdAt: Date;
   lastEditedAt: Date;
-  firstReviewAt: Date;
-  firstReviewAge: number;
-  firstReviewer: string;
   allReviewers: string[];
-  assignedReviewers: string[];
-  lastApprovalAt: Date;
-  lastChangeRequestAt: Date;
+  firstReviewAt?: Date;
+  firstReviewAge?: number;
+  firstReviewer?: string;
+  assignedReviewers?: string[];
+  approvedBy: string[];
+  lastApprovalAt?: Date;
+  lastChangeRequestAt?: Date;
   reviewCount: number;
   changedFileCount: number;
   additionsCount: number;

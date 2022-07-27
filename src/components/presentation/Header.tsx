@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = (props) => {
 
   return (
     <div className={styles.Header}>
-      <span className={styles.HeaderLogo} {...hidingProps()} ><PlannerLogo height={42}/></span>
+      <span className={styles.HeaderLogo} {...hidingProps()} ><PlannerLogo height={24}/></span>
       <span className={styles.HeaderContent}>{props.children}</span>
     </div>
   );
