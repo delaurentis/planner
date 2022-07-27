@@ -19,20 +19,20 @@ export const milestoneChoices = (): OptionChoice[] => [
   milestoneChoice(4, 4),
   milestoneChoice(4, 5),
   milestoneChoice(4, 6),
-    { metadata: { milestone: 'Future' }, title: 'Future' }
+    { metadata: { milestone: 'Backlog' }, title: 'Backlog' }
 ];
 
 // TODO: Switch this for a dynamic list
 export const recentMilestones: string[] = [
-  'Q3S5'
+  'Q3S2'
 ];
 
 // TODO: Switch this for a dynamic list
-export const currentMilestone: string = 'Q3S6';
+export const currentMilestone: string = 'Q3S3';
 
 // TODO: Switch this for a dynamic list
 export const upcomingMilestones: string[] = [
-  'Q3S6',
-  'Q4S1',
-  'Future'
+  'Q3S3',
+  'Q3S4',
+  'Q3S5',
 ];

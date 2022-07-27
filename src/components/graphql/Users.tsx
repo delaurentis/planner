@@ -2,6 +2,7 @@ import React from 'react';
 import MilestoneEpics from './MilestoneEpics';
 import UserIssues from './UserIssues';
 import VendorDiffs from './VendorDiffs';
+import Diffs from './Diffs';
 import Card from 'components/presentation/Card';
 import Listing from 'components/presentation/Listing';
 import { teams } from 'data/teams';
@@ -72,7 +73,7 @@ const Users: React.FC<UsersProps> = (props: UsersProps) => {
                            team={team}/>;
   }
   else if ( props.filter.username === 'diffs' ) {
-    return <VendorDiffs vendor={vendors.github} team={team}/>;
+    return <Diffs team={team} project={team?.project}/>;
   }
   else {
 

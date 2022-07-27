@@ -39,7 +39,7 @@ const Epic: React.FC<EpicProps> = (props) => {
 
   // Create our label objects which will become clickable URLs
   const labels: LabelType[] = labelNames.map((name: string) => {
-    return { name, url: `https://gitlab.companyname.com/groups/team/-/epics?label_name=${name}` };
+    return { name, url: `https://gitlab.com/groups/team/-/epics?label_name=${name}` };
   });
 
   // Figure out what goes in the right column

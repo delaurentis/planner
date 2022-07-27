@@ -11,10 +11,9 @@ const defaultProps = {
 };
 
 const PlannerLogo: React.FC<PlannerLogoProps> = (props) => {
-  const width = Math.round(994 / 224 * (props.height || 28));
-
+  const width = Math.round(267 / 40 * (props.height || 28));
   return (
-    <div><b>Planner</b></div>
+    <span>Planner</span>
   );
 };
 

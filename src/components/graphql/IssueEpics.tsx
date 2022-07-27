@@ -21,7 +21,7 @@ const IssueEpics: React.FC<IssueEpicsProps> = (props) => {
   }
 
   // This will show the current epic in GitLab
-  const epicLink = `https://gitlab.companyname.com/groups/team/-/epics/${props.currentEpic?.iid}`;
+  const epicLink = `https://gitlab.com/groups/team/-/epics/${props.currentEpic?.iid}`;
 
   // Subtitle varies based on if they have an epic already
   const subtitle = () => {

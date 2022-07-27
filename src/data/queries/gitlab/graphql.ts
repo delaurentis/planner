@@ -29,6 +29,7 @@ export const ISSUE_ONLY_FRAGMENT = gql`
       webUrl,
       webPath,
       dueDate,
+      humanTimeEstimate,
       labels {
           nodes {
             id,
@@ -62,6 +63,7 @@ export const ISSUE_WITH_EPIC_FRAGMENT = gql`
       webUrl,
       webPath,
       dueDate,
+      humanTimeEstimate,
       milestone {
         id,
         title
@@ -115,10 +117,10 @@ export const EPIC_WITH_ISSUES_FRAGMENT = gql`
 `;
 
 export const ALL_ISSUES = gql`
-  query GetAllUserIssues($username: String!, $milestones: [String], $labels: [String]) {
-    group(fullPath: "team") {
+  query GetAllUserIssues($username: String!, $milestones: [String], $labels: [String], $fullPath: ID!) {
+    project(fullPath: $fullPath) {
       name,
-      issues (assigneeUsername: $username, 
+      issues (assigneeUsernames: [$username], 
               milestoneTitle: $milestones,
               labelName: $labels,
               sort: CREATED_ASC ) {
@@ -131,9 +133,27 @@ export const ALL_ISSUES = gql`
   ${ISSUE_WITH_EPIC_FRAGMENT}
 `;
 
+export const OPEN_ISSUES_NO_MILESTONE = gql`
+  query GetOpenUserIssuesNoMilestone($username: String!, $labels: [String], $fullPath: ID!) {
+    project(fullPath: $fullPath) {
+      name,
+      issues (assigneeUsernames: [$username], 
+              milestoneWildcardId: NONE,
+              labelName: $labels,
+              state: opened,
+              sort: CREATED_ASC ) {
+        nodes {
+          ...issueWithEpicResult
+        }
+      }
+    }
+  }
+  ${ISSUE_WITH_EPIC_FRAGMENT}
+`;
+
 export const ALL_BUG_ISSUES = gql`
-  query GetAllFixedBugs($milestones: [String], $labels: [String]) {
-    group(fullPath: "team") {
+  query GetAllBugs($milestones: [String], $labels: [String], $fullPath: ID!) {
+    project(fullPath: $fullPath) {
       name,
       issues (milestoneTitle: $milestones,
               labelName: $labels,
@@ -148,8 +168,8 @@ export const ALL_BUG_ISSUES = gql`
 `;
 
 export const ALL_FIXED_BUG_ISSUES = gql`
-  query GetAllFixedBugs($milestones: [String], $labels: [String]) {
-    group(fullPath: "team") {
+  query GetAllFixedBugs($milestones: [String], $labels: [String], $fullPath: ID!) {
+    project(fullPath: $fullPath) {
       name,
       issues (milestoneTitle: $milestones,
               labelName: $labels,
@@ -165,8 +185,8 @@ export const ALL_FIXED_BUG_ISSUES = gql`
 `;
 
 export const ALL_OPEN_BUG_ISSUES = gql`
-  query GetAllFixedBugs($milestones: [String], $labels: [String]) {
-    group(fullPath: "team") {
+  query GetAllOpenBugs($milestones: [String], $labels: [String], $fullPath: ID!) {
+    project(fullPath: $fullPath) {
       name,
       issues (milestoneTitle: $milestones,
               labelName: $labels,
@@ -183,8 +203,8 @@ export const ALL_OPEN_BUG_ISSUES = gql`
 
 
 export const OPEN_ISSUES = gql`
-  query GetOpenUserIssues($username: String!, $milestones: [String], $labels: [String]) {
-    group(fullPath: "team") {
+  query GetOpenUserIssues($username: String!, $milestones: [String], $labels: [String], $fullPath: ID!) {
+    project(fullPath: $fullPath) {
       name,
       issues (assigneeUsername: $username, 
               milestoneTitle: $milestones,
@@ -201,8 +221,8 @@ export const OPEN_ISSUES = gql`
 `;
 
 export const CLOSED_ISSUES = gql`
-  query GetClosedUserIssues($username: String!, $milestones: [String], $labels: [String]) {
-    group(fullPath: "team") {
+  query GetClosedUserIssues($username: String!, $milestones: [String], $labels: [String], $fullPath: ID!) {
+    project(fullPath: $fullPath) {
       name,
       issues (assigneeUsername: $username, 
               milestoneTitle: $milestones,
@@ -219,8 +239,8 @@ export const CLOSED_ISSUES = gql`
 `;
 
 export const OPEN_UNASSIGNED_ISSUES = gql`
-  query GetOpenUserIssues($milestones: [String], $labels: [String]) {
-    group(fullPath: "team") {
+  query GetOpenUserIssues($milestones: [String], $labels: [String], $fullPath: ID!) {
+    project(fullPath: $fullPath) {
       name,
       issues (assigneeId: "None", 
               milestoneTitle: $milestones,
@@ -236,6 +256,23 @@ export const OPEN_UNASSIGNED_ISSUES = gql`
   ${ISSUE_WITH_EPIC_FRAGMENT}
 `;
 
+export const OPEN_UNASSIGNED_ISSUES_NO_MILESTONE = gql`
+  query GetOpenUserIssuesNoMilestone($labels: [String], $fullPath: ID!) {
+    project(fullPath: $fullPath) {
+      name,
+      issues (assigneeId: "None", 
+              milestoneWildcardId: NONE,
+              labelName: $labels,
+              state: opened, 
+              sort: LABEL_PRIORITY_ASC ) {
+        nodes {
+          ...issueWithEpicResult
+        }
+      }
+    }
+  }
+  ${ISSUE_WITH_EPIC_FRAGMENT}
+`;
 
 export const OPEN_EPICS = gql`
   query GetEpics($labels: [String!]) {
@@ -388,3 +425,55 @@ export const SET_ISSUE_MILESTONE = gql`
   ${ISSUE_WITH_EPIC_FRAGMENT}
 `;
 
+export const MERGE_REQUESTS = gql`
+  query GetMergeRequests($fullPath: ID!) {
+    project(fullPath: $fullPath) {
+      name,
+      mergeRequests(first: 100, state: opened, sort: CREATED_DESC) {
+        nodes {
+          id,
+          iid,
+          webUrl,
+          createdAt,
+          author {
+            name,
+            username
+          },
+          title,
+          state,
+          draft,
+          approved,
+          approvedBy {
+            nodes {
+              username
+            }
+          }
+          diffStatsSummary {
+            fileCount,
+            additions,
+            changes,
+            deletions
+          },
+          discussions(first: 20) {
+            nodes {
+              notes(first: 20) {
+                nodes {
+                  author {
+                    username
+                  },
+            			createdAt
+                }
+              }
+            }
+          },
+          assignees(first: 5) {
+            nodes {
+              name,
+              username
+            }
+          }
+        }
+      }
+    }
+  }
+`

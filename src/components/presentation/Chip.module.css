@@ -12,6 +12,11 @@
   user-select: none;
 }
 
+.Chip[selecting="true"] {
+  background-color: #DFD6FF;
+  color: black;
+}
+
 .Chip[bigness='medium'] {
   display: inline-block;
   margin-top: -0.5em;

@@ -10,6 +10,7 @@ interface ChipProps {
   isBlank?: boolean;
   isLoading?: boolean;
   isAlerting?: boolean;
+  isSelected?: boolean;
   onClick?(): void;
 }
 
@@ -21,6 +22,7 @@ const Chip: React.FC<ChipProps> = (props) => {
        {...{blank: `${props.isBlank}`}} 
        {...{loading: `${props.isLoading}`}} 
        {...{alerting: `${props.isAlerting}`}} 
+       {...{selecting: `${props.isSelected}`}} 
        href={props.url} 
        target='_blank' 
        rel='noopener noreferrer'

@@ -9,6 +9,7 @@ export const IS_LOGGED_IN = gql`
 export const FILTER = gql`query Filter { filter @client }`;
 
 export const EXTRA_COLUMN = gql`query ExtraColumn { extraColumn @client }`;
+export const EXTRA_DIFF_COLUMN = gql`query ExtraDiffColumn { extraDiffColumn @client }`;
 
 // Local queries
 export const localTypedefs = gql`
@@ -23,5 +24,6 @@ export const localTypedefs = gql`
     isLoggedIn: Boolean!
     filter: Filter!
     extraColumn: String!
+    extraDiffColumn: String!
   }
 `;

@@ -47,7 +47,7 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
   
   const bugQuery = useQuery(ALL_BUG_ISSUES, { 
     pollInterval: polling.frequency.bugCount, 
-    variables: { milestones: [currentMilestone], labels: [...team?.labels || [], 'Debug 🐞'] } });
+    variables: { milestones: [currentMilestone], labels: [...team?.labels || [], '🐞 Bug'] } });
 
   const countQueryResults = (query, state: string | undefined = undefined) => {
     const nodes = query.data?.group?.issues?.nodes || [];
@@ -81,6 +81,8 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
         {upcomingMilestones.map((milestoneName: string) => {
           return <Milestone key={`Milestone${milestoneName}`} filter={{ ...filter, milestone: milestoneName }} epics={epics}/>
         })}
+        <Milestone key="MilestoneNone" filter={{ ...filter, milestone: "none" }} epics={epics}/>
+        <Milestone key="MilestoneBacklog" filter={{ ...filter, milestone: "Backlog" }} epics={epics}/>
       </div>
     }
     return <Milestone filter={filter} epics={epics}/>

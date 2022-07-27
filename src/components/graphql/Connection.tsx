@@ -6,13 +6,14 @@ import { Vendor, Filter } from 'data/types';
 // State Management and Offline Support
 import { ApolloProvider } from '@apollo/client';
 import { apolloClient } from 'setup/graphql';
-import { IS_LOGGED_IN, FILTER, EXTRA_COLUMN } from 'data/queries';
+import { IS_LOGGED_IN, FILTER, EXTRA_COLUMN, EXTRA_DIFF_COLUMN } from 'data/queries';
 
 interface ConnectionProps {
   vendor: Vendor;
   children?: React.ReactNode;
   filter?: Filter;
   extraColumn?: string;
+  extraDiffColumn?: string;
   forceLogin?: boolean;
 }
 
@@ -28,6 +29,7 @@ const Connection: React.FC<ConnectionProps> = (props: ConnectionProps) => {
     cache.writeQuery({ query: IS_LOGGED_IN,  data: { isLoggedIn: !props.forceLogin && !!token } });
     cache.writeQuery({ query: FILTER,  data: { filter: props.filter } });
     cache.writeQuery({ query: EXTRA_COLUMN,  data: { extraColumn: props.extraColumn }});
+    cache.writeQuery({ query: EXTRA_DIFF_COLUMN,  data: { extraDiffColumn: props.extraDiffColumn }});
   };
 
   // Create our apollo client which manages all local and remote state

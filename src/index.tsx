@@ -43,13 +43,14 @@ if ( oauthToken ) {
 const queryString:string = window.location.search;
 const queryParams:any = new URLSearchParams(queryString);
 const username:string = queryParams.get('username') || afterSlash || 'none';
-const team:string = queryParams.get('team') || window.localStorage.getItem('team') || 'Patient';
+const team:string = queryParams.get('team') || window.localStorage.getItem('team') || 'Team1';
 const year:number = parseInt(queryParams.get('year')) || 21;
 const quarter:number = parseInt(queryParams.get('quarter')) || 3;
 const sprint:number = parseInt(queryParams.get('sprint')) || 6;
 const milestone:string = 'All'; //`Q${quarter}S${sprint}`;
 const showClosed:boolean = !(queryParams.get('closed') === 'false');
-const extraColumn:string = window.localStorage.getItem('extraColumn') || 'Sprint';
+const extraColumn:string = window.localStorage.getItem('extraColumn') || 'Schedule';
+const extraDiffColumn:string = window.localStorage.getItem('extraDiffColumn') || 'Overview';
 const filter:Filter = { year, quarter, sprint, milestone, username, team, showClosed };
 
 // Is there an oauth code?
@@ -62,7 +63,7 @@ if ( oauthCode ) {
 const iframe = () => {
   if ( window.location === window.parent.location ) {	
     return (
-      <iframe src='https://planner.companyname.com'
+      <iframe src='https:// planner.companyname.com'
               title='Planning Panel'
               style={{ border: 'none', borderTop: '1px solid #e5e5e5', position: 'fixed', top: '50%', left: '0', width: '100vw', height: '50vh'}}/>
     );
@@ -76,6 +77,7 @@ const app = (
     <Connection vendor={vendors.gitlab} 
                 filter={filter} 
                 extraColumn={extraColumn}
+                extraDiffColumn={extraDiffColumn}
                 forceLogin={afterSlash === 'login'}>
       <Planner/>
     </Connection>

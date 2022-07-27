@@ -13,12 +13,21 @@
   min-height: 1.9em;
 }
 
+.Listing[actions='true'] {
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+
 .Listing[highlighted='true'] {
   background-color: #EFEBFF;
 }
 
 .Listing[new='true'] {
   animation: glow 3s;
+}
+
+.Listing[dimmed='true'] .Link {
+  color: rgba(0,0,0,0.35);
 }
 
 @keyframes glow {
@@ -50,8 +59,8 @@
 }
 
 .Close  {
-  height: 1em;
-  margin-top: -0.4em;
+  height: 10px;
+  margin-top: 2px;
   vertical-align: middle;
   overflow: visible;
 }
@@ -84,6 +93,10 @@
   white-space: nowrap;
   padding-top: 0.2em;
   padding-bottom: 0.2em;
+  display: flex;
+  align-content: top;
+  justify-content: top;
+  margin-top: 4px;
 }
 
 .Link {
@@ -92,6 +105,9 @@
   text-decoration: none;
   white-space: normal;
   cursor: pointer;
+  max-width: 600px;
+  margin-top: 2px;
+
 }
 
 .Link:hover {
@@ -108,12 +124,21 @@
 }
 
 .Extra {
-  margin-top: 0.5em;
+  margin-top: 4px;
   margin-left: 50px;
   justify-self: right;
   align-self: right;
   margin-right: 2em;
   text-align: right;
+  display: flex;
+  flex-direction: row;
+}
+
+.ExtraChild + .ExtraChild {
+  display: flex;
+  margin-left: 20px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 
 .Input {
@@ -121,6 +146,9 @@
   width: 50em;
   outline: none;
   font-size: 1em;
+  display: flex;
+  align-content: top;
+  justify-content: top;
 }
 
 .Button {
