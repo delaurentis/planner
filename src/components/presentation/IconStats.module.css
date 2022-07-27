@@ -1,0 +1,20 @@
+.IconStats {
+  display: flex;
+  margin-right: 4px;
+  white-space: nowrap;
+  margin-top: 3px;
+  margin-bottom: -3px;
+}
+
+.IconStat + .IconStat {
+  margin-left: 28px;
+}
+
+.Icon {
+  margin-right: 6px;
+  font-size: 1.2em;
+}
+
+.Stat {
+  font-size: 14px;
+}

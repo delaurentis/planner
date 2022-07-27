@@ -9,17 +9,17 @@ export const teams: TeamMap = {
     hideUserTabs: true,
     usernames: ['user1', 'user2', 'user3']
   },
-  'Team 1': { 
-    name: 'Team 1', 
+  'Team': { 
+    name: 'Team', 
     labels: ['Team 1 Labelname'],
     project: 'reponame',
     usernames: ['user1', 'user2'],
-    links: [{ title: 'My Link', url: 'https://google.com'}]
+    links: [{ title: 'My Link', url: 'https://google.com' }]
   }
 };
 
 export const nicknames: AliasMap = {
-  user1: 'Thing 1'
+  'user1': 'User',
 }
 
 // A mapping of gitlab usernames to github usernames

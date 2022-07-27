@@ -14,6 +14,7 @@
   position: relative;
 }
 
+
 .Chip[isselectable='false'] {
   padding: 0.5em 1em 0.5em 1em;
   /*background-color: rgba(0,0,0,0.05);*/
@@ -68,6 +69,44 @@
   background-color: #DFD6FF;
   border: 1px solid  #DFD6FF;
 }
+
+.Chip[ismultiselectable='true'] {
+  background-color: rgba(0,0,0,0.07);
+  /*font-size: 0.8em;*/
+  color:#777777;
+  padding: 0.5em;
+  padding-left: 1em;
+  padding-right: 1em;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  border: none;
+}
+
+.Chip[ismultiselectable='true'] span {
+  opacity: 0.5;
+}
+
+.Chip[ismultiselectable='true'][isselected='true'] {
+  background-color: #DFD6FF;
+  color: #000000;
+  color: #7E57FF;
+}
+
+.Chip[ismultiselectable='true'][isselected='true'] span {
+  opacity: 1.0;
+}
+
+.Chip[issmall='true'] {
+  display: inline-block;
+  margin-top: -0.2em;
+  border-radius: 20px;
+  font-size: 0.9em;
+  margin-bottom: 0.1em;
+  margin-left: 0.75em;
+  margin-right: 0em;
+}
+
 /*
 .Chip[istoggleable='true'] {
   background-color: rgba(0,0,0,0.07);

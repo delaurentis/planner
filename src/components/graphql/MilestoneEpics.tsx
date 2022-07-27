@@ -126,7 +126,7 @@ const MilestoneEpics: React.FC<MilestoneEpicsProps> = (props: MilestoneEpicsProp
   return (
     <Card key='epics'
           title='Epics'
-          titleUrl='https://gitlab.companyname.com/team/reponame/-/epics'
+          titleUrl='https://gitlab.com/team/reponame/-/epics'
           isLoading={false}
           >
 

@@ -8,16 +8,20 @@ import { projects } from 'data/projects';
 
 import { useQuery, useMutation, useApolloClient } from '@apollo/client';
 import { ALL_ISSUES, 
+         OPEN_ISSUES_NO_MILESTONE,
          OPEN_UNASSIGNED_ISSUES,
+         OPEN_UNASSIGNED_ISSUES_NO_MILESTONE,
          ALL_BUG_ISSUES, 
          UPDATE_ISSUE, 
          CREATE_ISSUE,
          DELETE_ISSUE, 
+         ESTIMATE_ISSUE,
          USER,
          EXTRA_COLUMN } from 'data/queries';
 import { CATEGORY_FEATURE, CATEGORY_BUG } from 'data/categories';
 import { labelNameFromEnvironment } from 'data/environments';
 import { orderingForIssue } from 'data/labels';
+import { priorityStatsFromIssues, hourlyStatsFromIssues, countStatsFromIssues } from 'data/stats';
 import { durableOrder, DurableOrderSnapshot } from 'util/durableOrder';
 
 interface UserIssuesProps {
@@ -57,28 +61,53 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   
   // Figure out our variables for the query
   const variables = () => {
+    const fullPath = `team/${props.project}`;
     if ( props.username === 'none' ) {
 
       // If there is no user, we need to use team labels to filter down the unassigned issues
-      return { username: 'none', milestones: [props.milestone.title], labels: props.labels };
+      return { 
+        username: 'none', 
+        milestones: [props.milestone.title],  
+        labels: props.labels,
+        fullPath,
+      };
     }
     else if ( props.username === 'fixes' ) {
-      return { milestones: [props.milestone.title], labels: [...props.labels || [], 'Debug 🐞']  };
+      return { 
+        milestones: [props.milestone.title], 
+        labels: [...props.labels || [], '🐞 Bug'],
+        fullPath,
+      };
     }
     else {
-      return { username: props.username, milestones: [props.milestone.title] };
+      return { 
+        username: props.username, 
+        milestones: [props.milestone.title],
+        path: props.project,
+        fullPath,
+       };
     }
   }
   
   const gqlForIssues = () => {
     if ( props.username === 'none' ) {
-      return OPEN_UNASSIGNED_ISSUES;
+      if ( props.milestone.title === 'none' ) { 
+        return OPEN_UNASSIGNED_ISSUES_NO_MILESTONE;
+      }
+      else {
+        return OPEN_UNASSIGNED_ISSUES;
+      }
     }
     else if ( props.username === 'fixes' ) {
       return ALL_BUG_ISSUES;
     }
     else {
-      return ALL_ISSUES;
+      if ( props.milestone.title === 'none' ) { 
+        return OPEN_ISSUES_NO_MILESTONE;
+      }
+      else {
+        return ALL_ISSUES;
+      }
     }
   }
   
@@ -97,7 +126,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   }, [startPolling, stopPolling])
 
   // Extract our issues from the data returned
-  const issueNodes = issuesQuery.data?.group?.issues?.nodes || [];
+  const issueNodes = issuesQuery.data?.project?.issues?.nodes || [];
 
   // Get any epics associated with these issues
   // ...
@@ -111,6 +140,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   const [updateIssue] = useMutation(UPDATE_ISSUE, { refetchQueries });
   const [createIssue] = useMutation(CREATE_ISSUE, { refetchQueries });
   const [deleteIssue] = useMutation(DELETE_ISSUE, { refetchQueries });
+  const [estimateIssue] = useMutation(ESTIMATE_ISSUE, { refetchQueries });
   const handleUpdateIssue = (update: any, issue: any) => {
   
     // We will re-fetch the query from apollo after any mutations
@@ -121,12 +151,16 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
     if ( issue ) {  
 
       // Get the project name for this issue and figure out the ID
-      const issueProjectName: string = issue.webPath?.split('/')?.[2];
+      const beforeDash: string = issue.webPath?.split('/-')[0];
+      const issueProjectName: string = beforeDash?.split('/')?.slice(2)?.join('/');
       const issueProjectId = projects[issueProjectName];
 
       // Delete the issue if that's been requested
       if ( update.delete ) {
         deleteIssue({ variables: { projectId: issueProjectId, id: issue.iid }});
+      }
+      else if ( update.duration ) {
+        estimateIssue({ variables: { projectId: issueProjectId, id: issue.iid, input: update }});
       }
       else {
         // Now update the issue within the right project!
@@ -137,7 +171,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
 
       // Remove any metadata we use internally from the update
       const { meta, ...updateWithoutMeta } = update;
-      const categoryLabels = meta.category === '🐞 Bug' ? ['Debug 🐞'] : [];
+      const categoryLabels = meta.category === '🐞 Bug' ? ['🐞 Bug'] : [];
       const environmentLabels = meta.environment ? [labelNameFromEnvironment(meta.environment)] : [];
 
       // When we add issues to someone, we check what project they are a part of
@@ -166,7 +200,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   }
 
   // Figure out title and where it goes if you click iot
-  const userUrl: string = `https://gitlab.companyname.com/team/reponame/-/issues?scope=all&utf8=%E2%9C%93&assignee_username[]=${props.username}&milestone_title=${props.milestone.title}`
+  const userUrl: string = `https://gitlab.com/team/reponame/-/issues?scope=all&utf8=%E2%9C%93&assignee_username[]=${props.username}&milestone_title=${props.milestone.title}`
 
   // Determine if we've set orderings before... only happens once data gets loaded the first time
   const { sortedItems, orderingSnapshot } = durableOrder(issueNodes, orderingForIssue, orderingsRef.current);
@@ -200,10 +234,28 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
     return <div/>;
   }
 
+  // Adjust the milestone title
+  const milestoneTitle = props.milestone.title === 'none' ? 'Triage' : props.milestone.title; 
+
+  // Show the right stats based on the last column type
+  const stats = () => {
+    const extraColumn = extraQuery.data?.extraColumn;
+    if ( extraColumn === 'Schedule' || extraColumn === 'Estimate' ) {
+      return priorityStatsFromIssues(sortedItems);
+    }
+    else if ( extraColumn === 'Surprises' ) {
+      return hourlyStatsFromIssues(sortedItems, ['🐞', '👻']);
+    }
+    else if ( extraColumn === 'Details' ) {
+      return countStatsFromIssues(sortedItems, ['📝', '🕵🏻']);
+    }
+    return undefined;
+  }
+
   // isLoading = issuesQuery.loading
   return (
     <Card key={`user-${props.username}`} 
-          title={props.milestone.title} 
+          title={milestoneTitle} 
           titleUrl={userUrl} 
           isLoading={false}
           option={cardOption}>
@@ -214,7 +266,8 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
              team={props.team} 
              defaultCategory={props.username === 'fixes' ? CATEGORY_BUG : CATEGORY_FEATURE}
              isEditing={true} 
-             onUpdateIssue={handleUpdateIssue} />
+             onUpdateIssue={handleUpdateIssue} 
+             stats={stats()}/>
 
     </Card>
   );

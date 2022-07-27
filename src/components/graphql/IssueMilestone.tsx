@@ -56,7 +56,7 @@ const IssueMilestone: React.FC<IssueMilestoneProps> = (props) => {
   // We need milestone IDs to be able to write to GitLab
   // So let's find all the milestone objects from GraphQL  
   // corresponding to the milestone names we know and love
-  const suggestedMilestones: MilestoneType[] = upcomingMilestones.reduce((array: MilestoneType[], milestoneTitle: string) => {
+  const suggestedMilestones: MilestoneType[] = [...upcomingMilestones, 'Backlog'].reduce((array: MilestoneType[], milestoneTitle: string) => {
     const milestone: MilestoneType | undefined = props.milestones?.find(milestone => milestone.title === milestoneTitle);
     if ( milestone ) {
       array.push(milestone);

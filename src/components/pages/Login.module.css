@@ -47,6 +47,12 @@
   padding-left: 1em;
 }
 
+.DisabledLoginButton {
+  pointer-events: none;
+  opacity: 0.35;
+  cursor: no-drop;
+}
+
 .LoginScreenshot {
   margin-bottom: 1em;
   width: 1000px;

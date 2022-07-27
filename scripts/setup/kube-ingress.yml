@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: planner-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: planner-ip
+    networking.gke.io/managed-certificates: planner-cert
+    kubernetes.io/ingress.class: "gce"
+spec:
+  defaultBackend:
+    service:
+      name: planner-service
+      port:
+        number: 80
+  rules:
+  - host: planner.companyname.co
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: planner-service
+            port: 
+              number: 80

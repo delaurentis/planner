@@ -22,7 +22,9 @@ interface ListingProps {
   placeholder?: string;
   labels?: LabelType[];
   extra?: React.ReactNode;
+  extras?: React.ReactNode[];
   isHighlighted?: boolean;
+  isDimmed?: Boolean;
   isNew?: boolean;
   isEditing?: boolean;
   entity?: any;
@@ -80,7 +82,35 @@ const Listing: React.FC<ListingProps> = (props) => {
   const [issueEnvironment, setIssueEnvironment] = useState<EnvironmentType>();
 
   // These can change as we go
-  const divProps = { highlighted: `${props.isHighlighted}`, new: `${props.isNew}` };
+  const divProps = { highlighted: `${props.isHighlighted}`, new: `${props.isNew}`, dimmed: `${props.isDimmed}`, actions: `${showActions}` };
+
+  // Figure out what to put on the right column
+  const extra = () => {
+    if ( props.extras ) {
+      return <span className={styles.Extra}>
+        { props.extras.map((extra: React.ReactNode) => {
+            return <span className={styles.ExtraChild}>{extra}</span>
+          })
+        }
+      </span>
+    }
+    else if ( props.extra ) {
+      return <span className={styles.Extra}>{ props.extra }</span>
+    }
+    else {
+
+      // Label chips are the default extra
+      return (<span className={styles.Chips}>
+        {
+          props.labels?.map((label: LabelType) => 
+            <Chip url={label.url} key={label.name}>
+              {label.icon} {label.name}
+            </Chip>
+          )
+        }
+      </span>);      
+    }
+  }
 
   // We have two main states of our issue row, 
   // showing the listing, or showing actions
@@ -140,7 +170,15 @@ const Listing: React.FC<ListingProps> = (props) => {
         else {
           return undefined;
         }
-    };
+      };
+
+      // Optionally show extras if we're not editing
+      const editingExtra = () => {
+        if ( !editedTitle?.length ) {
+          return extra();
+        }
+        return undefined;
+      };
         
       return (<div className={styles.Listing}>
         <span className={styles.IconAndTitle}>
@@ -159,29 +197,10 @@ const Listing: React.FC<ListingProps> = (props) => {
             {button()}
           </span>
         </span>
+        {editingExtra()}
       </div>);
     }
     else {
-
-      // Figure out what to put on the right column
-      const extra = () => {
-        if ( props.extra ) {
-          return <span className={styles.Extra}>{ props.extra }</span>
-        }
-        else {
-
-          // Label chips are the default extra
-          return (<span className={styles.Chips}>
-            {
-              props.labels?.map((label: LabelType) => 
-                <Chip url={label.url}>
-                  {label.icon} {label.name}
-                </Chip>
-              )
-            }
-          </span>);      
-        }
-      }
 
       return (<div className={styles.Listing} {...divProps}>
                 <span className={styles.IconAndTitle}>

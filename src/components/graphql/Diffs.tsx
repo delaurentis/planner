@@ -3,9 +3,9 @@ import Card from '../presentation/Card';
 import Diff from './Diff';
 import { Option, OptionChoice, Diff as DiffType, Team } from 'data/types';
 import { extraDiffColumns } from 'data/extras';
-import { usernamesForDiffLogins } from 'data/teams';
-import { ApolloClient, NormalizedCacheObject, useQuery } from "@apollo/client";
-import { PULL_REQUESTS, EXTRA_COLUMN } from 'data/queries';
+import { titleForUsername } from 'data/teams';
+import { ApolloClient, NormalizedCacheObject, useQuery, useApolloClient } from "@apollo/client";
+import { MERGE_REQUESTS, EXTRA_DIFF_COLUMN } from 'data/queries';
 import { polling } from 'data/polling';
 
 interface DiffsProps {
@@ -18,55 +18,64 @@ const Diffs: React.FC<DiffsProps> = (props: DiffsProps) => {
 
   // The card has a setting that controls what we show on the right column
   // We'll store that setting globally for all cards
-  const extraQuery = useQuery(EXTRA_COLUMN, { client: props.client });
+  const client = useApolloClient();
+  const extraQuery = useQuery(EXTRA_DIFF_COLUMN, { client });
   const handleExtra = (option: Option, choice: OptionChoice) => {
-    props.client?.writeQuery({ query: EXTRA_COLUMN, data: { extraColumn: choice.title } });
-    window.localStorage.setItem('extraDiffsColumn', choice.title);
+    client.writeQuery({ query: EXTRA_DIFF_COLUMN, data: { extraDiffColumn: choice.title } });
+    window.localStorage.setItem('extraDiffColumn', choice.title);
   }
 
   // TODO: We should add variables here so 
   // we can abstract out project and team
   const variables = () => {
-    return { } 
+    return { fullPath: `team/${props.project}` } 
   }
   
   // Load open pull requests from cache, then API, and then refresh every 15 minutes
-  const openQuery = useQuery(PULL_REQUESTS, { pollInterval: polling.frequency.pullRequests, variables: variables(), client: props.client }) || {};
+  const openQuery = useQuery(MERGE_REQUESTS, { pollInterval: polling.frequency.pullRequests, variables: variables(), client: client }) || {};
 
   // Convert nested data from GitHub into our flat local data structure
-  const nodes: any[] = openQuery.data?.organization?.repository?.pullRequests?.nodes || [];
+  const nodes: any[] = openQuery.data?.project?.mergeRequests?.nodes || [];
   const diffs: DiffType[] = nodes.map((pull: any) => {
-    const otherReviews: any[] = pull.reviews?.nodes?.filter(node => node.author?.login !== pull.author?.login ) || [];
-    const allReviewers: string[] = [...(otherReviews.reduce((reviewers, review) => {
-      if ( review.author?.login ) {
-        reviewers.add(usernamesForDiffLogins[review.author?.login] || review.author?.login);
-      }
-      return reviewers;
-    }, new Set()))];
-    const assignedReviewerLogins: string[] = pull.assignees?.nodes?.map(node => node.login)?.filter(login => login !== pull.author?.login) || []
-    const assignedReviewers: string[] = assignedReviewerLogins.map(login => usernamesForDiffLogins[login] || login) || [];
+    // Take all the notes and put them together into a flat array
+    const notes = pull.discussions?.nodes?.reduce((notes, discussion) => { 
+      return [...notes, ...discussion?.notes?.nodes];
+    }, []);
+
+    // Find any notes by other people, not the author of the MR
+    const otherReviews: any[] = notes.filter(note => note.author?.username !== pull.author?.username ) || [];
     const firstReview: any = otherReviews[0];
-    const descendingReviews: any[] = pull.reviews?.nodes || [];
-    const lastApproval: any = descendingReviews.find(node => node.state === 'APPROVED' );
-    const lastChangeRequest: any = descendingReviews.find(node => node.state === 'CHANGES_REQUESTED' );
-    return { number: pull.number,
+
+    const reviewNoteAuthors = otherReviews.map(review => review.author?.username)
+    const approvers = pull.approvedBy?.nodes?.map(node => node.usernames) || [];
+    const assignedReviewers = pull.assignees?.nodes?.map(node => node.username) || []
+    const allReviewers = [...new Set([...reviewNoteAuthors, ...approvers, ...assignedReviewers].filter(x => x !== undefined))];
+    //const assignedReviewerLogins: string[] = pull.assignees?.nodes?.map(node => node.login)?.filter(login => login !== pull.author?.login) || []
+    //const assignedReviewers: string[] = assignedReviewerLogins.map(login => usernamesForDiffLogins[login] || login) || [];
+    //const descendingReviews: any[] = pull.reviews?.nodes || [];
+    //const lastApproval: any = descendingReviews.find(node => node.state === 'APPROVED' );
+    //const lastChangeRequest: any = descendingReviews.find(node => node.state === 'CHANGES_REQUESTED' );
+    return { number: pull.id,
              title: pull.title,
-             url: pull.url,
-             author: usernamesForDiffLogins[pull.author?.login],
-             isDraft: pull.isDraft,
+             url: pull.webUrl,
+             author: titleForUsername(pull.author?.username),
+             isDraft: pull.draft,
+             isApproved: pull.approvedBy?.nodes?.length > 0,
+             approvedBy: pull.approvedBy?.nodes?.map(node => node.username) || [],
              createdAt: pull.createdAt && new Date(pull.createdAt),
-             lastEditedAt: pull.lastEditedAt && new Date(pull.lastEditedAt),
+             lastEditedAt: pull.updatedAt && new Date(pull.updatedAt),
              firstReviewAt: firstReview?.createdAt && new Date(firstReview?.createdAt),
              firstReviewAge: firstReview?.createdAt && pull.createdAt && (+new Date(firstReview?.createdAt) - +new Date(pull.createdAt)),
-             firstReviewer: firstReview?.author?.login && usernamesForDiffLogins[firstReview?.author?.login],
-             allReviewers,
-             assignedReviewers,
-             lastApprovalAt: lastApproval?.createdAt && new Date(lastApproval?.createdAt),
-             lastChangeRequestAt: lastChangeRequest?.createdAt && new Date(lastChangeRequest?.createdAt),
+             firstReviewer: firstReview?.author?.username,
+             /*allReviewers,
+             /*lastApprovalAt: lastApproval?.createdAt && new Date(lastApproval?.createdAt),
+             lastChangeRequestAt: lastChangeRequest?.createdAt && new Date(lastChangeRequest?.createdAt),*/
              reviewCount: otherReviews.length,
-             changedFileCount: pull.changedFiles,
-             additionsCount: pull.additions,
-             deletionsCount: pull.deletions
+             assignedReviewers: assignedReviewers,
+             allReviewers: allReviewers,
+             changedFileCount: pull.diffStatsSummary.fileCount || 0,
+             additionsCount: pull.diffStatsSummary.additions || 0,
+             deletionsCount: pull.diffStatsSummary.deletions || 0
            };
   });
 
@@ -77,13 +86,15 @@ const Diffs: React.FC<DiffsProps> = (props: DiffsProps) => {
   const teamDiffs: DiffType[] = nonDraftDiffs.filter((diff: DiffType) => teamUsernames.includes(diff.author));
   
   // Filter bugs and features separately
-  const bugDiffs: DiffType[] = teamDiffs.filter((diff: DiffType) => diff.title.toUpperCase().includes('[FIX]'));
-  const featureDiffs: DiffType[] = teamDiffs.filter((diff: DiffType) => !diff.title.toUpperCase().includes('[FIX]'));
+  // const bugDiffs: DiffType[] = diffs.filter((diff: DiffType) => diff.title.toUpperCase().includes('[FIX]'));
+  const approvedDiffs: DiffType[] = diffs.filter((diff: DiffType) => !diff.isDraft && diff.isApproved);
+  const reviewDiffs: DiffType[] = diffs.filter((diff: DiffType) => !diff.isDraft && !diff.isApproved);
+  const draftDiffs: DiffType[] = diffs.filter((diff: DiffType) => diff.isDraft);
 
   // Controls what we show in the right column
   const cardOption: Option = {
-    title: extraQuery.data?.extraColumn,
-    name: extraQuery.data?.extraColumn,
+    title: extraQuery.data?.extraDiffColumn,
+    name: extraQuery.data?.extraDiffColumn,
     isSelected: false,
     isSelectable: false,
     isExpandable: true,
@@ -93,25 +104,36 @@ const Diffs: React.FC<DiffsProps> = (props: DiffsProps) => {
 
   return (
     <div>
-      <Card key='fixes'
-            title='Fixes'
-            titleUrl='https://github.com/companyname/reponame/pulls'
+      <Card key='approved'
+            title='Approved'
+            titleUrl=''
             isLoading={false}
             option={cardOption}>
         {
-          bugDiffs.map((diff: DiffType) => 
-            <Diff key={diff.number} diff={diff} extraColumn={extraQuery.data?.extraColumn}/>
+          approvedDiffs.map((diff: DiffType) => 
+            <Diff key={diff.number} diff={diff} extraColumn={extraQuery.data?.extraDiffColumn}/>
           )
         }
       </Card>
-      <Card key='features'
-            title='Features'
-            titleUrl='https://github.com/companyname/reponame/pulls'
+      <Card key='review'
+            title='Needs Review'
+            titleUrl=''
             isLoading={false}
             option={cardOption}>
         {
-          featureDiffs.map((diff: DiffType) => 
-            <Diff key={diff.number} diff={diff} extraColumn={extraQuery.data?.extraColumn}/>
+          reviewDiffs.map((diff: DiffType) => 
+            <Diff key={diff.number} diff={diff} extraColumn={extraQuery.data?.extraDiffColumn}/>
+          )
+        }
+      </Card>
+      <Card key='drafts'
+            title='Drafts'
+            titleUrl=''
+            isLoading={false}
+            option={cardOption}>
+        {
+          draftDiffs.map((diff: DiffType) => 
+            <Diff key={diff.number} diff={diff} extraColumn={extraQuery.data?.extraDiffColumn}/>
           )
         }
       </Card>
