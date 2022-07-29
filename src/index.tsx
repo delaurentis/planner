@@ -10,7 +10,7 @@ import './index.css';
 
 // State Management and Offline Support
 import { Filter } from './data/types';
-import { vendors, requestGithubAccess } from './data/vendors';
+import { vendors, requestVendorAccessToken, isStateTokenValid } from './data/vendors';
 import { teams } from './data/teams';
 import { currentYear, currentQuarter, currentSprint } from './data/milestones';
 import * as serviceWorker from './setup/serviceWorker';
@@ -57,8 +57,18 @@ const filter:Filter = { year, quarter, sprint, milestone, username, team, showCl
 
 // Is there an oauth code?
 const oauthCode:string | undefined = queryParams.get('code');
+const oauthState:string | undefined = queryParams.get('state');
 if ( oauthCode ) {
-  requestGithubAccess(oauthCode);
+  if ( document.referrer?.includes('github') ) {
+    if ( oauthState && isStateTokenValid('github', oauthState) ) {
+      requestVendorAccessToken('github', { code: oauthCode });
+    }
+  }
+  else {
+    if ( oauthState && isStateTokenValid('gitlab', oauthState) ) {
+      requestVendorAccessToken('gitlab', { code: oauthCode });
+    }
+  }
 }
 
 /*// Return an optional iFrame if they want a split view

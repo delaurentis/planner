@@ -164,13 +164,16 @@ type VendorTestCallback = (data: any) => boolean;
 
 export interface Vendor {
   name: string;
+  title: string;
   host: string;
   scope: string;
   tokenName: string;
+  refreshTokenName: string;
   graphUrl: string;
   restUrl: string;
   authorizeUrl: string;
   personalTokenUrl: string;
+  accessTokenRequestUrl: string;
   instructionTitle: string;
   instructionBody: any;
   instructionImage: string;
@@ -179,6 +182,7 @@ export interface Vendor {
   clientId?: string;
   clientSecret?: string;
   redirectUrl?: string;
+  postAuthRedirectPath: string;
   testQuery: any;
   testQueryVariables?: any;
   isTestOk: VendorTestCallback;

@@ -37,7 +37,7 @@ export const apolloClient = (token, vendor, initCache) => {
 
   // Cache the remote and local stuff all in RAM
   const cache = new InMemoryCache();
-  window[`cacheFor${vendor.name}`] = cache;
+  window[`cacheFor${vendor.title}`] = cache;
 
   // Setup GraphQL Client
   const link = linkToServer(vendor, token);

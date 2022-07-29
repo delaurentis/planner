@@ -10,8 +10,8 @@ const IconStats: React.FC<IconStatsProps> = (props) => {
   return (
     <span className={styles.IconStats}>
        {
-         props.stats.map(stat => 
-          <span className={styles.IconStat}>
+         props.stats.map((stat, index) => 
+          <span key={index} className={styles.IconStat}>
             <span className={styles.Icon}>{stat.icon}</span>
             <span className={styles.Stat}>{stat.value}</span>
           </span>

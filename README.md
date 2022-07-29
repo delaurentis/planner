@@ -1,3 +1,13 @@
+# Overview
+
+Planner is a front-end for GitLab that makes it significantly faster for teams to create, estimate, and manage tickets.  
+
+It is an opinionated tool that incorporates over a decade of agile software management learnings, to increase both velocity and collaboration for teams.
+
+Merge requests can also be explored, with statistics on response time and a view that encourages faster code review turnaround times.  
+
+<br>
+
 # Running and Deploying
 
 To run locally:
@@ -46,15 +56,35 @@ This project is currently designed for deployment using Google Cloud and Kuberne
 
 <br>
 
+# Setting up OAuth 
+
+To setup OAuth:
+
+- Go to your user Preferences in GitLab, and then select Applications.  
+- Add a new Application in GitLab with a redirect URI of `https://planner.companyname.com`
+- Copy the clientID and paste in `src/data/customize.ts` under `production`
+- Add a second Application in GitLab with a redirect URI of `http://localhost:3000` for local development
+- Copy the clientID and paste in `src/data/customize.ts` under `development` 
+
+<br>
+
 # GitLab API Integration
 
 Planner was built to use GitLab's new GraphQL API... but it has some missing functionality for mutations, so we still need to use REST calls to modify data.
 
-All API calls require an authorization token in the HTTP header of form `Authorization: Bearer <token>`.  This token can either be retrieved using OAuth, or by getting a personal access token from GitLab.  
+All API calls require an authorization token in the HTTP header of form `Authorization: Bearer <token>`.  This token can either be retrieved using OAuth, or by getting a personal access token from GitLab.   
 
-For local development, you can use a personal access token (instructions are provided in the app)
+For local development, you can create an Application in GitLab and point it to `http://localhost:3000` to test OAuth locally, or you can use a personal access token (instructions are provided in the app).
 
-Note: GitLab has deprecated the OAuth API method this project used previously.  Currently, automated login is not working, and personal access tokens are required for all users.
+<br>
+
+# GitHub API Integraton
+
+Pull request viewing was supported for GitHub in a prior version of the Planner app.  This version is still available in the `github-tickets-only` branch, which will show tickets from GitLab and pull requests from GitHub.  
+
+In the future, it would be great to add full support for GitHub in the same branch for both Issues and Pull Requests, by adding an abstraction layer that sits in front of both GitLab and GitHub APIs.
+
+<br>
 
 # App History
 
@@ -68,5 +98,5 @@ Planner is officially published as an open source project, with his employer's b
 
 ## 2022
 
-Pete continues to maintain the app in his spare time.
+Pete continues to maintain the app in his spare time, including updates to make sure it continues to work with the latest version of GitLab.
 
