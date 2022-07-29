@@ -26,6 +26,7 @@ import { ISSUE_WITH_EPIC_FRAGMENT } from 'data/queries';
 import { environmentFromLabelNames } from 'data/environments';
 import { resolutionsFromLabelNames } from 'data/resolutions';
 import { flagsFromLabelNames } from 'data/flags';
+import { organization } from 'data/customize';
 import IssueMilestones from './IssueMilestones';
 import OptionChip from 'components/presentation/OptionChip';
 
@@ -63,7 +64,7 @@ const Issue: React.FC<IssueProps> = (props) => {
 
   // Create our label objects which will become clickable URLs
   const labels: LabelType[] = labelNames.map((name: string) => {
-    return { name, url: `https://gitlab.com/groups/team/-/issues?label_name=${name}` };
+    return { name, url: `https://gitlab.com/groups/${organization}/-/issues?label_name=${name}` };
   });
 
   // Filter out the day labels from what we display, and extract them into their own lisrt
@@ -193,7 +194,7 @@ const Issue: React.FC<IssueProps> = (props) => {
                                }}/>*/
     }
     else if ( props.extraColumn === 'Author' ) {
-      return [<Chip size='small' url={`https://gitlab.com/groups/team/-/issues?author_username=${issue.author?.username}`}>
+      return [<Chip size='small' url={`https://gitlab.com/groups/${organization}/-/issues?author_username=${issue.author?.username}`}>
               <span>{titleForUsername(issue.author?.username)}</span>
              </Chip>]
     } 

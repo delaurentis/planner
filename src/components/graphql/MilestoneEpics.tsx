@@ -6,6 +6,7 @@ import { Epic as EpicType, Team } from 'data/types';
 import { useQuery } from '@apollo/client';
 import { MILESTONE_EPICS } from 'data/queries';
 import { polling } from 'data/polling';
+import { organization } from 'data/customize';
 
 interface MilestoneEpicsProps {
   milestone?: any;
@@ -28,7 +29,7 @@ const MilestoneEpics: React.FC<MilestoneEpicsProps> = (props: MilestoneEpicsProp
 
   // Figure out our variables for the query
   const variables = () => {
-    return { milestone:  props.milestone.title, labels: props.labels } 
+    return { milestone:  props.milestone.title, labels: props.labels, groupPath: organization }
   }
   
   // Load open AND closed issues from cache, then API, and then refresh every second

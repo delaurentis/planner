@@ -1,5 +1,6 @@
 import { VendorMap } from './types';
-import { PROJECT, REPO } from 'data/queries';
+import { GROUP, REPO } from 'data/queries';
+import { organization, teams as teamList } from 'data/customize';
 
 const port = window.location.port && `:${window.location.port}`;
 const baseUrl = `${window.location.protocol}//${window.location.hostname}${port}`;
@@ -46,6 +47,7 @@ export const vendors: VendorMap = {
     redirectAfterLogin: true,
     isLoginFullscreen: false,
     testQuery: REPO,
+    testQueryVariables: { repo: teamList[0]?.project }, /* use the first team's project as a connection test */
     isTestOk: (data: any) => !!(data?.organization?.repository?.name)
   },
   gitlab: {
@@ -64,8 +66,9 @@ export const vendors: VendorMap = {
     instructionImage: '/access-token-screenshot.jpg',
     redirectAfterLogin: true,
     isLoginFullscreen: true,
-    testQuery: PROJECT,
-    isTestOk: (data: any) => !!(data?.project?.name)
+    testQuery: GROUP,
+    testQueryVariables: { groupPath: organization },
+    isTestOk: (data: any) => !!(data?.group?.name)
   }
 }
 

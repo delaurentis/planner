@@ -4,4 +4,4 @@ metadata:
   name: planner-cert
 spec:
   domains:
-    - planner.twelve.co
+    - planner.companyname.co

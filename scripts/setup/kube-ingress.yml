@@ -13,7 +13,7 @@ spec:
       port:
         number: 80
   rules:
-  - host: planner.twelve.co
+  - host: planner.companyname.co
     http:
       paths:
       - pathType: Prefix

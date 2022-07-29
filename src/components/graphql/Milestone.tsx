@@ -3,6 +3,7 @@ import Users from './Users';
 import { Filter, Epic } from 'data/types';
 import { MILESTONES } from 'data/queries';
 import { useQuery } from '@apollo/client';
+import { organization } from 'data/customize';
 
 interface MilestoneProps {
   filter: Filter;
@@ -15,7 +16,7 @@ const Milestone: React.FC<MilestoneProps> = (props: MilestoneProps) => {
   // We need a milestone ID for the API call
   // so this is a two stage loading process, where first we get the milestone
   // and then we'll filter the content below based on the milestone
-  const milestonesQuery = useQuery(MILESTONES);
+  const milestonesQuery = useQuery(MILESTONES, { variables: { groupPath: organization } });
   const milestoneFromQuery = () => {
     const milestoneTitle = props.filter.milestone;
     if ( milestonesQuery.data?.group ) {

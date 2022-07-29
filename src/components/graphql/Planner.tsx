@@ -9,6 +9,7 @@ import { Filter, FilterReadouts, Team } from 'data/types';
 import { FILTER, OPEN_UNASSIGNED_ISSUES, OPEN_EPICS, ALL_BUG_ISSUES } from 'data/queries';
 import { useQuery, useApolloClient } from '@apollo/client';
 import { polling } from 'data/polling';
+import { organization } from 'data/customize';
 
 interface PlannerProps {
 }
@@ -66,7 +67,7 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
   }
 
   // Get a list of epics (don't refresh as we go at the moment)
-  const epicsQuery = useQuery(OPEN_EPICS, { variables: { labels: team?.labels }});
+  const epicsQuery = useQuery(OPEN_EPICS, { variables: { labels: team?.labels, groupPath: organization }});
   const epics = epicsQuery.data?.group?.epics?.nodes || [];
 
   // Create our milestones based on the filter - if it's All, include multiple
