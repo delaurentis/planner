@@ -35,7 +35,7 @@ const IssueAssignees: React.FC<IssueAssigneesProps> = (props) => {
   const noneChoice = { title: 'None', metadata: { username: 'none' } }
 
   // Make choice objects for users
-  const userChoices = props.team?.usernames.map((username: string) => {
+  const userChoices = props.team?.usernames?.map((username: string) => {
     return { title: titleForUsername(username), metadata: { username } }
   }) || [];
 

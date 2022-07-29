@@ -5,6 +5,7 @@ import { Epic, Option, OptionChoice, Team } from 'data/types';
 import { extraColumns } from 'data/extras';
 import { polling } from 'data/polling';
 import { projects } from 'data/projects';
+import { organization } from 'data/customize';
 
 import { useQuery, useMutation, useApolloClient } from '@apollo/client';
 import { ALL_ISSUES, 
@@ -61,7 +62,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   
   // Figure out our variables for the query
   const variables = () => {
-    const fullPath = `team/${props.project}`;
+    const fullPath = `${organization}/${props.project}`;
     if ( props.username === 'none' ) {
 
       // If there is no user, we need to use team labels to filter down the unassigned issues

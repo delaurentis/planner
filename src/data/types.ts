@@ -27,12 +27,20 @@ export type TeamLink = {
 
 export interface Team {
   name: string;
-  usernames: string[];
+  usernames?: string[];
   labels: string[];
   project: string;
+  projectId?: number;
   parentTeam?: string;
   hideUserTabs?: boolean;
   links?: TeamLink[];
+}
+
+export interface User {
+  name: string;
+  username: string;
+  teams: string[];
+  githubUsername?: string;
 }
 
 export interface TeamMap {
@@ -172,6 +180,7 @@ export interface Vendor {
   clientSecret?: string;
   redirectUrl?: string;
   testQuery: any;
+  testQueryVariables?: any;
   isTestOk: VendorTestCallback;
 }
 

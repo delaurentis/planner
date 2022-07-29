@@ -1,31 +1,25 @@
 import { TeamMap, AliasMap } from './types';
+import { teams as teamList, users as userList } from './customize';
 
-export const teams: TeamMap = {
-  'All Teams': { 
-    name: 'All Teams', 
-    labels: [],
-    project: 'reponame',
-    links: [],
-    hideUserTabs: true,
-    usernames: ['user1', 'user2', 'user3']
-  },
-  'Team': { 
-    name: 'Team', 
-    labels: ['Team 1 Labelname'],
-    project: 'reponame',
-    usernames: ['user1', 'user2'],
-    links: [{ title: 'My Link', url: 'https://google.com' }]
+export const teams: TeamMap = teamList.reduce((teams: TeamMap, team: any) => {
+  const name = team.name;
+  if (name) {
+    const usernames = userList.filter(user => user.teams.includes(name)).map(user => user.username);
+    teams[name] = { ...team, usernames };
   }
-};
+  return teams;
+}, {});
 
-export const nicknames: AliasMap = {
-  'user1': 'User',
-}
+export const nicknames: AliasMap = userList.reduce((nicknames: AliasMap, user: any) => {
+  nicknames[user.username] = user.name;
+  return nicknames;
+}, {})
 
 // A mapping of gitlab usernames to github usernames
-export const usernamesForDiffLogins: AliasMap = {
-  'github-username': 'gitlab-username'
-}
+export const usernamesForDiffLogins: AliasMap = userList.reduce((usernames: AliasMap, user: any) => {
+  usernames[user.githubUsername] = user.username;
+  return usernames;
+}, {})
 
 // Return the title to show in the tab for the given username
 export const titleForUsername = (username: string): string => {
@@ -56,7 +50,7 @@ export const labelsForUsername = (username: string) => {
   const teamNames = Object.keys(teams);
   const possiblyDuplicateLabels: string[] = teamNames.reduce((labels: any, teamName: string) => {
     const team = teams[teamName];
-    if ( team.usernames.includes(username) ) {
+    if ( team.usernames?.includes(username) ) {
       return labels.concat(team.labels);
     }
     return labels;

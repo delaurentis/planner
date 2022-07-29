@@ -29,6 +29,9 @@ export const recentMilestones: string[] = [
 
 // TODO: Switch this for a dynamic list
 export const currentMilestone: string = 'Q3S3';
+export const currentYear: number = 22;
+export const currentQuarter: number = 3;
+export const currentSprint: number = 4;
 
 // TODO: Switch this for a dynamic list
 export const upcomingMilestones: string[] = [
@@ -36,3 +39,4 @@ export const upcomingMilestones: string[] = [
   'Q3S4',
   'Q3S5',
 ];
+
