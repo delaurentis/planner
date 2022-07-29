@@ -3,7 +3,7 @@ import Button from '../presentation/Button';
 import Header from '../presentation/Header';
 import styles from './Login.module.css';
 import { Vendor } from 'data/types';
-import { vendors } from 'data/vendors';
+import { redirectToVendorAuthorization } from 'data/vendors';
 
 interface AutoLoginProps {
   onChooseManual(): void;
@@ -12,8 +12,8 @@ interface AutoLoginProps {
 
 const AutoLogin: React.FC<AutoLoginProps> = (props) => {
 
-  const redirectToVendor = () => {
-    window.location.href = props.vendor.authorizeUrl;
+  const handleLoginClick = () => {
+    redirectToVendorAuthorization(props.vendor.name);
   }
 
   const handleAlternateClick = (e: any) => {
@@ -28,7 +28,7 @@ const AutoLogin: React.FC<AutoLoginProps> = (props) => {
       <h1>{props.vendor.instructionTitle}</h1>
       <div className={styles.LoginParagraph}>{props.vendor.instructionBody}</div>
       <div>
-        <span className={styles.DisabledLoginButton}><Button onClick={redirectToVendor} title={`Login with ${props.vendor.name}`}/></span>
+        <span className={styles.LoginButton}><Button onClick={handleLoginClick} title={`Login with ${props.vendor.title}`}/></span>
         <div className={styles.LoginAlternate}>
           <a onClick={handleAlternateClick}>
             Use a developer token
@@ -85,10 +85,11 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = (props) => {
 
-  // If we're running locally, then manual mode is the 
-  // only option since we can't redirect to localhost
-  // const isRunningOnLocal = window.location.hostname === 'localhost';
-  const [isManual, setManual] = useState(true);
+  // You can access automatic login on localhost if you add 
+  // create a clientID for http://localhost:3000.  Not all
+  // vendors allow this, and manual logins can be used 
+  // when needed for development
+  const [isManual, setManual] = useState(false);
   const chooseManual = () => setManual(true);
 
   const loginContent = () => 

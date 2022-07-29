@@ -20,3 +20,26 @@ export const users: User[] = [
   { name: 'User E', username: 'user-e', teams: ['Team 2'] },
 ]
 
+// These keys are used for OAuth2 authentication
+// You can generate a clientId in GitLab or GitHub for your app
+// The redirect URI for the app must match the URL of your server
+// When doing this, you can use http://localhost:3000 for local development
+// and https://planner.companyname.com for production 
+export const vendorKeysByEnvironment: any = { 
+  development: {
+    github: {
+      clientId: 'XX',
+    },
+    gitlab:{
+      clientId: 'XX'
+    }
+  }, 
+  production: {
+    github: {
+      clientId: 'XX',
+    },
+    gitlab: {
+      clientId: 'XX'
+    }
+  }
+};

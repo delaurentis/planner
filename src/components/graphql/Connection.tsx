@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Authenticated from './Authenticated';
-import { vendors } from 'data/vendors';
+import { getVendorAccessToken, refreshVendorToken } from 'data/vendors';
 import { Vendor, Filter } from 'data/types';
 
 // State Management and Offline Support
@@ -19,9 +19,15 @@ interface ConnectionProps {
 
 const Connection: React.FC<ConnectionProps> = (props: ConnectionProps) => {
 
-  // Lookup the stored token
-  const storedToken:string | null = window.localStorage.getItem(props.vendor.tokenName); 
-  const token:string | undefined = ((storedToken?.length || 0) > 0 && storedToken) || undefined;
+  // We want to keep track of the last token and force a refresh if it changes
+  const [token, setToken] = useState(getVendorAccessToken(props.vendor.name));
+
+  // Whenever the vendor access token refreshes, we will update our local state
+  // which will cause a new token to be passed to apollo client below
+  // so that GraphQL calls can continue to work
+  useEffect(() => {
+    refreshVendorToken(props.vendor.name, (newToken) => { setToken(newToken) });
+  }, [props.vendor.name, token]);
 
   // Setup our cache with some initial data
   // That way we don't have to prop drill them down into the UI
