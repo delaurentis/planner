@@ -7,6 +7,7 @@ import { Epic as EpicType,
          Milestone as MilestoneType,
          Team } from 'data/types';
 import Listing from 'components/presentation/Listing';
+import { organization } from 'data/customize';
 
 interface EpicProps {
   epic?: EpicType;
@@ -39,7 +40,7 @@ const Epic: React.FC<EpicProps> = (props) => {
 
   // Create our label objects which will become clickable URLs
   const labels: LabelType[] = labelNames.map((name: string) => {
-    return { name, url: `https://gitlab.com/groups/team/-/epics?label_name=${name}` };
+    return { name, url: `https://gitlab.com/groups/${organization}/-/epics?label_name=${name}` };
   });
 
   // Figure out what goes in the right column

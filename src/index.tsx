@@ -11,6 +11,8 @@ import './index.css';
 // State Management and Offline Support
 import { Filter } from './data/types';
 import { vendors, requestGithubAccess } from './data/vendors';
+import { teams } from './data/teams';
+import { currentYear, currentQuarter, currentSprint } from './data/milestones';
 import * as serviceWorker from './setup/serviceWorker';
 
 // Fonts
@@ -43,10 +45,10 @@ if ( oauthToken ) {
 const queryString:string = window.location.search;
 const queryParams:any = new URLSearchParams(queryString);
 const username:string = queryParams.get('username') || afterSlash || 'none';
-const team:string = queryParams.get('team') || window.localStorage.getItem('team') || 'Team1';
-const year:number = parseInt(queryParams.get('year')) || 21;
-const quarter:number = parseInt(queryParams.get('quarter')) || 3;
-const sprint:number = parseInt(queryParams.get('sprint')) || 6;
+const team:string = queryParams.get('team') || window.localStorage.getItem('team') || Object.keys(teams)[0];
+const year:number = parseInt(queryParams.get('year')) || currentYear;
+const quarter:number = parseInt(queryParams.get('quarter')) || currentQuarter;
+const sprint:number = parseInt(queryParams.get('sprint')) || currentSprint;
 const milestone:string = 'All'; //`Q${quarter}S${sprint}`;
 const showClosed:boolean = !(queryParams.get('closed') === 'false');
 const extraColumn:string = window.localStorage.getItem('extraColumn') || 'Schedule';

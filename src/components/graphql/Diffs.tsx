@@ -7,6 +7,7 @@ import { titleForUsername } from 'data/teams';
 import { ApolloClient, NormalizedCacheObject, useQuery, useApolloClient } from "@apollo/client";
 import { MERGE_REQUESTS, EXTRA_DIFF_COLUMN } from 'data/queries';
 import { polling } from 'data/polling';
+import { organization } from 'data/customize';
 
 interface DiffsProps {
   project?: string;
@@ -28,7 +29,7 @@ const Diffs: React.FC<DiffsProps> = (props: DiffsProps) => {
   // TODO: We should add variables here so 
   // we can abstract out project and team
   const variables = () => {
-    return { fullPath: `team/${props.project}` } 
+    return { fullPath: `${organization}/${props.project}` } 
   }
   
   // Load open pull requests from cache, then API, and then refresh every 15 minutes

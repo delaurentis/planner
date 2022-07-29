@@ -6,6 +6,7 @@ import Popup from 'components/presentation/Popup';
 import { Milestone as MilestoneType } from 'data/types';
 import { MILESTONES } from 'data/queries';
 import { useQuery } from '@apollo/client';
+import { organization } from 'data/customize';
 
 interface IssueMilestonesProps {
   milestone?: MilestoneType;
@@ -15,7 +16,7 @@ interface IssueMilestonesProps {
 
 const IssueMilestones: React.FC<IssueMilestonesProps> = (props) => {
 
-  const milestonesQuery = useQuery(MILESTONES);
+  const milestonesQuery = useQuery(MILESTONES, { variables: { groupPath: organization } });
 
   // When they switch the assignee, let's update it using an API call
   const handleSelectOption = (option: OptionType, choice: OptionChoiceType) => {

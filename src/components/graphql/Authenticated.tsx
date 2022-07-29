@@ -18,7 +18,7 @@ const Authenticated: React.FC<AuthenticatedProps> = (props: AuthenticatedProps) 
   const doesTokenExist = loggedInQuery.data?.isLoggedIn;
 
   // 2. Is it real?  Can it access the project?
-  const testQuery = useQuery(props.vendor.testQuery, { client: props.client });
+  const testQuery = useQuery(props.vendor.testQuery, { client: props.client, variables: props.vendor.testQueryVariables });
   const isTokenPossiblyValid = testQuery.loading || props.vendor.isTestOk(testQuery.data);
 
   // Make sure to redirect to the login page if we actually don't have a valid token

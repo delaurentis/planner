@@ -275,8 +275,8 @@ export const OPEN_UNASSIGNED_ISSUES_NO_MILESTONE = gql`
 `;
 
 export const OPEN_EPICS = gql`
-  query GetEpics($labels: [String!]) {
-    group(fullPath: "team") {
+  query GetEpics($labels: [String!], $groupPath: ID!) {
+    group(fullPath: $groupPath) {
       name,
       epics (labelName: $labels, state: opened) {
         nodes {
@@ -289,8 +289,8 @@ export const OPEN_EPICS = gql`
 `;
 
 export const EPICS = gql`
-  query GetEpics($labels: [String!]) {
-    group(fullPath: "team") {
+  query GetEpics($labels: [String!], $groupPath: ID!) {
+    group(fullPath: $groupPath) {
       name,
       epics (labelName: $labels) {
         nodes {
@@ -303,8 +303,8 @@ export const EPICS = gql`
 `;
 
 export const MILESTONE_EPICS = gql`
-  query GetMilestoneEpics($labels: [String!]  $milestone: String,) {
-    group(fullPath: "team") {
+  query GetMilestoneEpics($labels: [String!]  $milestone: String, $groupPath: ID!) {
+    group(fullPath: $groupPath) {
       name,
       epics (labelName: $labels, milestoneTitle: $milestone) {
         nodes {
@@ -317,8 +317,8 @@ export const MILESTONE_EPICS = gql`
 `;
 
 export const EPICS_WITH_ISSUES = gql`
-  query GetEpicsWithIssues($labels: [String!]) {
-    group(fullPath: "team") {
+  query GetEpicsWithIssues($labels: [String!], $groupPath: ID!) {
+    group(fullPath: $groupPath) {
       name,
       epics (labelName: $labels) {
         nodes {
@@ -353,8 +353,8 @@ export const USERS = gql`
 `;
 
 export const MILESTONES = gql`
-  query GetMilestones {
-    group(fullPath: "team") {
+  query GetMilestones($groupPath: ID!) {
+    group(fullPath: $groupPath) {
       name,
       milestones {
         nodes {
@@ -369,9 +369,18 @@ export const MILESTONES = gql`
   }
 `;
 
+export const GROUP = gql`
+  query GetGroup($groupPath: ID!) {
+    group(fullPath: $groupPath) {
+      name
+    }
+  }
+`;
+
+
 export const PROJECT = gql`
-  query GetProject {
-    project(fullPath: "team/reponame") {
+  query GetProject($fullPath: ID!) {
+    project(fullPath: $fullPath) {
       name
     }
   }
