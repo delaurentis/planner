@@ -9,7 +9,7 @@ export const priorityStatsFromIssues = (issues: Issue[]) => {
     const labelNames = issue.labels.nodes.map(node => node.title);
     const priority = priorityFromLabels(labelNames);
     if ( priority ) {
-      stats[priority.icon] = (stats[priority.icon] || 0) + (parseInt(issue.humanTimeEstimate) || 0);
+      stats[priority.icon] = (stats[priority.icon] || 0) + (estimateInHours(issue.humanTimeEstimate) || 0.0);
     }
     return stats;
   }, orderedPriorityStats);

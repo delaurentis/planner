@@ -11,6 +11,7 @@ export const extraColumns = [
   { title: 'Labels', metadata: {} },
   { title: 'Author', metadata: {} },
   { title: 'Project', metadata: {} },
+/* { title: 'Ordering', metadata: {} }, */
 ]
 
 export const extraDiffColumns = [

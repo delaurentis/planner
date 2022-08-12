@@ -43,6 +43,13 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   // That way we can prevent things from getting sorted as we click around
   // (We use a ref because we don't want to trigger updates when we update this)
   const orderingsRef = useRef<DurableOrderSnapshot>({});
+  
+  // Allow for us to reset the ordering
+  const [orderingEpoc, setOrderingEpoc] = React.useState(0);
+  const handleResetOrdering = () => {
+    orderingsRef.current = {}
+    setOrderingEpoc(orderingEpoc + 1)
+  }
 
   // Reset the order when we switch users, because we'll get different issues
   useEffect(() => { orderingsRef.current = {}; }, [props.username, props.labels, props.milestone])
@@ -85,7 +92,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
         username: props.username, 
         milestones: [props.milestone.title],
         path: props.project,
-        fullPath,
+        fullPath: organization, // for users return all issues in the organization
        };
     }
   }
@@ -127,7 +134,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   }, [startPolling, stopPolling])
 
   // Extract our issues from the data returned
-  const issueNodes = issuesQuery.data?.project?.issues?.nodes || [];
+  const issueNodes = issuesQuery.data?.group?.issues?.nodes || issuesQuery.data?.project?.issues?.nodes || [];
 
   // Get any epics associated with these issues
   // ...
@@ -183,7 +190,12 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
       const labelsForTeam = props.labels || [];
       const standardLabels: string[] = (props.username === 'none' || props.username === 'fixes') ? ['Triage 🛎'] : ['P2 🙏'];
       const standardAndCustomLabels: string[] = labelsForTeam.concat(standardLabels);
-      const allLabels: string[] = standardAndCustomLabels.concat(categoryLabels).concat(environmentLabels);
+
+      // Are there any labels based on the text detected in the issue title?
+      const titleGeneratedLabels = update.title?.indexOf('OOO') >= 0 ? ['OOO 🌴'] : [];
+
+      // Combine all the labels together and de-dupe them
+      const allLabels: string[] = standardAndCustomLabels.concat(categoryLabels).concat(environmentLabels).concat(titleGeneratedLabels);
       const uniqueLabels = [...new Set(allLabels)];
 
       createIssue({ variables: 
@@ -201,7 +213,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   }
 
   // Figure out title and where it goes if you click iot
-  const userUrl: string = `https://gitlab.com/team/reponame/-/issues?scope=all&utf8=%E2%9C%93&assignee_username[]=${props.username}&milestone_title=${props.milestone.title}`
+  const userUrl: string = `https://gitlab.com/${organization}/${props.project}/-/issues?scope=all&utf8=%E2%9C%93&assignee_username[]=${props.username}&milestone_title=${props.milestone.title}`
 
   // Determine if we've set orderings before... only happens once data gets loaded the first time
   const { sortedItems, orderingSnapshot } = durableOrder(issueNodes, orderingForIssue, orderingsRef.current);
@@ -259,7 +271,10 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
           title={milestoneTitle} 
           titleUrl={userUrl} 
           isLoading={false}
-          option={cardOption}>
+          option={cardOption}
+          icon='🗓'
+          iconTip='Click to sort'
+          onClickIcon={handleResetOrdering}>
 
       { issuesToShow() }
       
