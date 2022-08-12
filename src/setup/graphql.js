@@ -6,9 +6,14 @@ import { localTypedefs } from '../data/queries';
 // Manages how we connect to the GraphQL / REST server
 const linkToServer = (vendor, token) => {
 
-  // Setup the URL we'll be connecting to
-  const httpLink = new HttpLink({ uri: vendor.graphUrl });
+  // Add a cache busting query parameter to all GraphQL requests
+  const customFetch = (uri, options) => {
+    return fetch(`${vendor.graphUrl}?now=${Date.now()}`, options);
+  };
 
+  // Setup the URL we'll be connecting to
+  const httpLink = new HttpLink({ uri: vendor.graphUrl, fetch: customFetch });
+  
   // Setup authorization with Apollo 
   const authLink = new ApolloLink((operation, forward) => {
     
