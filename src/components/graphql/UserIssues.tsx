@@ -8,14 +8,14 @@ import { projects } from 'data/projects';
 import { organization } from 'data/customize';
 
 import { useQuery, useMutation, useApolloClient } from '@apollo/client';
-import { ALL_ISSUES, 
+import { ALL_ISSUES,
          OPEN_ISSUES_NO_MILESTONE,
          OPEN_UNASSIGNED_ISSUES,
          OPEN_UNASSIGNED_ISSUES_NO_MILESTONE,
-         ALL_BUG_ISSUES, 
-         UPDATE_ISSUE, 
+         ALL_BUG_ISSUES,
+         UPDATE_ISSUE,
          CREATE_ISSUE,
-         DELETE_ISSUE, 
+         DELETE_ISSUE,
          ESTIMATE_ISSUE,
          USER,
          EXTRA_COLUMN } from 'data/queries';
@@ -43,7 +43,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   // That way we can prevent things from getting sorted as we click around
   // (We use a ref because we don't want to trigger updates when we update this)
   const orderingsRef = useRef<DurableOrderSnapshot>({});
-  
+
   // Allow for us to reset the ordering
   const [orderingEpoc, setOrderingEpoc] = React.useState(0);
   const handleResetOrdering = () => {
@@ -66,40 +66,40 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   // Get our user, because we need their ID to create issues
   const userQuery = useQuery(USER, { variables: { username: props.username } });
   const optionalAssignee = props.username === 'none' || props.username === 'fixes' ? {} : { assignee_id: userQuery.data?.user[0]?.id  };
-  
+
   // Figure out our variables for the query
   const variables = () => {
     const fullPath = `${organization}/${props.project}`;
     if ( props.username === 'none' ) {
 
       // If there is no user, we need to use team labels to filter down the unassigned issues
-      return { 
-        username: 'none', 
-        milestones: [props.milestone.title],  
+      return {
+        username: 'none',
+        milestones: [props.milestone.title],
         labels: props.labels,
         fullPath,
       };
     }
     else if ( props.username === 'fixes' ) {
-      return { 
-        milestones: [props.milestone.title], 
+      return {
+        milestones: [props.milestone.title],
         labels: [...props.labels || [], '🐞 Bug'],
         fullPath,
       };
     }
     else {
-      return { 
-        username: props.username, 
+      return {
+        username: props.username,
         milestones: [props.milestone.title],
         path: props.project,
         fullPath: organization, // for users return all issues in the organization
        };
     }
   }
-  
+
   const gqlForIssues = () => {
     if ( props.username === 'none' ) {
-      if ( props.milestone.title === 'none' ) { 
+      if ( props.milestone.title === 'none' ) {
         return OPEN_UNASSIGNED_ISSUES_NO_MILESTONE;
       }
       else {
@@ -110,7 +110,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
       return ALL_BUG_ISSUES;
     }
     else {
-      if ( props.milestone.title === 'none' ) { 
+      if ( props.milestone.title === 'none' ) {
         return OPEN_ISSUES_NO_MILESTONE;
       }
       else {
@@ -118,11 +118,11 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
       }
     }
   }
-  
+
   // Load open AND closed issues from cache, then API, and then refresh every second
   const issuesQuery = useQuery(gqlForIssues(), { variables: variables() }) || {};
 
-  // Poll for changes to open issues 
+  // Poll for changes to open issues
   // (fix for bug in Apollo that doesn't stop polling when you navigate away)
   const startPolling = issuesQuery.startPolling;
   const stopPolling = issuesQuery.stopPolling;
@@ -150,13 +150,13 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   const [deleteIssue] = useMutation(DELETE_ISSUE, { refetchQueries });
   const [estimateIssue] = useMutation(ESTIMATE_ISSUE, { refetchQueries });
   const handleUpdateIssue = (update: any, issue: any) => {
-  
+
     // We will re-fetch the query from apollo after any mutations
     // Temporarily turn off polling since they can conflict and cause the screen to flash white
     stopPolling();
 
     // Are we modifying an existing issue, or creating a new one?
-    if ( issue ) {  
+    if ( issue ) {
 
       // Get the project name for this issue and figure out the ID
       const beforeDash: string = issue.webPath?.split('/-')[0];
@@ -192,22 +192,22 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
       const standardAndCustomLabels: string[] = labelsForTeam.concat(standardLabels);
 
       // Are there any labels based on the text detected in the issue title?
-      const titleGeneratedLabels = update.title?.indexOf('OOO') >= 0 ? ['OOO 🌴'] : [];
+      const titleGeneratedLabels = update.title?.toUpperCase().indexOf('OOO') >= 0 ? ['OOO 🌴'] : [];
 
       // Combine all the labels together and de-dupe them
       const allLabels: string[] = standardAndCustomLabels.concat(categoryLabels).concat(environmentLabels).concat(titleGeneratedLabels);
       const uniqueLabels = [...new Set(allLabels)];
 
-      createIssue({ variables: 
-        { projectId: userProjectId, 
-          input: {...updateWithoutMeta, 
+      createIssue({ variables:
+        { projectId: userProjectId,
+          input: {...updateWithoutMeta,
                   ...optionalAssignee,
                   milestone_id: props.milestone.id,
                   labels: uniqueLabels.join(',') }}});
     }
 
     // Revert to slower timeouts after N seconds
-    setTimeout(() => { 
+    setTimeout(() => {
       startPolling(polling.frequency.allIssue);
     }, polling.period.changedIssue);
   }
@@ -218,15 +218,15 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   // Determine if we've set orderings before... only happens once data gets loaded the first time
   const { sortedItems, orderingSnapshot } = durableOrder(issueNodes, orderingForIssue, orderingsRef.current);
   orderingsRef.current = orderingSnapshot;
-  
-  const issuesToShow = () => sortedItems.map((issue: any) => 
-    <Issue key={issue.id} 
-           issue={issue} 
-           epics={props.epics} 
+
+  const issuesToShow = () => sortedItems.map((issue: any) =>
+    <Issue key={issue.id}
+           issue={issue}
+           epics={props.epics}
            team={props.team}
            milestone={props.milestone}
            milestones={props.milestones}
-           extraColumn={extraQuery.data?.extraColumn} 
+           extraColumn={extraQuery.data?.extraColumn}
            onUpdateIssue={handleUpdateIssue}/>
   );
 
@@ -248,7 +248,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   }
 
   // Adjust the milestone title
-  const milestoneTitle = props.milestone.title === 'none' ? 'Triage' : props.milestone.title; 
+  const milestoneTitle = props.milestone.title === 'none' ? 'Triage' : props.milestone.title;
 
   // Show the right stats based on the last column type
   const stats = () => {
@@ -267,9 +267,9 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
 
   // isLoading = issuesQuery.loading
   return (
-    <Card key={`user-${props.username}`} 
-          title={milestoneTitle} 
-          titleUrl={userUrl} 
+    <Card key={`user-${props.username}`}
+          title={milestoneTitle}
+          titleUrl={userUrl}
           isLoading={false}
           option={cardOption}
           icon='🗓'
@@ -277,12 +277,12 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
           onClickIcon={handleResetOrdering}>
 
       { issuesToShow() }
-      
-      <Issue key='new' 
-             team={props.team} 
+
+      <Issue key='new'
+             team={props.team}
              defaultCategory={props.username === 'fixes' ? CATEGORY_BUG : CATEGORY_FEATURE}
-             isEditing={true} 
-             onUpdateIssue={handleUpdateIssue} 
+             isEditing={true}
+             onUpdateIssue={handleUpdateIssue}
              stats={stats()}/>
 
     </Card>
