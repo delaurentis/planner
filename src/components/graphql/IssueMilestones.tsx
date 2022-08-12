@@ -10,12 +10,14 @@ import { organization } from 'data/customize';
 
 interface IssueMilestonesProps {
   milestone?: MilestoneType;
+  isShowingInactiveMilestones?: boolean;
   onCancel(): void;
   onSelectMilestone?(milestone: MilestoneType): void;
 }
 
 const IssueMilestones: React.FC<IssueMilestonesProps> = (props) => {
 
+  // Lookup all the milestones from the vendor API
   const milestonesQuery = useQuery(MILESTONES, { variables: { groupPath: organization } });
 
   // When they switch the assignee, let's update it using an API call
@@ -33,7 +35,7 @@ const IssueMilestones: React.FC<IssueMilestonesProps> = (props) => {
   
   // Make choice objects for users
   const milestones = milestonesQuery.data?.group?.milestones?.nodes || [];
-  const activeMilestones = milestones.filter(milestone => milestone.state === 'active');
+  const activeMilestones = props.isShowingInactiveMilestones ? milestones : milestones.filter(milestone => milestone.state === 'active');
   const userChoices = activeMilestones.map((milestone: MilestoneType) => {
     return { title: milestone.title, metadata: { milestone } }
   }) || [];
@@ -49,7 +51,7 @@ const IssueMilestones: React.FC<IssueMilestonesProps> = (props) => {
       <AutoComplete title={'Sprint'}
                     subtitle={subtitle()}
                     text={props.milestone?.title}
-                    placeholder={ props.milestone ? 'Type to change' : 'Type assignee name' }
+                    placeholder={ props.milestone ? 'Type to change' : 'Type milestone name' }
                     option={milestoneOption}
                     onCancel={() => props.onCancel?.()}/>
     </Popup>);
