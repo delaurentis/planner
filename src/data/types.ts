@@ -110,6 +110,7 @@ export interface Action {
 export interface Issue {
   iid?: number;
   id?: string;
+  projectId?: number;
   labels?: any;
   webUrl?: string;
   webPath?: string;
