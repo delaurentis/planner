@@ -3,16 +3,16 @@ import { primaryLabelForIssue } from './labels';
 
 // Based on state, what do we need to tell the API to update
 const updateForAction = (action: any, labelToRemove: any) => {
-  
+
   // Compose our label names
   const labelNameToAdd = `${action.name} ${action.icon}`
   const labelNameToRemove = `${labelToRemove.name} ${labelToRemove.icon}`;
 
   // Handle different actions differently
   if ( action.icon === '✅' ) {
-    const removeWhenClosing = ['Doing ⏳', 'Review 👓', 'Blocked 🛑', 'Paused ⏸', ...[labelNameToRemove]];
+    const removeWhenClosing = ['Doing ⏳', 'Review 👓', 'Blocked 🛑', 'Paused ⏸'];
     return { state_event: 'close', remove_labels: removeWhenClosing.join(',') };
-  } 
+  }
   else if ( action.icon === '📖' ) {
     return { state_event: 'reopen' };
   }
@@ -35,7 +35,7 @@ const updateForAction = (action: any, labelToRemove: any) => {
 
 // Figure out our actions based on our state
 const actionsForIcon: any = {
-  '✅': [{ icon: '📖', name: 'Reopen'}, 
+  '✅': [{ icon: '📖', name: 'Reopen'},
          { icon: '🗑', name: 'Delete'}],
   '⏳': [{ icon: '✅', name: 'Done'},
          { icon: '👓', name: 'Review'},
