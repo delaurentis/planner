@@ -1,5 +1,5 @@
 import { Priority, Label, Diff } from './types';
-import { priorityFromLabel } from './priorities';
+import { priorityFromLabel, priorityFromLabels } from './priorities';
 import e from 'express';
 
 export const officialLabelNames = {
@@ -28,6 +28,7 @@ export const primaryLabelForIssue = (issue: any): Label => {
   const isPaused = labels.includes('Paused ⏸');
   const isBlocked = labels.includes('Blocked 🛑');
   const isDoing = labels.includes('Doing ⏳');
+  const isOutOfOffice = labels.includes('OOO 🌴');
   const isDone = issue.state === 'closed';
 
   // Pick an emoji based on all this info
@@ -45,6 +46,9 @@ export const primaryLabelForIssue = (issue: any): Label => {
   }
   else if ( isBlocked ) { 
     return { icon: '🛑', name: 'Blocked'}; 
+  }
+  else if ( isOutOfOffice ) {
+    return { icon: '🌴', name: 'OOO' };
   }
   else if ( priority ) { 
     return priority;
@@ -78,9 +82,9 @@ interface OrderingsMap {
 // Create a mapping of label to relative ordering
 const orderingsByDayLabel = (): OrderingsMap => {
   const weekdays = ['M','T','W','Th','F'];
-  const dayLabels = weekdays.map(day => `📅 W1${day}`).concat(weekdays.map(day => `📅 W2${day}`));
+  const dayLabels = [...weekdays.map(day => `📅 W1${day}`), ...weekdays.map(day => `📅 W2${day}`), ...weekdays.map(day => `📅 W3${day}`)];
   return dayLabels.reduce((orderings: OrderingsMap, label: string, index: number) => {
-    orderings[label] = index + 1;
+    orderings[label] = (index + 1) * 10;
     return orderings;
   }, {});
 };
@@ -95,9 +99,13 @@ export const orderingForIssue = (issue: any) => {
   const orderingsPossible: OrderingsMap = orderingsByDayLabel();
   const orderingsDiscovered: number[] = labelNames.map((label: string) => orderingsPossible[label]);
   const orderingsDefined: number[] = orderingsDiscovered.filter(ordering => ordering !== undefined);
-  const earliestOrdering = orderingsDefined.length > 0 ? Math.min(...orderingsDefined) : 20;
+  const earliestOrdering = orderingsDefined.length > 0 ? Math.min(...orderingsDefined) : 500;
+
+  // Add an offset based on the labels applied
+  const priority = priorityFromLabels(labelNames);
+  const orderingWithPriority = priority ? earliestOrdering + priority.level : earliestOrdering + 4;
   
   // Closed issues get put higher up (1000 is more issues than we should ever see at once)
   const MAX_POSSIBLE_ISSUES = 1000;
-  return issue.state === "closed" ? earliestOrdering - MAX_POSSIBLE_ISSUES: earliestOrdering;
+  return issue.state === "closed" ? orderingWithPriority - MAX_POSSIBLE_ISSUES: orderingWithPriority;
 }

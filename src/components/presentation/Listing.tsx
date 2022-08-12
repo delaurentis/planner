@@ -88,8 +88,8 @@ const Listing: React.FC<ListingProps> = (props) => {
   const extra = () => {
     if ( props.extras ) {
       return <span className={styles.Extra}>
-        { props.extras.map((extra: React.ReactNode) => {
-            return <span className={styles.ExtraChild}>{extra}</span>
+        { props.extras.map((extra: React.ReactNode, index: number) => {
+            return <span className={styles.ExtraChild} key={index}>{extra}</span>
           })
         }
       </span>
@@ -204,7 +204,7 @@ const Listing: React.FC<ListingProps> = (props) => {
 
       return (<div className={styles.Listing} {...divProps}>
                 <span className={styles.IconAndTitle}>
-                  <span className={styles.Icon} onClick={handleIconClick}>{props.icon}</span>
+                  <span className={styles.Icon} title='Click for actions' onClick={handleIconClick}>{props.icon}</span>
                   <a className={styles.Link} href={props.url} target='_blank' rel='noopener noreferrer'>{props.title}</a>
                 </span>
                 {extra()}

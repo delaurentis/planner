@@ -2,7 +2,7 @@
 
 Planner is a front-end for GitLab that makes it significantly faster for teams to create, estimate, and manage tickets.  
 
-It is an opinionated tool that incorporates over a decade of agile software management learnings, to increase both velocity and collaboration for teams.
+It incorporates over a decade of agile software management learnings, to increase both velocity and collaboration for teams.
 
 Merge requests can also be explored, with statistics on response time and a view that encourages faster code review turnaround times.  
 

@@ -39,6 +39,31 @@
   padding-left: 0.5em;
 }
 
+.CardIcon {
+  display: inline-block;
+  font-size: 1.2em;
+  opacity: 1;
+  cursor: pointer;
+  margin-left: -2px;
+  margin-right: 11px;
+}
+
+.CardIcon:hover {
+  animation: growCardIcon 0.75s ease-in-out;
+}
+
+@keyframes growCardIcon {
+  0% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .CardOption {
   display: block;
   justify-self: right;
