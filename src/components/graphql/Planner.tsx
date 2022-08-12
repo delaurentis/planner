@@ -5,11 +5,12 @@ import Header from '../presentation/Header';
 import Milestone from './Milestone';
 import { teams } from 'data/teams';
 import { upcomingMilestones, recentMilestones, currentMilestone } from 'data/milestones';
-import { Filter, FilterReadouts, Team } from 'data/types';
+import { Filter, FilterReadouts, Team, Milestone as MilestoneType } from 'data/types';
 import { FILTER, OPEN_UNASSIGNED_ISSUES, OPEN_EPICS, ALL_BUG_ISSUES } from 'data/queries';
 import { useQuery, useApolloClient } from '@apollo/client';
 import { polling } from 'data/polling';
 import { organization } from 'data/customize';
+import IssueMilestones from 'components/graphql/IssueMilestones';
 
 interface PlannerProps {
 }
@@ -24,6 +25,29 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
   const client = useApolloClient();
   const handleChangeFilter = (filter: Filter) => {
     client.writeQuery({ query: FILTER, data: { filter: filter } });
+  }
+
+  // We may be choosing a milestone
+  const [isChoosingMilestone, setChoosingMilestone] = React.useState(false);
+  const milestonePicker = () => {
+    if ( isChoosingMilestone ) {
+      return (
+        <span>
+          <IssueMilestones 
+            onCancel={() => { setChoosingMilestone(false); }}
+            onSelectMilestone={(milestone: MilestoneType) => { 
+
+              // Hide the picker
+              setChoosingMilestone(false);
+
+              // Update the filter
+              client.writeQuery({ query: FILTER, data: { filter: { ...filter, milestone: milestone.title } } });
+            }}
+          />
+        </span>
+      );
+    }
+    return undefined;
   }
 
   // What milestone names should we query?
@@ -94,10 +118,12 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
       <Header>
         <FilterBar filter={filter} 
                    readouts={filterReadouts()} 
-                   onChangeFilter={handleChangeFilter}/>
+                   onChangeFilter={handleChangeFilter}
+                   onChooseMilestone={() => setChoosingMilestone(true)}/>
       </Header>
       <Arena>
         {milestones()}
+        {milestonePicker()}
       </Arena>
     </div>
   );

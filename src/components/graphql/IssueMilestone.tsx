@@ -2,11 +2,12 @@
 // separate this from the listing it's no longer updating the UI
 // when we change the apollo cache
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Issue as IssueType, 
          Milestone as MilestoneType, 
          Option as OptionType } from 'data/types';
 import OptionChips from 'components/presentation/OptionChips';
+import IssueMilestones from './IssueMilestones';
 import { upcomingMilestones } from 'data/milestones';
 import { useMutation, gql, useApolloClient } from '@apollo/client';
 import { SET_ISSUE_MILESTONE } from 'data/queries';
@@ -30,6 +31,10 @@ const IssueMilestone: React.FC<IssueMilestoneProps> = (props) => {
     });  
   }
   
+  // Controls whether or not the popup is showing because
+  // if we are editing the project we need to show it
+  const [isEditing, setEditing] = useState<boolean>(false);
+
   // Update milestone
   const [setMilestone, ] = useMutation(SET_ISSUE_MILESTONE);
   const handleSelectMilestone = (milestone: MilestoneType) => {
@@ -56,7 +61,8 @@ const IssueMilestone: React.FC<IssueMilestoneProps> = (props) => {
   // We need milestone IDs to be able to write to GitLab
   // So let's find all the milestone objects from GraphQL  
   // corresponding to the milestone names we know and love
-  const suggestedMilestones: MilestoneType[] = [...upcomingMilestones, 'Backlog'].reduce((array: MilestoneType[], milestoneTitle: string) => {
+  const firstThreeMilestones = upcomingMilestones.slice(0, 3);
+  const suggestedMilestones: MilestoneType[] = [...firstThreeMilestones, 'Backlog'].reduce((array: MilestoneType[], milestoneTitle: string) => {
     const milestone: MilestoneType | undefined = props.milestones?.find(milestone => milestone.title === milestoneTitle);
     if ( milestone ) {
       array.push(milestone);
@@ -75,9 +81,44 @@ const IssueMilestone: React.FC<IssueMilestoneProps> = (props) => {
              onSelectOption: () => { handleSelectMilestone(milestone); } 
     };
   })
+
+  // Generate an extra ... option
+  const moreOption: OptionType = { 
+    title: '⋯',
+    name: 'More',
+    isSelected: false,
+    isSelectable: true,
+    isExpandable: false,
+    isSmall: true, 
+    onSelectOption: () => { 
+      setEditing(true); 
+    }
+  }
   
+  // Only show the project picker if we're editing
+  const picker = () => {
+    if ( isEditing ) {
+      return (
+        <span>
+          <IssueMilestones 
+            milestone={props.issue.milestone}
+            onCancel={() => { setEditing(false); }}
+            onSelectMilestone={(milestone: MilestoneType) => { 
+              handleSelectMilestone(milestone); 
+              setEditing(false);
+            }}
+          />
+        </span>
+      );
+    }
+    return undefined;
+  }
+
   // Put all of our groups together
-  return <span><OptionChips options={[options]}/></span>;
+  return <span>
+    <OptionChips options={[[...options, moreOption]]}/>
+    {picker()}
+  </span>;
 }
 
 export default IssueMilestone;

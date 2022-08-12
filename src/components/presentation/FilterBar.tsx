@@ -3,11 +3,13 @@ import OptionChips from './OptionChips';
 import { teams, titleForUsername } from 'data/teams';
 import { Team, Filter, FilterReadouts, Option, OptionChoice } from 'data/types';
 import { milestoneChoices } from 'data/milestones';
+import { capitalizeFirstLetter } from 'util/capitalize'
 
 interface FilterBarProps {
   filter: Filter;
   readouts: FilterReadouts;
   onChangeFilter?(changedFilter: Filter): void;
+  onChooseMilestone?(): void;
 }
 
 const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
@@ -19,12 +21,17 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
   };
  
   const onSelectWhen = (option: Option, choice?: OptionChoice | undefined) => {
-    props.onChangeFilter?.({ ...filter, 
-      quarter: choice?.metadata.quarter,
-      sprint: choice?.metadata.sprint,
-      milestone: choice?.metadata.milestone })
+    if ( choice?.metadata.isChoosingMilestone ) {
+      props.onChooseMilestone?.();
+    }
+    else {
+      props.onChangeFilter?.({ ...filter, 
+        quarter: choice?.metadata.quarter,
+        sprint: choice?.metadata.sprint,
+        milestone: choice?.metadata.milestone });
+    }
   }
-
+  
   const onSelectTeam = (option: Option, choice?: OptionChoice | undefined) => {
 
     // Keep the user on Diff's if they are switching teams
@@ -45,7 +52,6 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
     window.localStorage.setItem('team', choice?.metadata);
   }
 
-  const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   const teamChoices: OptionChoice[] = Object.keys(teams).map(team => { 
     return { metadata: team, 
              title: `${teams[team].parentTeam ? '• ' : ''}${capitalizeFirstLetter(team)}`,
