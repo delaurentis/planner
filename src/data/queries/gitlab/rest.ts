@@ -39,6 +39,15 @@ export const ESTIMATE_ISSUE = gql`
     }
 `;
 
+export const MOVE_ISSUE = gql`
+    mutation MoveIssue($projectId: ID!, $id: ID!, $input: Any!) {
+      moveIssue(projectId: $projectId, id: $id, input: $input)
+        @rest(type: "Issue", path: "/projects/{args.projectId}/issues/{args.id}/move", method: "POST") {
+          NoResponse
+      }
+    }
+`;
+
 export const SUBGROUPS = gql`
   query GetSubgroups($groupId: ID!) {
     subgroups(groupId: $groupId) 

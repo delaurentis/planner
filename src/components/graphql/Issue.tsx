@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { primaryLabelForIssue, 
          officialLabelNames, 
-         labelNamesForIssue } from 'data/labels';
+         labelNamesForIssue,
+         orderingForIssue } from 'data/labels';
 import { actionsForPrimaryLabel } from 'data/actions';
 import { titleForUsername } from 'data/teams';
 import { Issue as IssueType, 
@@ -20,6 +21,7 @@ import IssueEnvironment from './IssueEnvironment';
 import IssueResolution from './IssueResolution';
 import IssueFlags from './IssueFlags';
 import IssueEstimate from './IssueEstimate';
+import IssueProject from './IssueProject';
 import IssueSchedule from './IssueSchedule';
 import { useApolloClient } from '@apollo/client';
 import { ISSUE_WITH_EPIC_FRAGMENT } from 'data/queries';
@@ -185,18 +187,14 @@ const Issue: React.FC<IssueProps> = (props) => {
                               }
                              }}/>
              ]
-
-             /* <a onClick={() => { alert('hello') }}><OptionChip option={{title: '⋯', name: 'more', isSmall: true}} /></a> */
-             /* <IssueMilestones milestone={issue.milestone}
-                               onCancel={() => {}}
-                               onSelectMilestone={(milestone: MilestoneType) => {
-                                handleUpdate({milestone_id: milestone.id}, issue);
-                               }}/>*/
     }
     else if ( props.extraColumn === 'Author' ) {
       return [<Chip size='small' url={`https://gitlab.com/groups/${organization}/-/issues?author_username=${issue.author?.username}`}>
               <span>{titleForUsername(issue.author?.username)}</span>
              </Chip>]
+    } 
+    else if ( props.extraColumn === 'Project' ) {
+      return [<IssueProject issue={issue} onUpdating={setUpdating}/>]
     } 
     else if ( props.extraColumn === 'Estimate' ) {
       return [<IssueEstimate issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>]
@@ -210,6 +208,9 @@ const Issue: React.FC<IssueProps> = (props) => {
       return [<IssueSchedule issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>, 
               <IssueEstimate issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>]
     }
+    else if ( props.extraColumn === 'Ordering' ) {
+      return [<Chip size='small'><span>{orderingForIssue(issue)}</span></Chip>]
+    }
     return undefined;
   }
 
@@ -218,7 +219,9 @@ const Issue: React.FC<IssueProps> = (props) => {
 
   return (
     <div>
-      <Listing icon={displayIcon()}
+      <Listing 
+            key={issue.id}
+            icon={displayIcon()}
             title={displayTitle()}
             url={issue.webUrl}
             entity={issue}

@@ -24,6 +24,7 @@ export const ISSUE_ONLY_FRAGMENT = gql`
   fragment issueOnlyResult on Issue {
       id,
       iid,
+      projectId,
       title,
       state,
       webUrl,
@@ -58,6 +59,7 @@ export const ISSUE_WITH_EPIC_FRAGMENT = gql`
   fragment issueWithEpicResult on Issue {
       id,
       iid,
+      projectId,
       title,
       state,
       webUrl,
@@ -118,6 +120,24 @@ export const EPIC_WITH_ISSUES_FRAGMENT = gql`
 
 export const ALL_ISSUES = gql`
   query GetAllUserIssues($username: String!, $milestones: [String], $labels: [String], $fullPath: ID!) {
+    group(fullPath: $fullPath) {
+      name,
+      issues (assigneeUsernames: [$username], 
+              milestoneTitle: $milestones,
+              labelName: $labels,
+              sort: CREATED_ASC ) {
+        nodes {
+          ...issueWithEpicResult
+        }
+      }
+    }
+  }
+  ${ISSUE_WITH_EPIC_FRAGMENT}
+`;
+
+
+export const ALL_PROJECT_ISSUES = gql`
+  query GetAllUserProjectIssues($username: String!, $milestones: [String], $labels: [String], $fullPath: ID!) {
     project(fullPath: $fullPath) {
       name,
       issues (assigneeUsernames: [$username], 
