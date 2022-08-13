@@ -1,6 +1,7 @@
 .OptionChips {
   display: inline-block;
   user-select: none;
+  height: 1.1em;
 }
 
 .OptionChipGroup {

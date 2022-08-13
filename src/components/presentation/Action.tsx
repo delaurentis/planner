@@ -16,7 +16,12 @@ const Action: React.FC<ActionProps> = (props: ActionProps) => {
   }
 
   return (
-    <span className={styles.Action} onClick={handleClick}>
+    <span 
+      className={styles.Action} 
+      onClick={handleClick} 
+      title={props.action.shortcut ? `Press ${props.action.shortcut}`: undefined}
+      {...{ undo: props.action.isUndo ? 'true' : undefined } }
+    >
       <span className={styles.ActionIcon}>{props.action.icon}</span>
       <span className={styles.ActionName}>{props.action.name}</span>
     </span>

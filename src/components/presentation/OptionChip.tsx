@@ -85,8 +85,10 @@ const OptionChip: React.FC<OptionChipProps> = (props) => {
 
   return (
     <span className={styles.Chip} { ...optionalStyles } onClick={handleClick}>
-      <span>{props.option.title}</span>
-      <span><Caret caret={caretDirection}/></span>
+      <span title={props.option.tip}>
+        <span>{props.option.title}</span>
+        <span><Caret caret={caretDirection}/></span>
+      </span>
       {menu()}
     </span>
   );

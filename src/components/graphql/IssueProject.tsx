@@ -89,6 +89,7 @@ const IssueProject: React.FC<IssueProjectProps> = (props) => {
   return (
     <span>
       <Chip size='medium' 
+            isCenteredVertically={true}
             isAlerting={false}
             isLoading={moveMutation.loading || deleteMutation.loading} 
             isBlank={false} 

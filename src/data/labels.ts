@@ -1,9 +1,12 @@
 import { Priority, Label, Diff } from './types';
 import { priorityFromLabel, priorityFromLabels } from './priorities';
-import e from 'express';
 
 export const officialLabelNames = {
-  bug: '🐞 Bug'
+  bug: '🐞 Bug',
+  doing: 'Doing ⏳',
+  review: 'Review 👓',
+  blocked: 'Blocked 🛑', 
+  paused: 'Paused ⏸'
 }
 
 export const primaryLabelForEpic = (epic: any): Label => {

@@ -81,6 +81,7 @@ const IssueEpic: React.FC<IssueEpicProps> = (props) => {
   return (
     <span>
       <Chip size='medium' 
+            isCenteredVertically={true}
             isLoading={epicMutation.loading} 
             isBlank={!props.issue.epic?.title} 
             onClick={() => setEditing(true)}>

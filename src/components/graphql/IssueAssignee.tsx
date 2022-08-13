@@ -67,11 +67,12 @@ const IssueAssignee: React.FC<IssueAssigneeProps> = (props) => {
   return (
     <span>
       <Chip size='medium' 
+            isCenteredVertically={true}
             isAlerting={firstAssigneeUsername === undefined}
             isLoading={assigneeMutation.loading} 
             isBlank={props.issue.assignees?.length === 0} 
             onClick={() => setEditing(true)}>
-        {titleForUsername(firstAssigneeUsername || '') || 'None'}
+        <span title={`Click to change the person assigned to this issue`}>🛠 {titleForUsername(firstAssigneeUsername || '') || 'None'}</span>
       </Chip>
       {picker()}
     </span>

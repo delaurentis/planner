@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Issue from './Issue';
 import Card from '../presentation/Card';
 import { Epic, Option, OptionChoice, Team } from 'data/types';
@@ -45,10 +45,14 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   const orderingsRef = useRef<DurableOrderSnapshot>({});
   
   // Allow for us to reset the ordering
-  const [orderingEpoc, setOrderingEpoc] = React.useState(0);
+  // (this is used to force a re-render b/c the value changes)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [orderingRequestedAt, setOrderingRequestedAt] = React.useState(new Date().getTime());
   const handleResetOrdering = () => {
+    // Do this here instead of in the useEffect below
+    // because it makes it re-sort with 1 keystroke instead of 2
     orderingsRef.current = {}
-    setOrderingEpoc(orderingEpoc + 1)
+    setOrderingRequestedAt(new Date().getTime())
   }
 
   // Reset the order when we switch users, because we'll get different issues
@@ -192,7 +196,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
       const standardAndCustomLabels: string[] = labelsForTeam.concat(standardLabels);
 
       // Are there any labels based on the text detected in the issue title?
-      const titleGeneratedLabels = update.title?.indexOf('OOO') >= 0 ? ['OOO 🌴'] : [];
+      const titleGeneratedLabels = update.title?.toUpperCase().indexOf('OOO') >= 0 ? ['OOO 🌴'] : [];
 
       // Combine all the labels together and de-dupe them
       const allLabels: string[] = standardAndCustomLabels.concat(categoryLabels).concat(environmentLabels).concat(titleGeneratedLabels);
@@ -227,7 +231,10 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
            milestone={props.milestone}
            milestones={props.milestones}
            extraColumn={extraQuery.data?.extraColumn} 
-           onUpdateIssue={handleUpdateIssue}/>
+           disableShortcuts={disableShortcuts}
+           onUpdateIssue={handleUpdateIssue} 
+           onKey={handleKeyOnIssue} 
+    />
   );
 
   // Controls what we show in the right column
@@ -238,13 +245,49 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
     isSelectable: false,
     isExpandable: true,
     choices: extraColumns,
-    onSelectOption: handleExtra
+    onSelectOption: handleExtra,
+    tip: 'Press v or click to change the view'
   };
 
-  // Don't show anything if we're supposed to hide it if empty
-  const openIssueNodes = sortedItems.filter(node => (node as any).state !== 'closed');
-  if ( props.isHiddenWhenEmpty && openIssueNodes.length === 0 ) {
-    return <div/>;
+  // When we're creating a new issue, that means we should disable shortcuts
+  const [disableShortcuts, setDisableShortcuts] = useState(false);
+  const handleNeedsKeyboard = (isNeeded: boolean) => { setDisableShortcuts(isNeeded); }
+
+  // Be able to focus on a new issue when needed
+  const [focusRequestedAt, setFocusRequestedAt] = useState(new Date().getTime());
+  const handleKeyOnIssue = (key: string): boolean => {
+    return false;
+  }
+
+  // Handle a key press on the card
+  const handleKeyOnCard = (key: string): boolean => {
+    if ( disableShortcuts ) { return true; }
+    if ( key === 'n' || key === '/' ) {
+      setFocusRequestedAt(new Date().getTime());
+    }
+    else if ( key === 's' ) {
+      handleResetOrdering();
+    } 
+    else if ( key === 'v' || key === 'V' ) {
+
+      // Move to the next or previous view
+      const index = extraColumns.findIndex((column: any) => column.title === extraQuery.data?.extraColumn);
+      console.log(extraQuery.data?.extraColumn);
+      console.log('index is ' + index);
+      const isGoingForward = key === 'v';
+      const nextIndex = (index + (isGoingForward ? 1 : -1)) % extraColumns.length;
+      const protectedNextIndex = nextIndex < 0 ? extraColumns.length + nextIndex : nextIndex;
+      const nextExtra = extraColumns[protectedNextIndex].title;
+
+      // Update apollo so the UI updates + store it in local storage 
+      // so it persists across reloads of the page
+      client.writeQuery({ query: EXTRA_COLUMN, data: { extraColumn: nextExtra } });
+      window.localStorage.setItem('extraColumn', nextExtra);
+    }
+    else {
+      return false;
+    }
+    return true;
   }
 
   // Adjust the milestone title
@@ -264,7 +307,13 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
     }
     return undefined;
   }
-
+  
+  // Don't show anything if we're supposed to hide it if empty
+  const openIssueNodes = sortedItems.filter(node => (node as any).state !== 'closed');
+  if ( props.isHiddenWhenEmpty && openIssueNodes.length === 0 ) {
+    return <div/>;
+  }
+  
   // isLoading = issuesQuery.loading
   return (
     <Card key={`user-${props.username}`} 
@@ -273,8 +322,9 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
           isLoading={false}
           option={cardOption}
           icon='🗓'
-          iconTip='Click to sort'
-          onClickIcon={handleResetOrdering}>
+          iconTip='Press s or click to sort'
+          onClickIcon={handleResetOrdering}
+          onKey={handleKeyOnCard}>
 
       { issuesToShow() }
       
@@ -283,7 +333,10 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
              defaultCategory={props.username === 'fixes' ? CATEGORY_BUG : CATEGORY_FEATURE}
              isEditing={true} 
              onUpdateIssue={handleUpdateIssue} 
-             stats={stats()}/>
+             onNeedsKeyboard={handleNeedsKeyboard}
+             focusRequestedAt={focusRequestedAt}
+             stats={stats()}
+      />
 
     </Card>
   );

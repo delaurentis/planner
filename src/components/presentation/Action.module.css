@@ -23,9 +23,23 @@
   vertical-align: top;
 }
 
+.Action[undo='true'] {
+  opacity: 0.5;
+}
+
+.Action[undo='true'] .ActionName {
+  text-decoration: line-through;
+/*  color: rgba(255,0,0,0.75);*/
+}
+
 .Action:hover .ActionName {
   color: black;
 }
+
+.Action[undo='true']:hover .ActionName {
+/*  color: rgba(255,0,0,1);*/
+}
+
 
 @media only screen and (max-width: 480px) {
   .ActionName {

@@ -25,6 +25,28 @@ npm run deploy
 
 <br>
 
+# Keyboard Shortctus
+
+These shortcuts apply to the issue under the mouse cursor:
+
+- Press `a` to toggle showing the action menu
+- Press `c` to complete/close an issue, and `C` to undo
+- Press `d` to mark as `⏳ Doing` and `D` to undo
+- Press `r` to mark as in `👓 Review` and `R` to undo
+- Press `x` to delete an issue (confirmation required)
+- Press `0` to set priority to `🔥 P0`
+- Press `1` to set priority to `⭐️ P1`
+- Press `2` to set priority to `🙏 P2`
+- Press `3` to set priority to `🤷🏻‍♀️ P3`
+
+These shortcuts apply to the sprint under the mouse cursor:
+
+- Press `n` to type in a new issue
+- Press `s` to re-sort the issues 
+- Press `v` to go to the next view, and `V` to the previous
+
+<br>
+
 # Customizing
 
 To customize for your organization, please edit the constants in:
