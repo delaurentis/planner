@@ -2,6 +2,7 @@ export interface Priority {
   icon: string;
   name: string;
   level: number;
+  shortcut?: string;
 }
 
 export interface FilterReadouts {
@@ -97,12 +98,17 @@ export interface Option {
   isIconOnly?: boolean;
   isAutoComplete?: boolean;
   choices?: OptionChoice[],
+  tip?: string;
   onSelectOption?(option: Option, choice?: OptionChoice | undefined): void;
 }
 
 export interface Action {
   icon: string;
   name: string;
+  shortcut?: string;
+  isUndo?: boolean;
+  isConfirmable?: boolean;
+  confirmMessage?: string;
   update?: any;
   create?: any;
 }

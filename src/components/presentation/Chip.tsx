@@ -11,6 +11,8 @@ interface ChipProps {
   isLoading?: boolean;
   isAlerting?: boolean;
   isSelected?: boolean;
+  isDimmed?: boolean;
+  isCenteredVertically?: boolean;
   onClick?(): void;
 }
 
@@ -23,6 +25,8 @@ const Chip: React.FC<ChipProps> = (props) => {
        {...{loading: `${props.isLoading}`}} 
        {...{alerting: `${props.isAlerting}`}} 
        {...{selecting: `${props.isSelected}`}} 
+       {...{dimmed: `${props.isDimmed}`}} 
+       {...{centered: `${props.isCenteredVertically}`}} 
        href={props.url} 
        target='_blank' 
        rel='noopener noreferrer'

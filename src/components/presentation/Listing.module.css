@@ -11,6 +11,12 @@
   background-color: white;
   transition: background-color 1s linear;
   min-height: 1.9em;
+  transition: none;
+}
+
+.Listing:hover {
+  background-color: #f8f8ff;
+  transition: none;
 }
 
 .Listing[actions='true'] {
@@ -20,10 +26,19 @@
 
 .Listing[highlighted='true'] {
   background-color: #EFEBFF;
+  /*transition: background-color 1s linear;*/
+}
+
+.Listing[highlighted='true']:hover {
+  background-color: #eae6fd;
 }
 
 .Listing[new='true'] {
   animation: glow 3s;
+}
+
+.Listing[blank='true']:hover {
+  background-color: white;
 }
 
 .Listing[dimmed='true'] .Link {
@@ -149,6 +164,7 @@
   display: flex;
   align-content: top;
   justify-content: top;
+  background: rgba(0,0,0,0);
 }
 
 .Button {

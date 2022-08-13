@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { primaryLabelForIssue, 
          officialLabelNames, 
          labelNamesForIssue,
          orderingForIssue } from 'data/labels';
 import { actionsForPrimaryLabel } from 'data/actions';
-import { titleForUsername } from 'data/teams';
 import { Issue as IssueType, 
          Label as LabelType,
          Action as ActionType,
@@ -15,6 +14,7 @@ import Listing from 'components/presentation/Listing';
 import Chip from 'components/presentation/Chip';
 import IconStats from 'components/presentation/IconStats';
 import IssueEpic from './IssueEpic';
+import IssueAuthor from './IssueAuthor';
 import IssueAssignee from './IssueAssignee';
 import IssueMilestone from './IssueMilestone';
 import IssueEnvironment from './IssueEnvironment';
@@ -29,8 +29,6 @@ import { environmentFromLabelNames } from 'data/environments';
 import { resolutionsFromLabelNames } from 'data/resolutions';
 import { flagsFromLabelNames } from 'data/flags';
 import { organization } from 'data/customize';
-import IssueMilestones from './IssueMilestones';
-import OptionChip from 'components/presentation/OptionChip';
 
 interface IssueProps {
   issue?: IssueType;
@@ -42,7 +40,11 @@ interface IssueProps {
   team?: Team;
   defaultCategory?: string;
   stats?: any[];
+  disableShortcuts?: boolean;
+  focusRequestedAt?: number;
   onUpdateIssue?(update: any, issue?: IssueType): void;
+  onNeedsKeyboard?(isNeeded: boolean): void;
+  onKey?(key: string): boolean;
 }
 
 const Issue: React.FC<IssueProps> = (props) => {
@@ -54,7 +56,14 @@ const Issue: React.FC<IssueProps> = (props) => {
   const issue: IssueType = client.readFragment({id: `Issue:${props.issue?.id}`, 
                                                 fragment: ISSUE_WITH_EPIC_FRAGMENT,
                                                 fragmentName: 'issueWithEpicResult'}) || {};
-    
+
+  // Make sure we can disable shortcuts in a way that our handleKey method can recognize
+  // even though it's getting called with an older version of props
+  const disableShortcutsRef = useRef<boolean>(false);
+  useEffect(() => {
+    disableShortcutsRef.current = props.disableShortcuts || false;
+  }, [props.disableShortcuts]);
+
   // Get all label names, and extract some info from them
   const labelNames: string[] = labelNamesForIssue(issue);
   const resolutions = resolutionsFromLabelNames(labelNames);
@@ -110,6 +119,9 @@ const Issue: React.FC<IssueProps> = (props) => {
   // Ask the user for more info if they open or close a bug
   const [needsResolution, setNeedsResolution] = useState(false);
 
+  // Are we showing the actions menu?
+  const [showActions, setShowActions] = useState(false);
+
   // When the issue is created, trigger a prompt to ask for enviromment
   /*
   useEffect(() => {
@@ -121,12 +133,60 @@ const Issue: React.FC<IssueProps> = (props) => {
 
   // Handle update of existing issue, or creation of new one
   const handleUpdate = (update: any, entity: any) => {
+
+    // Ask our callback to update the issue now
     props.onUpdateIssue?.(update, entity);
 
     // If the issue was closed, prompt for resolution
     if ( isBug && update?.state_event === 'close' && resolutions.length === 0) {
       setNeedsResolution(true);
     }
+  }
+
+  // Handle a key 
+  const handleKey = (key: string, entity: any): boolean => {
+
+    // If shortcuts are disabled don't do anything
+    // This is used when the user is typing a new issue title
+    // and we don't want to trigger any shortcuts 
+    // if their mouse moves over another listing
+    if ( disableShortcutsRef.current === true ) {
+      return true;
+    }
+
+    // Get the latest issue direct from Apollo, since this called
+    // from a place that freezes the React component's props
+    // internal variables and they will be old when this method is called
+    const latestIssue: IssueType = client.readFragment(
+      {id: `Issue:${entity.id}`, 
+      fragment: ISSUE_WITH_EPIC_FRAGMENT,
+      fragmentName: 'issueWithEpicResult'}) || {};
+
+    // Lookup all actions for the given issue
+    const actions: ActionType[] = actionsForPrimaryLabel(primaryLabelForIssue(latestIssue));
+    const actionWithShortcut: ActionType | undefined = actions.find(action => action.shortcut === key);
+    if ( actionWithShortcut ) {
+
+      // Some actions may require confirmation
+      if ( actionWithShortcut.isConfirmable ) {
+        if ( !window.confirm(`${actionWithShortcut.confirmMessage}:\n'${issue.title}'`) ) {
+          
+          // Bail before doing anything 
+          // if the user cancels the action
+          return true;
+        }
+      } 
+
+      // Continue on and update the issue
+      handleUpdate(actionWithShortcut.update, latestIssue);
+      return true;
+    }
+    else if ( key === 'a' ) {
+      setShowActions(!showActions);
+    }
+
+    // No keys matched so use default handling in the Card, and then in the Listing
+    return props.onKey?.(key) || false;
   }
 
   // Figure out what goes in the right column
@@ -164,35 +224,30 @@ const Issue: React.FC<IssueProps> = (props) => {
     }
     else if ( props.extraColumn === 'Epic' ) {
       return [<IssueEpic issue={issue} 
-                        epics={props.epics} 
-                        onUpdating={setUpdating}/>]
+                         epics={props.epics} 
+                         onUpdating={setUpdating}/>]
     }
-    else if ( props.extraColumn === 'Assignee' ) {
-      return [<IssueAssignee issue={issue} 
-                            team={props.team}
-                            onUpdating={setUpdating}/>]
+    else if ( props.extraColumn === 'People' ) {
+      return [<IssueAuthor issue={issue} team={props.team}/>,
+              <IssueAssignee issue={issue} team={props.team} onUpdating={setUpdating}/>
+            ]
     }
     else if ( props.extraColumn === 'Sprint' ) {
       return [<IssueMilestone issue={issue} 
-                             milestone={issue.milestone}
-                             milestones={props.milestones}
-                             onUpdating={(isUpdating) => {
+                              milestone={issue.milestone}
+                              milestones={props.milestones}
+                              onUpdating={(isUpdating) => {
 
-                              // Note that we're updating
-                              setUpdating(isUpdating); 
+                                // Note that we're updating
+                                setUpdating(isUpdating); 
 
-                              // If we're making a change, remove all day labels
-                              if ( isUpdating ) {
-                                handleUpdate({remove_labels: dayLabelNames.join(',')}, issue);
-                              }
+                                // If we're making a change, remove all day labels
+                                if ( isUpdating ) {
+                                  handleUpdate({remove_labels: dayLabelNames.join(',')}, issue);
+                                }
                              }}/>
              ]
     }
-    else if ( props.extraColumn === 'Author' ) {
-      return [<Chip size='small' url={`https://gitlab.com/groups/${organization}/-/issues?author_username=${issue.author?.username}`}>
-              <span>{titleForUsername(issue.author?.username)}</span>
-             </Chip>]
-    } 
     else if ( props.extraColumn === 'Project' ) {
       return [<IssueProject issue={issue} onUpdating={setUpdating}/>]
     } 
@@ -209,7 +264,7 @@ const Issue: React.FC<IssueProps> = (props) => {
               <IssueEstimate issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>]
     }
     else if ( props.extraColumn === 'Ordering' ) {
-      return [<Chip size='small'><span>{orderingForIssue(issue)}</span></Chip>]
+      return [<Chip size='small' isCenteredVertically={true}><span>{orderingForIssue(issue)}</span></Chip>]
     }
     return undefined;
   }
@@ -233,7 +288,13 @@ const Issue: React.FC<IssueProps> = (props) => {
             defaultCategory={props.defaultCategory}
             isEditing={props.isEditing}
             isHighlighted={(primaryLabel.name === 'Doing')}
-            onUpdate={handleUpdate}/>
+            onUpdate={handleUpdate}
+            onKey={handleKey}
+            focusRequestedAt={props.focusRequestedAt}
+            isShowingActions={showActions}
+            onShowActions={(show) => setShowActions(show)}
+            onFocus={() => props.onNeedsKeyboard?.(true)}
+            onBlur={() => props.onNeedsKeyboard?.(false)}/>
     </div>
   );
 }

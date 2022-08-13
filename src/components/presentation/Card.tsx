@@ -1,7 +1,8 @@
 import React from 'react';
 import styles from './Card.module.css';
 import OptionChip from './OptionChip';
-import { Option, OptionChoice } from 'data/types';
+import { Option } from 'data/types';
+import KeyWatcher from 'components/presentation/KeyWatcher';
 
 interface CardProps {
   title: string;
@@ -13,6 +14,7 @@ interface CardProps {
   icon?: string;
   iconTip?: string;
   onClickIcon?(): void;
+  onKey?(key: string): void;
 }
 
 const Card: React.FC<CardProps> = (props: CardProps)  => {
@@ -43,7 +45,9 @@ const Card: React.FC<CardProps> = (props: CardProps)  => {
       return <span/>
     }
   }
-  return <div className={styles.Card}>
+
+  // Render our HTML
+  return <KeyWatcher className={styles.Card} onKey={props.onKey}>
             <div className={styles.CardHeader}>
               <div className={styles.CardTitles}>
                 {cardIcon()}
@@ -57,7 +61,7 @@ const Card: React.FC<CardProps> = (props: CardProps)  => {
             <div {...{ loading: `${props.isLoading}`}} className={styles.CardContent}>
               {props.children}
             </div>
-          </div>;
+         </KeyWatcher>;
 }
 
 export default Card;

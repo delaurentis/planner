@@ -19,7 +19,8 @@ const Radio: React.FC<RadioProps> = (props) => {
     <span className={styles.Radio}>
        {
          props.answers.map(answer => 
-           <RadioItem answer={answer} 
+           <RadioItem key={answer}
+                      answer={answer} 
                       isSelected={answer === props.selectedAnswer}
                       onClickAnswer={handleClickAnswer}/>
          )

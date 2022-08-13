@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import Chip from './Chip';
 import Button from './Button';
 import Actions from './Actions';
 import OptionChips from './OptionChips';
 import Radio from './Radio';
+import KeyWatcher from './KeyWatcher';
 import IconX from '../icons/IconX';
 import { Option as OptionType, 
          Label as LabelType,
@@ -23,27 +24,32 @@ interface ListingProps {
   labels?: LabelType[];
   extra?: React.ReactNode;
   extras?: React.ReactNode[];
+  isShowingActions?: boolean;
   isHighlighted?: boolean;
   isDimmed?: Boolean;
   isNew?: boolean;
   isEditing?: boolean;
   entity?: any;
   defaultCategory?: string;
+  focusRequestedAt?: number;
+  onShowActions?(shouldShow: boolean): void;
   onUpdate?(update: any, entity?: any): void;
+  onKey?(key: string, entity?: any): boolean;
+  onFocus?(): void;
+  onBlur?(): void;
 }
 
 const Listing: React.FC<ListingProps> = (props) => {
 
   // Handle showing + hiding of actions strip
-  const [showActions, setShowActions] = useState(false);
-  const handleIconClick = () => { setShowActions(!showActions); }
+  const handleIconClick = () => { props.onShowActions?.(!props.isShowingActions); }
 
   // Accept clicks on actions + trigger an update to the issue
   const handleActionClick = (action: ActionType) => {
     if ( props.entity && props.onUpdate ) {
       props.onUpdate(action.update, props.entity);
     }
-    setShowActions(false);
+    props.onShowActions?.(false);
   }
 
   // Setup editing
@@ -52,16 +58,29 @@ const Listing: React.FC<ListingProps> = (props) => {
     setEditedTitle(event.target.value);
   }
 
-  // Detect enter key
-  const handleKeyDown = (event: any) => {
-    // TODO: Add enter key handling
-  }
-
   // Put focus onto the input if you click the plus sign
   const inputRef = useRef<HTMLInputElement>(null);
   const handleClickPlus = () => {
     inputRef?.current?.focus();
   }
+
+  // Make inputs not editable until a beat after created
+  // so we don't default to focus on the bottom most one created
+  const [isEditable, setEditable] = useState(false);
+  useEffect(() => { 
+    if ( props.isEditing ) {
+      setEditable(true);
+    }
+  }, [props.isEditing]);
+
+  // When the focus epoc is upgraded, we'll focus on the input
+  useEffect(() => {
+    if ( props.focusRequestedAt && props.focusRequestedAt > 0 ) {
+      console.log('Focus requested at', props.focusRequestedAt);
+      inputRef?.current?.focus();
+      inputRef?.current?.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+    }
+  }, [props.focusRequestedAt]);
 
   // They clicked to create a new issue
   const handleClickCreate = () => {
@@ -78,11 +97,31 @@ const Listing: React.FC<ListingProps> = (props) => {
     setIssueCategory(newAnswer);
   }
 
+  // When the user is moused over a listing, accept keyboard shortcuts
+  const handleKey = (key: string) => { props.onKey?.(key, props.entity) }
+
+  // Handle key presses on the input
+  const handleInputKeyPress = (event: any) => {
+    if ( event.key === 'Enter' ) {
+      handleClickCreate();
+      inputRef.current?.blur();
+    }
+    else if ( event.key === 'Escape' ) {
+      setEditedTitle('');
+      inputRef.current?.blur();
+    }
+  };
+
+  // We're going to lock keyboard events to this input
+  // by passing 'true' for useCapture (3rd argument below)
+  const handleInputFocus = () => { props.onFocus?.();  }
+  const handleInputBlur = () => {  props.onBlur?.(); }
+
   // For bugs we'll prompt for environment
   const [issueEnvironment, setIssueEnvironment] = useState<EnvironmentType>();
 
   // These can change as we go
-  const divProps = { highlighted: `${props.isHighlighted}`, new: `${props.isNew}`, dimmed: `${props.isDimmed}`, actions: `${showActions}` };
+  const divProps = { highlighted: `${props.isHighlighted}`, new: `${props.isNew}`, dimmed: `${props.isDimmed}`, actions: `${props.isShowingActions}` };
 
   // Figure out what to put on the right column
   const extra = () => {
@@ -114,15 +153,17 @@ const Listing: React.FC<ListingProps> = (props) => {
 
   // We have two main states of our issue row, 
   // showing the listing, or showing actions
-  if ( showActions ) {
-    return (<div className={styles.Listing} {...divProps}>
-              <span className={styles.IconAndTitle}>
-                <span className={styles.Close} onClick={handleIconClick}>
-                  <IconX width='1.2em' height='1.2em'/>
+  if ( props.isShowingActions ) {
+    return (<KeyWatcher onKey={handleKey}>
+              <div className={styles.Listing} {...divProps}>
+                <span className={styles.IconAndTitle}>
+                  <span className={styles.Close} onClick={handleIconClick} title="Click to close or press Escape">
+                    <IconX width='1.2em' height='1.2em'/>
+                  </span>
+                  <Actions actions={props.actions || []} onClickAction={handleActionClick}/>
                 </span>
-                <Actions actions={props.actions || []} onClickAction={handleActionClick}/>
-              </span>
-            </div>);
+              </div>
+            </KeyWatcher>);
   }
   else {
 
@@ -179,36 +220,61 @@ const Listing: React.FC<ListingProps> = (props) => {
         }
         return undefined;
       };
-        
-      return (<div className={styles.Listing}>
-        <span className={styles.IconAndTitle}>
-          <span className={styles.Icon} onClick={handleClickPlus}>➕</span>
-          <input className={styles.Input}
-                 ref={inputRef}
-                 placeholder={props.placeholder}
-                 value={editedTitle}
-                 onChange={handleChangeTitle}
-                 onKeyDown={handleKeyDown}/>
-          <span className={styles.Radio}>
-            {environmentOptions()}
-            {radio()}
+
+      // Custom input attributes
+      const inputAttributes = () => {
+        if ( isEditable ) {
+          return undefined;
+        }
+        else {
+          return { disabled: true }
+        }
+      }
+
+      return (
+        <div className={styles.Listing} {...{ blank: 'true' }} >
+          <span className={styles.IconAndTitle}>
+            <span 
+              className={styles.Icon} 
+              onClick={handleClickPlus}
+              title='Press n click to create a new issue'
+            >
+              ➕
+            </span>
+            <input className={styles.Input}
+                  ref={inputRef}
+                  placeholder={props.placeholder}
+                  value={editedTitle}
+                  onChange={handleChangeTitle}
+                  onKeyUp={handleInputKeyPress}
+                  onFocus={handleInputFocus}
+                  onBlur={handleInputBlur}
+                  {...inputAttributes()}
+            />
+            <span className={styles.Radio}>
+              {environmentOptions()}
+              {radio()}
+            </span>
+            <span className={styles.Button}>
+              {button()}
+            </span>
           </span>
-          <span className={styles.Button}>
-            {button()}
-          </span>
-        </span>
-        {editingExtra()}
-      </div>);
+          {editingExtra()}
+        </div>
+      );
     }
     else {
 
-      return (<div className={styles.Listing} {...divProps}>
-                <span className={styles.IconAndTitle}>
-                  <span className={styles.Icon} title='Click for actions' onClick={handleIconClick}>{props.icon}</span>
-                  <a className={styles.Link} href={props.url} target='_blank' rel='noopener noreferrer'>{props.title}</a>
-                </span>
-                {extra()}
-              </div>);
+      // This is our standard listing
+      return (<KeyWatcher onKey={handleKey}>
+                <div className={styles.Listing} {...divProps}>
+                  <span className={styles.IconAndTitle}>
+                    <span className={styles.Icon} title={`Press a or click for actions`} onClick={handleIconClick}>{props.icon}</span>
+                    <a className={styles.Link} href={props.url} target='_blank' rel='noopener noreferrer'>{props.title}</a>
+                  </span>
+                  {extra()}
+                </div>
+              </KeyWatcher>);
     }
   }
 }

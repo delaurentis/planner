@@ -1,8 +1,8 @@
 import { priorities, labelFromPriority } from './priorities';
-import { primaryLabelForIssue } from './labels';
+import { officialLabelNames, primaryLabelForIssue } from './labels';
 
 // Based on state, what do we need to tell the API to update
-const updateForAction = (action: any, labelToRemove: any) => {
+export const updateForAction = (action: any, labelToRemove: any) => {
   
   // Compose our label names
   const labelNameToAdd = `${action.name} ${action.icon}`
@@ -10,12 +10,20 @@ const updateForAction = (action: any, labelToRemove: any) => {
 
   // Handle different actions differently
   if ( action.icon === '✅' ) {
-    const removeWhenClosing = ['Doing ⏳', 'Review 👓', 'Blocked 🛑', 'Paused ⏸', ...[labelNameToRemove]];
-    return { state_event: 'close', remove_labels: removeWhenClosing.join(',') };
+    if ( action.isUndo ) {
+      return { state_event: 'reopen' };
+    }
+    else {  
+      // Remove state labels that are mutually exclusive with completion
+      const removeWhenClosing = [
+        officialLabelNames.doing, 
+        officialLabelNames.review, 
+        officialLabelNames.blocked, 
+        officialLabelNames.paused
+      ];
+      return { state_event: 'close', remove_labels: removeWhenClosing.join(',') };
+    }
   } 
-  else if ( action.icon === '📖' ) {
-    return { state_event: 'reopen' };
-  }
   else if ( action.icon === '🗑' ) {
     return { delete: true };
   }
@@ -33,47 +41,52 @@ const updateForAction = (action: any, labelToRemove: any) => {
   }
 }
 
+// Some action we re-use a bunch
+const deleteAction = { icon: '🗑', name: 'Delete', shortcut: 'x', isConfirmable: true, confirmMessage: 'Are you sure you want to delete this issue' };
+
 // Figure out our actions based on our state
-const actionsForIcon: any = {
-  '✅': [{ icon: '📖', name: 'Reopen'}, 
-         { icon: '🗑', name: 'Delete'}],
-  '⏳': [{ icon: '✅', name: 'Done'},
-         { icon: '👓', name: 'Review'},
-         { icon: '⏸', name: 'Paused'},
+const actionsForIcon: any = { 
+  '✅': [{ icon: '✅', name: 'Complete', shortcut: 'C', isUndo: true },
+         deleteAction],
+  '⏳': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
+         { icon: '👓', name: 'Review', shortcut: 'r'},
+         { icon: '⏳', name: 'Doing', shortcut: 'D', isUndo: true },
+         /*{ icon: '⏸', name: 'Paused'},*/
          { icon: '🛑', name: 'Blocked'},
-         { icon: '🗑', name: 'Delete'}],
-  '👓': [{ icon: '✅', name: 'Done'},
-         { icon: '⏳', name: 'Doing'},
-         { icon: '⏸', name: 'Paused'},
+         deleteAction],
+  '👓': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
+         { icon: '👓', name: 'Review', shortcut: 'R', isUndo: true },
+         { icon: '⏳', name: 'Doing', shortcut: 'd'},
          { icon: '🛑', name: 'Blocked'},
-         { icon: '🗑', name: 'Delete'}],
-  '⏸': [{ icon: '⏳', name: 'Doing'},
-         { icon: '✅', name: 'Done'},
+         deleteAction],
+  '⏸': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
+         { icon: '⏳', name: 'Doing', shortcut: 'd'},
+         { icon: '⏸', name: 'Paused', isUndo: true },
          { icon: '🛑', name: 'Blocked'},
          ...priorities,
-         { icon: '🗑', name: 'Delete'}],
-  '🛑': [{ icon: '✅', name: 'Done'},
-         { icon: '⏳', name: 'Doing'},
-         { icon: '⏸', name: 'Paused'},
+         deleteAction],
+  '🛑': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
+         { icon: '⏳', name: 'Doing', shortcut: 'd'},
+         { icon: '🛑', name: 'Blocked', isUndo: true },
          ...priorities,
-         { icon: '🗑', name: 'Delete'}],
-  '🧺': [...priorities, { icon: '🗑', name: 'Delete'}],
+         deleteAction],
+  '🧺': [...priorities, 
+         deleteAction],
 
   /* Handle default case */
-  '❓': [{ icon: '✅', name: 'Done'},
-         { icon: '⏳', name: 'Doing'},
-         { icon: '⏸', name: 'Paused'},
+  '❓': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
+         { icon: '👓', name: 'Review', shortcut: 'r'},
+         { icon: '⏳', name: 'Doing', shortcut: 'd'},
          ...priorities,
-         { icon: '🗑', name: 'Delete'}],
+         deleteAction ],
 
   /* Handle case for each priority */
   ...priorities.map(priority => {
 
     // These are available to any priority level
-    const standardActions = [{ icon: '✅', name: 'Done'},
+    const standardActions = [{ icon: '✅', name: 'Complete'},
                              { icon: '👓', name: 'Review'},
                              { icon: '⏳', name: 'Doing'},
-                             { icon: '⏸', name: 'Paused'},
                              { icon: '🛑', name: 'Blocked'}];
 
     // Combine priorities with our standard actions

@@ -1,16 +1,15 @@
 export const extraColumns = [
-  { title: 'Assignee', metadata: {} },
-  { title: 'Schedule', metadata: {} },
-  /*{ title: 'Estimate', metadata: {} },*/
   { title: 'Sprint', metadata: {} },
-  { title: 'Epic', metadata: {} },
-  { title: 'Details', metadata: {} },
+  { title: 'Schedule', metadata: {} },
   { title: 'Surprises', metadata: {} },
+  /*{ title: 'Estimate', metadata: {} },*/
+  { title: 'Details', metadata: {} },
+  { title: 'Epic', metadata: {} },
+  { title: 'Project', metadata: {} },
+  { title: 'People', metadata: {} },
 /* { title: 'Environment', metadata: {} },*/
 /*  { title: 'Resolution', metadata: {} },*/
   { title: 'Labels', metadata: {} },
-  { title: 'Author', metadata: {} },
-  { title: 'Project', metadata: {} },
 /* { title: 'Ordering', metadata: {} }, */
 ]
 
