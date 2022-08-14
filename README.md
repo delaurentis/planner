@@ -33,6 +33,7 @@ These shortcuts apply to the issue under the mouse cursor:
 - Press `c` to complete/close an issue, and `C` to undo
 - Press `d` to mark as `⏳ Doing` and `D` to undo
 - Press `r` to mark as in `👓 Review` and `R` to undo
+- Press `e` to edit the issue (and Enter to save)
 - Press `x` to delete an issue (confirmation required)
 - Press `0` to set priority to `🔥 P0`
 - Press `1` to set priority to `⭐️ P1`

@@ -219,6 +219,17 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   // Figure out title and where it goes if you click iot
   const userUrl: string = `https://gitlab.com/${organization}/${props.project}/-/issues?scope=all&utf8=%E2%9C%93&assignee_username[]=${props.username}&milestone_title=${props.milestone.title}`
 
+  // Keep track of which issue we're editing (only allow 1 at a time)
+  const [editingIssueId, setEditingIssueId] = useState<number | null>(null);
+  const handleEditingIssue = (editing: boolean, issue: any) => {
+    if ( editing ) {
+      setEditingIssueId(issue.iid);
+    }
+    else {
+      setEditingIssueId(null);
+    }
+  }
+
   // Determine if we've set orderings before... only happens once data gets loaded the first time
   const { sortedItems, orderingSnapshot } = durableOrder(issueNodes, orderingForIssue, orderingsRef.current);
   orderingsRef.current = orderingSnapshot;
@@ -231,8 +242,10 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
            milestone={props.milestone}
            milestones={props.milestones}
            extraColumn={extraQuery.data?.extraColumn} 
-           disableShortcuts={disableShortcuts}
+           disableShortcuts={disableShortcuts || editingIssueId !== null}
            onUpdateIssue={handleUpdateIssue} 
+           onEditingIssue={handleEditingIssue}
+           isEditing={editingIssueId === issue.iid}
            onKey={handleKeyOnIssue} 
     />
   );
@@ -254,14 +267,14 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   const handleNeedsKeyboard = (isNeeded: boolean) => { setDisableShortcuts(isNeeded); }
 
   // Be able to focus on a new issue when needed
-  const [focusRequestedAt, setFocusRequestedAt] = useState(new Date().getTime());
+  const [focusRequestedAt, setFocusRequestedAt] = useState<number | undefined>();
   const handleKeyOnIssue = (key: string): boolean => {
     return false;
   }
 
   // Handle a key press on the card
   const handleKeyOnCard = (key: string): boolean => {
-    if ( disableShortcuts ) { return true; }
+    if ( disableShortcuts || editingIssueId !== null ) { return true; }
     if ( key === 'n' || key === '/' ) {
       setFocusRequestedAt(new Date().getTime());
     }
@@ -331,7 +344,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
       <Issue key='new' 
              team={props.team} 
              defaultCategory={props.username === 'fixes' ? CATEGORY_BUG : CATEGORY_FEATURE}
-             isEditing={true} 
+             isCreating={true} 
              onUpdateIssue={handleUpdateIssue} 
              onNeedsKeyboard={handleNeedsKeyboard}
              focusRequestedAt={focusRequestedAt}

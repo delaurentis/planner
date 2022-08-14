@@ -1,0 +1,33 @@
+.ChatBubble {
+  border-radius: 10px;
+  background-color: rgba(255,255,255,0.7);  
+  border: 1px solid rgba(0,0,0,0.09);
+  padding: 1em 1em 0.25em 1em;
+  width: calc(100% - 2.25em);
+  max-width: 600px;
+  margin-top: 1.5em;
+}
+
+.ChatBubble + .ChatBubble {
+  margin-top: 1em;
+}
+
+.BubbleHeader {
+  display: flex;
+  flex-direction: row;
+  height: 1.5em;
+}
+
+.BubbleAuthor {
+  font-weight: 600;
+  flex-grow: 1;
+}
+
+.BubbleIcon {
+  display: inline-block;
+  margin-right: 0.5em;
+}
+
+.BubbleTime {
+  color: rgba(0,0,0,0.5);
+}

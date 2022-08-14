@@ -1,0 +1,37 @@
+
+.GrowingTextContainer {
+  display: grid;
+  margin-top: -2px;
+}
+
+.Input, 
+.Replica {
+  margin-top: 1em;
+  grid-area: 1 / 1 / 2 / 2;
+  padding-bottom: 1em;
+  font-size: 1em;
+}
+
+.Replica {
+  /* This is how textarea text behaves */
+  white-space: pre-wrap;
+
+  /* Hidden from view, clicks, and screen readers */
+  visibility: hidden;
+}
+
+textarea.Input {
+  font: inherit;
+  border: none;
+  overflow: hidden;
+  outline: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  resize: none;
+  margin-left: -2px;
+  width: 100%;
+  min-height: 1em;
+  background-color: rgba(0,0,0,0);
+}
+

@@ -6,11 +6,12 @@ import Milestone from './Milestone';
 import { teams } from 'data/teams';
 import { upcomingMilestones, recentMilestones, currentMilestone } from 'data/milestones';
 import { Filter, FilterReadouts, Team, Milestone as MilestoneType } from 'data/types';
-import { FILTER, OPEN_UNASSIGNED_ISSUES, OPEN_EPICS, ALL_BUG_ISSUES } from 'data/queries';
+import { FILTER, OPEN_UNASSIGNED_ISSUES, OPEN_EPICS, ALL_BUG_ISSUES, SELECTED_ISSUE } from 'data/queries';
 import { useQuery, useApolloClient } from '@apollo/client';
 import { polling } from 'data/polling';
 import { organization } from 'data/customize';
 import IssueMilestones from 'components/graphql/IssueMilestones';
+import IssueDetail from 'components/graphql/IssueDetail';
 
 interface PlannerProps {
 }
@@ -113,6 +114,22 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
     return <Milestone filter={filter} epics={epics}/>
   }
 
+  // Lookup the selected issue ID, if there is one
+  const selectedIssueQuery = useQuery(SELECTED_ISSUE);
+  const selectedIssueId = selectedIssueQuery.data?.selectedIssueId;
+
+  // Create our details pane
+  const details = (): React.ReactNode | undefined => {
+
+    // Don't show for any non-issue panes
+    if ( filter.username === 'diffs' || filter.username === 'links' ) {
+      return undefined;
+    }
+
+    // Let's see if there's a selected issue right now
+    return <IssueDetail issueId={selectedIssueId}/>
+  }
+
   return (
     <div>
       <Header>
@@ -121,7 +138,7 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
                    onChangeFilter={handleChangeFilter}
                    onChooseMilestone={() => setChoosingMilestone(true)}/>
       </Header>
-      <Arena>
+      <Arena detailPane={details()}>
         {milestones()}
         {milestonePicker()}
       </Arena>

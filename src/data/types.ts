@@ -126,7 +126,9 @@ export interface Issue {
   epic?: any;
   author?: any;
   assignees?: any;
+  notes?: any;
   state?: string;
+  description?: string;
   milestone?: Milestone;
   humanTimeEstimate?: string;
 }

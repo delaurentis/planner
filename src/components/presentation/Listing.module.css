@@ -25,20 +25,23 @@
 }
 
 .Listing[highlighted='true'] {
-  background-color: #EFEBFF;
-  /*transition: background-color 1s linear;*/
-}
-
-.Listing[highlighted='true']:hover {
-  background-color: #eae6fd;
+  box-shadow: inset 4px 0px 0px 0px rgba(126,87,255,1.0); 
 }
 
 .Listing[new='true'] {
   animation: glow 3s;
 }
 
-.Listing[blank='true']:hover {
+.Listing[editing='true']:hover {
   background-color: white;
+}
+
+.Listing[selecting='true'] {
+  background-color: #EFEBFF;
+}
+
+.Listing[selecting='true']:hover {
+  background-color: #eae6fd;
 }
 
 .Listing[dimmed='true'] .Link {
@@ -122,12 +125,12 @@
   cursor: pointer;
   max-width: 600px;
   margin-top: 2px;
-
 }
 
-.Link:hover {
+.Listing[linking='true'] .Link:hover {
   color: #7E57FF;
 }
+
 
 .Chips {
   margin-top: 0.5em;
@@ -167,14 +170,22 @@
   background: rgba(0,0,0,0);
 }
 
+.Buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
 .Button {
   position: absolute;
-  right: 1em;
+  right: 2.1em;
+  top: 0.8em;
 }
 
 .Radio {
   position: absolute;
-  right: 8.2em;
+  right: 7.9em;
+  top: 0.8em;
 }
 
 .EnvironmentOptions {
