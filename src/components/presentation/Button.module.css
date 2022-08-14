@@ -5,6 +5,7 @@
   height: 2.25em;
   border: none; 
   background-color: #7E57FF;
+  border: 1px solid #7E57FF;
   border-radius: 5px;
   font-size: 1em;
   font-weight: bold;
@@ -17,16 +18,29 @@
 
 .Button[isdisabled='true'] {
   background-color: #BFC6D1;
+  border: 1px solid #BFC6D1;
 }
 
-.Button[issmall='true'] {
-  height: 1.75em;
-  padding-top: 0.5em;
+.Button[vastness='medium'] {
+  height: 1.6em;
+  padding-top: 0.35em;
   width: auto;
   padding-left: 1em;
   padding-right: 1em;
   margin-top: 0em;
   margin-bottom: 0em;
+}
+
+.Button[vastness='small'] {
+  height: 0.96em;
+  width: auto;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  padding-top: 0.15em;
+  padding-bottom: 0.4em;
+  margin-top: 0em;
+  margin-bottom: 0em;
+  font-size: 0.95em;
 }
 
 .ButtonText {
@@ -35,5 +49,22 @@
 
 .Button:hover {
   background-color: #A78DFF;
+  border: 1px solid #A78DFF;
 }
 
+.Button[secondary='true'] {
+  font-weight: 500;
+  background-color: rgba(0,0,0,0);
+  border: 1px solid #7E57FF;
+  color: #7E57FF;
+  border: 1px solid rgba(0,0,0,0.35);
+  color: rgba(0,0,0,0.45);
+  /*background-color: rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.1);*/
+}
+
+.Button[secondary='true']:hover {
+  background-color: rgba(0,0,0,0);
+  border: 1px solid rgba(0,0,0,0.25);
+  color: rgba(0,0,0,0.35);
+}

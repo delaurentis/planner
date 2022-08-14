@@ -5,6 +5,7 @@ import styles from './Actions.module.css';
 
 interface ActionsProps {
   actions: ActionType[];
+  isShowingShortcuts?: boolean;
   onClickAction(action: ActionType): void;
 }
 
@@ -19,7 +20,14 @@ const Actions: React.FC<ActionsProps> = (props: ActionsProps) => {
   return (
     <div className={styles.Actions}>
       {props.actions.map((action: ActionType) => {
-        return <Action key={action.name} action={action} onClick={() => handleClickAction(action)}/>
+        return (
+          <Action 
+            key={action.name} 
+            action={action} 
+            isShowingShortcut={props.isShowingShortcuts} 
+            onClick={() => handleClickAction(action)}
+          />
+        )
       })}
     </div>
   );

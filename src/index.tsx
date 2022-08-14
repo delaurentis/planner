@@ -6,6 +6,7 @@ import Connection from './components/graphql/Connection';
 
 // Static Assets
 import { loadFonts } from './setup/fonts';
+import { setupTimeFormatting } from './setup/time';
 import './index.css';
 
 // State Management and Offline Support
@@ -17,6 +18,9 @@ import * as serviceWorker from './setup/serviceWorker';
 
 // Fonts
 loadFonts();
+
+// Setup time formatting
+setupTimeFormatting();
 
 // Was there a route the user was trying to go to?
 const afterSlash:string = window.location.href.split('/').slice(-1)[0].split('?')[0];

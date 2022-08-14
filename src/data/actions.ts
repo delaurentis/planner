@@ -24,6 +24,9 @@ export const updateForAction = (action: any, labelToRemove: any) => {
       return { state_event: 'close', remove_labels: removeWhenClosing.join(',') };
     }
   } 
+  else if ( action.icon === '✍️' ) {
+    return { isEditingTitle: true };
+  }
   else if ( action.icon === '🗑' ) {
     return { delete: true };
   }
@@ -47,37 +50,41 @@ const deleteAction = { icon: '🗑', name: 'Delete', shortcut: 'x', isConfirmabl
 // Figure out our actions based on our state
 const actionsForIcon: any = { 
   '✅': [{ icon: '✅', name: 'Complete', shortcut: 'C', isUndo: true },
+         { icon: '✍️', name: 'Edit', shortcut: 'e'},
          deleteAction],
   '⏳': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
          { icon: '👓', name: 'Review', shortcut: 'r'},
          { icon: '⏳', name: 'Doing', shortcut: 'D', isUndo: true },
          /*{ icon: '⏸', name: 'Paused'},*/
          { icon: '🛑', name: 'Blocked'},
+         { icon: '✍️', name: 'Edit', shortcut: 'e'},
          deleteAction],
   '👓': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
          { icon: '👓', name: 'Review', shortcut: 'R', isUndo: true },
          { icon: '⏳', name: 'Doing', shortcut: 'd'},
          { icon: '🛑', name: 'Blocked'},
+         { icon: '✍️', name: 'Edit', shortcut: 'e'},
          deleteAction],
   '⏸': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
          { icon: '⏳', name: 'Doing', shortcut: 'd'},
          { icon: '⏸', name: 'Paused', isUndo: true },
          { icon: '🛑', name: 'Blocked'},
-         ...priorities,
+         { icon: '✍️', name: 'Edit', shortcut: 'e'},
          deleteAction],
   '🛑': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
          { icon: '⏳', name: 'Doing', shortcut: 'd'},
          { icon: '🛑', name: 'Blocked', isUndo: true },
-         ...priorities,
+         { icon: '✍️', name: 'Edit', shortcut: 'e'},
          deleteAction],
   '🧺': [...priorities, 
-         deleteAction],
+        { icon: '✍️', name: 'Edit', shortcut: 'e'},
+        deleteAction],
 
   /* Handle default case */
   '❓': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
-         { icon: '👓', name: 'Review', shortcut: 'r'},
          { icon: '⏳', name: 'Doing', shortcut: 'd'},
          ...priorities,
+         { icon: '✍️', name: 'Edit', shortcut: 'e'},
          deleteAction ],
 
   /* Handle case for each priority */

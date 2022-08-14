@@ -23,8 +23,8 @@ import IssueFlags from './IssueFlags';
 import IssueEstimate from './IssueEstimate';
 import IssueProject from './IssueProject';
 import IssueSchedule from './IssueSchedule';
-import { useApolloClient } from '@apollo/client';
-import { ISSUE_WITH_EPIC_FRAGMENT } from 'data/queries';
+import { useApolloClient, useQuery } from '@apollo/client';
+import { ISSUE_WITH_EPIC_FRAGMENT, SELECTED_ISSUE } from 'data/queries';
 import { environmentFromLabelNames } from 'data/environments';
 import { resolutionsFromLabelNames } from 'data/resolutions';
 import { flagsFromLabelNames } from 'data/flags';
@@ -32,6 +32,7 @@ import { organization } from 'data/customize';
 
 interface IssueProps {
   issue?: IssueType;
+  isCreating?: boolean;
   isEditing?: boolean;
   extraColumn?: string;
   milestone?: MilestoneType,
@@ -43,6 +44,7 @@ interface IssueProps {
   disableShortcuts?: boolean;
   focusRequestedAt?: number;
   onUpdateIssue?(update: any, issue?: IssueType): void;
+  onEditingIssue?(editing: boolean, issue?: IssueType): void;
   onNeedsKeyboard?(isNeeded: boolean): void;
   onKey?(key: string): boolean;
 }
@@ -63,6 +65,12 @@ const Issue: React.FC<IssueProps> = (props) => {
   useEffect(() => {
     disableShortcutsRef.current = props.disableShortcuts || false;
   }, [props.disableShortcuts]);
+
+  // Allow focus to be requested internally or externally
+  const [focusRequestedAt, setFocusRequestedAt] = useState(props.focusRequestedAt);
+  useEffect(() => {
+    setFocusRequestedAt(props.focusRequestedAt);
+  }, [props.focusRequestedAt]);
 
   // Get all label names, and extract some info from them
   const labelNames: string[] = labelNamesForIssue(issue);
@@ -121,6 +129,7 @@ const Issue: React.FC<IssueProps> = (props) => {
 
   // Are we showing the actions menu?
   const [showActions, setShowActions] = useState(false);
+  const [showActionShortcuts, setShowActionShortcuts] = useState(false);
 
   // When the issue is created, trigger a prompt to ask for enviromment
   /*
@@ -131,16 +140,47 @@ const Issue: React.FC<IssueProps> = (props) => {
   }, [props.issue]);
   */
 
+  // When clicked, mark the issue as selected
+  // We store it in Apollo so that other components can access it
+  const selectedQuery = useQuery(SELECTED_ISSUE);
+  const selectedIssueId = selectedQuery.data?.selectedIssueId;
+  const handleIssueClick = () => {
+    if ( selectedIssueId !== issue.id ) {
+      client.writeQuery({ query: SELECTED_ISSUE, data: { selectedIssueId: issue?.id } });
+    }
+    else {
+      client.writeQuery({ query: SELECTED_ISSUE, data: { selectedIssueId: null } });
+    }
+  }
+
+  // Handle adjustments to editing state
+  const handleEditing = (editing: boolean) => {
+    props.onEditingIssue?.(editing, issue);
+  }
+
   // Handle update of existing issue, or creation of new one
   const handleUpdate = (update: any, entity: any) => {
 
-    // Ask our callback to update the issue now
-    props.onUpdateIssue?.(update, entity);
-
-    // If the issue was closed, prompt for resolution
-    if ( isBug && update?.state_event === 'close' && resolutions.length === 0) {
-      setNeedsResolution(true);
+    // If we're being asked to edit then request edit mode
+    // and wait to focus for a beat to avoid the keystroke that 
+    // triggered edit mode from being captured by the input
+    if ( update.isEditingTitle ) {
+      props.onEditingIssue?.(true, issue);
+      setTimeout(() => { setFocusRequestedAt(new Date().getTime()) }, 100);
     }
+    else {
+      // Ask our callback to update the issue now
+      props.onUpdateIssue?.(update, entity);
+
+      // If the issue was closed, prompt for resolution
+      if ( isBug && update?.state_event === 'close' && resolutions.length === 0) {
+        setNeedsResolution(true);
+      }
+    }
+
+    // Clear the actions menu
+    setShowActions(false);
+    setShowActionShortcuts(false);
   }
 
   // Handle a key 
@@ -182,7 +222,17 @@ const Issue: React.FC<IssueProps> = (props) => {
       return true;
     }
     else if ( key === 'a' ) {
-      setShowActions(!showActions);
+      // Toggle showing the actions strip
+      // and if we get there with the keyboard shortcut
+      // then show other keyboard shortcuts
+      if ( !showActions ) { 
+        setShowActions(true);
+        setShowActionShortcuts(true);
+      }
+      else {
+        setShowActions(false);
+        setShowActionShortcuts(false);
+      }
     }
 
     // No keys matched so use default handling in the Card, and then in the Listing
@@ -278,23 +328,27 @@ const Issue: React.FC<IssueProps> = (props) => {
             key={issue.id}
             icon={displayIcon()}
             title={displayTitle()}
-            url={issue.webUrl}
             entity={issue}
-            placeholder='New Issue'
+            placeholder={ props.isCreating ? 'New Issue' : 'Untitled Issue' }
             actions={possibleActions}
             labels={props.extraColumn === 'Labels' ? visibleLabels : undefined}
             extras={extras()}
             isNew={isNew} 
-            defaultCategory={props.defaultCategory}
-            isEditing={props.isEditing}
+            isSelected={issue?.id ? issue?.id === selectedIssueId : false}
+            defaultCategory={props.defaultCategory} 
+            isEditing={props.isCreating || props.isEditing}
+            isCreating={props.isCreating}
             isHighlighted={(primaryLabel.name === 'Doing')}
             onUpdate={handleUpdate}
             onKey={handleKey}
-            focusRequestedAt={props.focusRequestedAt}
+            focusRequestedAt={focusRequestedAt}
             isShowingActions={showActions}
-            onShowActions={(show) => setShowActions(show)}
+            isShowingActionShortcuts={showActionShortcuts}
+            onShowActions={(show) => { setShowActions(show); setShowActionShortcuts(false); }}
+            onEditing={(editing: boolean) => { handleEditing(editing)}}
             onFocus={() => props.onNeedsKeyboard?.(true)}
-            onBlur={() => props.onNeedsKeyboard?.(false)}/>
+            onBlur={() => props.onNeedsKeyboard?.(false)}
+            onClick={() => { handleIssueClick() }}/>
     </div>
   );
 }

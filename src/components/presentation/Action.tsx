@@ -4,6 +4,7 @@ import { Action as ActionType } from 'data/types';
 
 interface ActionProps {
   action: ActionType;
+  isShowingShortcut?: boolean;
   onClick(): void;
 }
 
@@ -15,6 +16,13 @@ const Action: React.FC<ActionProps> = (props: ActionProps) => {
     }
   }
 
+  const shortcut = () => {
+    if ( props.action.shortcut && props.isShowingShortcut) {
+      return <span className={styles.ActionShortcut}>{props.action.shortcut}</span>
+    }
+    return undefined;
+  }
+
   return (
     <span 
       className={styles.Action} 
@@ -24,6 +32,7 @@ const Action: React.FC<ActionProps> = (props: ActionProps) => {
     >
       <span className={styles.ActionIcon}>{props.action.icon}</span>
       <span className={styles.ActionName}>{props.action.name}</span>
+      {shortcut()}
     </span>
   );
 }

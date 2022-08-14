@@ -1,0 +1,112 @@
+.DetailPane {
+  margin-bottom: 2em;
+  background: white;
+  clip: border-box;
+  margin-bottom: 1em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  margin-left: 20px;
+  border-radius: 10px;
+  max-width: 1200px;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.01), 0 1px 2px rgba(0,0,0,0.033), 0 2px 8px rgba(0,0,0,0.033), 0 2px 16px rgba(0,0,0,0.033), 0 4px 32px rgba(0,0,0,0.066);
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  background-color: #EFEBFF;
+  background-color: #f6f4ff;
+  background-color: #f8f8ff;
+}
+
+.DetailTitle {
+  width: 100%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  padding: 5px 15px 10px 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.DetailSubtitle {
+  display: block;
+  font-size: 0.9em;
+  margin-left: 1em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  height: 1.3em;
+  line-height: 1.3em;
+  margin-top: 0.3em;
+  margin-right: 2em;
+  width: 100%;
+}
+
+.DetailTitleColumns {
+  display: flex;
+  flex-direction: row;
+  align-content: center;  
+}
+
+.DetailLinkContainer {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  white-space: nowrap;
+  width: calc(100% - 15em);
+}
+
+.DetailTitleColumns a {
+  color: black;
+  text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+  "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",sans-serif;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.DetailTitleColumns a:hover {
+  color: #7E57FF;
+}
+
+.DetailButtons {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.DetailButton {
+  margin-top: -0.25em;
+  margin-right: 2em;
+}
+
+.DetailIcon {
+  margin-right: 0.5em;
+  font-size: 1.2em;
+  cursor: default;
+}
+
+.DetailContent {
+  font-size: 0.85em;
+  padding: 5px 15px 10px 15px;
+  width: calc(100%-30px);
+  max-width: 800px;
+  white-space: wrap;
+}
+
+.DetailPane img {
+  max-width: 100%;
+}
+
+.DetailPane code {
+  font-size: 0.9em;
+  white-space: pre-wrap;
+}
+
+.DetailPane h3 {
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.DetailPane p>img {
+  margin-top: 1em;
+}

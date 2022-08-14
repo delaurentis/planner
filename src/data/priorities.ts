@@ -5,7 +5,7 @@ export const priorities: Priority[] = [
   { icon: '⭐️', name: 'P1', level: 1, shortcut: '1' },
   { icon: '🙏', name: 'P2', level: 2, shortcut: '2' },
   { icon: '🤷🏻‍♀️', name: 'P3', level: 3, shortcut: '3' },
-  { icon: '🛎', name: 'Triage', level: 1 },
+  { icon: '🛎', name: 'Triage', level: 1, shortcut: 't' },
 ];
 
 export const labelFromPriority = (priority: Priority) => `${priority.name} ${priority.icon}`;

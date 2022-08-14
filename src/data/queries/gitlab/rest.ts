@@ -48,6 +48,15 @@ export const MOVE_ISSUE = gql`
     }
 `;
 
+export const CREATE_NOTE = gql`
+  mutation CreateNote($projectId: ID!, $issueId: ID!, $input: Any!) {
+    createNote(projectId: $projectId, issueId: $issueId, input: $input)
+      @rest(type: "Note", path: "/projects/{args.projectId}/issues/{args.issueId}/notes", method: "POST") {
+        NoResponse
+    }
+  }
+`;
+
 export const SUBGROUPS = gql`
   query GetSubgroups($groupId: ID!) {
     subgroups(groupId: $groupId) 

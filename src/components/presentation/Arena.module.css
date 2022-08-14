@@ -1,3 +1,17 @@
 .Arena {
-  margin-top: 5.5em;
+  margin-top: 5em;
+  display: flex;
+  flex-direction: row;
+}
+
+.MainPane {
+  min-width: 1224px;
+}
+
+.DetailPane {
+  position: fixed;
+  left: 1220px;
+  flex-direction: column;
+  width: calc(100vw - 1240px);
+  height: calc(100vh - 7em);
 }

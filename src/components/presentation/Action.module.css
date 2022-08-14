@@ -23,7 +23,8 @@
   vertical-align: top;
 }
 
-.Action[undo='true'] {
+.Action[undo='true'] .ActionName,
+.Action[undo='true'] .ActionIcon {
   opacity: 0.5;
 }
 
@@ -38,6 +39,29 @@
 
 .Action[undo='true']:hover .ActionName {
 /*  color: rgba(255,0,0,1);*/
+}
+
+.ActionShortcut {
+  font-size: 0.9em;
+  color: rgba(0,0,0,0.35);
+  background-color: rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.05);
+  border-radius: 3px;
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  margin-left: 6px;
+  margin-right: 12px;
+  margin-top: -5px;
+  vertical-align: middle;
+  line-height: 16px;
+  text-align: center;
+}
+
+.Action:hover .ActionShortcut {
+  color: rgba(0,0,0,0.7);
+  background-color: rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.1);
 }
 
 

@@ -1,10 +1,13 @@
 import React from 'react';
 import styles from './Button.module.css';
 
+type ButtonSizeType = 'large' | 'medium' | 'small'
+
 interface ButtonProps {
   title: string;
-  isSmall?: boolean;
+  size?: ButtonSizeType;
   isDisabled?: boolean;
+  isSecondary?: boolean;
   onClick(): void;
 }
 
@@ -18,7 +21,7 @@ const Button: React.FC<ButtonProps> = (props) => {
     }
   }
   
-  const customProps = { issmall: `${props.isSmall}`, isdisabled: `${props.isDisabled}`};
+  const customProps = { vastness: `${props.size}`, isdisabled: `${props.isDisabled}`, secondary: `${props.isSecondary}` };
   return (
     <div className={styles.Button} {...customProps} onClick={handleClick}>
       <div className={styles.ButtonText}>{props.title}</div>

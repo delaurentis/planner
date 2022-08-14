@@ -118,6 +118,55 @@ export const EPIC_WITH_ISSUES_FRAGMENT = gql`
   ${ISSUE_ONLY_FRAGMENT}
 `;
 
+export const ISSUE_DETAIL = gql`
+  query GetIssueDetail($id: IssueID!) {
+    issue(id: $id) {
+      id,
+      iid,
+      projectId,
+      title,
+      state,
+      webUrl,
+      webPath,
+      dueDate,
+      humanTimeEstimate,
+      labels {
+          nodes {
+            id,
+            title
+          }
+      },
+      milestone {
+        id,
+        title
+      },
+      assignees {
+        nodes {
+          username
+        }
+      },
+      author {
+        name,
+        username
+      },
+      createdAt,
+      updatedAt,
+      description,
+      notes {
+        nodes {
+          author {
+            name,
+            username
+          },
+          createdAt,
+          body,
+          system
+        }
+      }
+    }
+  }
+`;
+
 export const ALL_ISSUES = gql`
   query GetAllUserIssues($username: String!, $milestones: [String], $labels: [String], $fullPath: ID!) {
     group(fullPath: $fullPath) {
