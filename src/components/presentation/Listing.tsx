@@ -86,7 +86,6 @@ const Listing: React.FC<ListingProps> = (props) => {
   // When the focus epoc is upgraded, we'll focus on the input
   useEffect(() => {
     if ( props.focusRequestedAt && props.focusRequestedAt > 0 ) {
-      console.log('Focus requested at', props.focusRequestedAt);
       inputRef?.current?.focus();
       inputRef?.current?.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
     }

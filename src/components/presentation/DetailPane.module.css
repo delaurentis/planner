@@ -90,7 +90,9 @@
   padding: 5px 15px 10px 15px;
   width: calc(100%-30px);
   max-width: 800px;
-  white-space: wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .DetailPane img {
@@ -109,4 +111,10 @@
 
 .DetailPane p>img {
   margin-top: 1em;
+}
+
+@media only screen and (max-width: 1600px) {
+  .DetailPane {
+    display: none !important;
+  } 
 }
