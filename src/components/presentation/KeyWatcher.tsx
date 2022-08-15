@@ -22,16 +22,16 @@ const KeyWatcher: React.FC<KeyWatcherProps> = (props) => {
   // (even if the react component re-renders)
   const handleKeyPress = useCallback((event: any) => { handleKeyRef.current(event.key); }, []);
   const handleMouseEnter = () => {
-    window.removeEventListener('keypress', handleKeyPress, true);
-    window.addEventListener('keypress', handleKeyPress, true);
+    document.removeEventListener('keyup', handleKeyPress, true);
+    document.addEventListener('keyup', handleKeyPress, true);
   }
   const handleMouseLeave = () => {
-    window.removeEventListener('keypress', handleKeyPress, true);
+    document.removeEventListener('keyup', handleKeyPress, true);
   }
 
   // If this element is destroyed, then remove the event listener
   useEffect(() => {
-    return () => { window.removeEventListener('keypress', handleKeyPress, true); }
+    return () => { document.removeEventListener('keyup', handleKeyPress, true); }
   }, [handleKeyPress]);
 
   return (

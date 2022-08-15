@@ -29,11 +29,14 @@ import { environmentFromLabelNames } from 'data/environments';
 import { resolutionsFromLabelNames } from 'data/resolutions';
 import { flagsFromLabelNames } from 'data/flags';
 import { organization } from 'data/customize';
+import { BooleanValueNode } from 'graphql';
 
 interface IssueProps {
   issue?: IssueType;
   isCreating?: boolean;
   isEditing?: boolean;
+  isShowingActions?: boolean;
+  isShowingActionShortcuts?: boolean;
   extraColumn?: string;
   milestone?: MilestoneType,
   milestones?: MilestoneType[],
@@ -45,6 +48,7 @@ interface IssueProps {
   focusRequestedAt?: number;
   onUpdateIssue?(update: any, issue?: IssueType): void;
   onEditingIssue?(editing: boolean, issue?: IssueType): void;
+  onShowActions?(isShowing: boolean, isUsingKeyboard: boolean, issue?: IssueType): void;
   onNeedsKeyboard?(isNeeded: boolean): void;
   onKey?(key: string): boolean;
 }
@@ -127,10 +131,6 @@ const Issue: React.FC<IssueProps> = (props) => {
   // Ask the user for more info if they open or close a bug
   const [needsResolution, setNeedsResolution] = useState(false);
 
-  // Are we showing the actions menu?
-  const [showActions, setShowActions] = useState(false);
-  const [showActionShortcuts, setShowActionShortcuts] = useState(false);
-
   // When the issue is created, trigger a prompt to ask for enviromment
   /*
   useEffect(() => {
@@ -179,8 +179,7 @@ const Issue: React.FC<IssueProps> = (props) => {
     }
 
     // Clear the actions menu
-    setShowActions(false);
-    setShowActionShortcuts(false);
+    props.onShowActions?.(false, false, issue);
   }
 
   // Handle a key 
@@ -225,14 +224,17 @@ const Issue: React.FC<IssueProps> = (props) => {
       // Toggle showing the actions strip
       // and if we get there with the keyboard shortcut
       // then show other keyboard shortcuts
-      if ( !showActions ) { 
-        setShowActions(true);
-        setShowActionShortcuts(true);
+      if ( !props.isShowingActions ) { 
+        props.onShowActions?.(true, true, issue);
       }
       else {
-        setShowActions(false);
-        setShowActionShortcuts(false);
+        props.onShowActions?.(false, true, issue);
       }
+      return true;
+    }
+    else if ( key === 'Escape' && props.isShowingActions ) {
+      props.onShowActions?.(false, true, issue);
+      return true;
     }
 
     // No keys matched so use default handling in the Card, and then in the Listing
@@ -342,9 +344,9 @@ const Issue: React.FC<IssueProps> = (props) => {
             onUpdate={handleUpdate}
             onKey={handleKey}
             focusRequestedAt={focusRequestedAt}
-            isShowingActions={showActions}
-            isShowingActionShortcuts={showActionShortcuts}
-            onShowActions={(show) => { setShowActions(show); setShowActionShortcuts(false); }}
+            isShowingActions={props.isShowingActions}
+            isShowingActionShortcuts={props.isShowingActionShortcuts}
+            onShowActions={(show) => { props.onShowActions?.(show, false, issue) }}
             onEditing={(editing: boolean) => { handleEditing(editing)}}
             onFocus={() => props.onNeedsKeyboard?.(true)}
             onBlur={() => props.onNeedsKeyboard?.(false)}

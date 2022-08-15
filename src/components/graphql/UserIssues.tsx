@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Issue from './Issue';
 import Card from '../presentation/Card';
-import { Epic, Option, OptionChoice, Team } from 'data/types';
+import { Epic, Option, OptionChoice, Team, Issue as IssueType } from 'data/types';
 import { extraColumns } from 'data/extras';
 import { polling } from 'data/polling';
 import { projects } from 'data/projects';
 import { organization } from 'data/customize';
-
 import { useQuery, useMutation, useApolloClient } from '@apollo/client';
 import { ALL_ISSUES, 
          OPEN_ISSUES_NO_MILESTONE,
@@ -18,7 +17,8 @@ import { ALL_ISSUES,
          DELETE_ISSUE, 
          ESTIMATE_ISSUE,
          USER,
-         EXTRA_COLUMN } from 'data/queries';
+         EXTRA_COLUMN,
+         SELECTED_ISSUE } from 'data/queries';
 import { CATEGORY_FEATURE, CATEGORY_BUG } from 'data/categories';
 import { labelNameFromEnvironment } from 'data/environments';
 import { orderingForIssue } from 'data/labels';
@@ -221,12 +221,25 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
 
   // Keep track of which issue we're editing (only allow 1 at a time)
   const [editingIssueId, setEditingIssueId] = useState<number | null>(null);
-  const handleEditingIssue = (editing: boolean, issue: any) => {
+  const handleEditingIssue = (editing: boolean, issue: IssueType) => {
     if ( editing ) {
-      setEditingIssueId(issue.iid);
+      setEditingIssueId((issue && issue.iid) || null);
     }
     else {
       setEditingIssueId(null);
+    }
+  }
+
+  // Keep track of which issue, if any has the action strips showing
+  const [actionIssueId, setActionIssueId] = useState<number | null>(null);
+  const [isShowingActionShortcuts, setShowingActionShortcuts] = useState<boolean>(false);
+  const handleShowActions = (isShowing: boolean, isUsingKeyboard: boolean, issue: IssueType) => {
+    if ( isShowing ) {
+      setActionIssueId((issue && issue.iid) || null);
+      setShowingActionShortcuts(isUsingKeyboard);
+    }
+    else {
+      setActionIssueId(null);
     }
   }
 
@@ -245,7 +258,10 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
            disableShortcuts={disableShortcuts || editingIssueId !== null}
            onUpdateIssue={handleUpdateIssue} 
            onEditingIssue={handleEditingIssue}
+           onShowActions={(handleShowActions)}
            isEditing={editingIssueId === issue.iid}
+           isShowingActions={actionIssueId === issue.iid}
+           isShowingActionShortcuts={actionIssueId === issue.iid && isShowingActionShortcuts}
            onKey={handleKeyOnIssue} 
     />
   );
@@ -268,7 +284,24 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
 
   // Be able to focus on a new issue when needed
   const [focusRequestedAt, setFocusRequestedAt] = useState<number | undefined>();
+  
+  // Support up and down arrows to move between issues
+  const selectedQuery = useQuery(SELECTED_ISSUE);
+  const selectedIssueId = selectedQuery.data?.selectedIssueId;
   const handleKeyOnIssue = (key: string): boolean => {
+    if ( key === 'ArrowDown' || key === 'ArrowUp' ) {
+
+      // If it's an arrow key, lets find out where in the list our current selected issue is
+      const currentIndex = sortedItems.findIndex((issue: any) => issue.id === selectedIssueId);
+      if ( currentIndex >= 0 ) {
+        const targetIndex = Math.min(Math.max(key === 'ArrowDown' ? currentIndex + 1 : currentIndex - 1, 0), sortedItems.length - 1);
+        const targetIssue: IssueType = sortedItems[targetIndex];
+        if ( targetIssue && targetIssue?.id !== selectedIssueId ) {
+          client.writeQuery({ query: SELECTED_ISSUE, data: { selectedIssueId: targetIssue?.id } });
+        }
+      }
+      return true;
+    }
     return false;
   }
 
