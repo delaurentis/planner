@@ -21,18 +21,33 @@ const KeyWatcher: React.FC<KeyWatcherProps> = (props) => {
   // that we can reliably remove from the window when the mouse leaves
   // (even if the react component re-renders)
   const handleKeyPress = useCallback((event: any) => { handleKeyRef.current(event.key); }, []);
+  const handleKeyDown = useCallback((event: any) => { 
+    // Only key up and key down get special keys (not key press)
+    if ( event.key === 'Escape' || event.key?.indexOf('Arrow') >= 0 ) {
+      handleKeyRef.current(event.key);
+    }
+  }, []);
+
+  // When the user mouses over the element, start listening for keyboard shortcuts
+  // We listen for onKeyUp to catch the escape key
   const handleMouseEnter = () => {
-    document.removeEventListener('keyup', handleKeyPress, true);
-    document.addEventListener('keyup', handleKeyPress, true);
+    document.removeEventListener('keypress', handleKeyPress, true);
+    document.removeEventListener('keydown', handleKeyDown, true);
+    document.addEventListener('keypress', handleKeyPress, true);
+    document.addEventListener('keydown', handleKeyDown, true);
   }
   const handleMouseLeave = () => {
-    document.removeEventListener('keyup', handleKeyPress, true);
+    document.removeEventListener('keypress', handleKeyPress, true);
+    document.removeEventListener('keydown', handleKeyDown, true);
   }
 
   // If this element is destroyed, then remove the event listener
   useEffect(() => {
-    return () => { document.removeEventListener('keyup', handleKeyPress, true); }
-  }, [handleKeyPress]);
+    return () => { 
+      document.removeEventListener('keypress', handleKeyPress, true); 
+      document.removeEventListener('keydown', handleKeyDown, true); 
+    }
+  }, [handleKeyPress, handleKeyDown]);
 
   return (
     <div className={props.className} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
