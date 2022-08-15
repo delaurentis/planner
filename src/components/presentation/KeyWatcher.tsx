@@ -29,7 +29,7 @@ const KeyWatcher: React.FC<KeyWatcherProps> = (props) => {
   }, []);
 
   // When the user mouses over the element, start listening for keyboard shortcuts
-  // We listen for onKeyUp to catch the escape key
+  // We listen for onKeyDown to catch the escape key
   const handleMouseEnter = () => {
     document.removeEventListener('keypress', handleKeyPress, true);
     document.removeEventListener('keydown', handleKeyDown, true);
