@@ -1,6 +1,3 @@
-gcloud config set project planner-XX
-gcloud config set compute/zone us-west4-a 
-
 gcloud compute addresses create planner-ip  --global
 gcloud compute networks create planner
 gcloud compute firewall-rules create https --allow=tcp:443 --network planner --description="Allow traffic on TCP port 443"   

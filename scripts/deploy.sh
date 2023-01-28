@@ -1,4 +1,5 @@
 #!/bin/bash
+export DOCKER_DEFAULT_PLATFORM=linux/amd64
 docker-compose -f docker-compose.prod.yml up -d --build
 
 GCP_PROJECT=$(gcloud config get-value project)
