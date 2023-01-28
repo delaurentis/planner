@@ -113,7 +113,7 @@
   margin-top: 1em;
 }
 
-@media only screen and (max-width: 1600px) {
+@media only screen and (max-width: 1280px) {
   .DetailPane {
     display: none !important;
   } 
