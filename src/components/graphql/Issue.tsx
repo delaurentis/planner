@@ -161,12 +161,17 @@ const Issue: React.FC<IssueProps> = (props) => {
   // Handle update of existing issue, or creation of new one
   const handleUpdate = (update: any, entity: any) => {
 
+    console.log('Update ', update)
+
     // If we're being asked to edit then request edit mode
     // and wait to focus for a beat to avoid the keystroke that 
     // triggered edit mode from being captured by the input
     if ( update.isEditingTitle ) {
       props.onEditingIssue?.(true, issue);
       setTimeout(() => { setFocusRequestedAt(new Date().getTime()) }, 100);
+    }
+    else if ( update.isOpeningIssueLink ) {
+      window.open(`https://gitlab.com${issue.webPath}`);
     }
     else {
       // Ask our callback to update the issue now
