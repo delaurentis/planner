@@ -27,6 +27,9 @@ export const updateForAction = (action: any, labelToRemove: any) => {
   else if ( action.icon === '✍️' ) {
     return { isEditingTitle: true };
   }
+  else if ( action.icon === '🦊' ) {
+    return { isOpeningIssueLink: true };
+  }
   else if ( action.icon === '🗑' ) {
     return { delete: true };
   }
@@ -46,46 +49,54 @@ export const updateForAction = (action: any, labelToRemove: any) => {
 
 // Some action we re-use a bunch
 const deleteAction = { icon: '🗑', name: 'Delete', shortcut: 'x', isConfirmable: true, confirmMessage: 'Are you sure you want to delete this issue' };
+const gitlabAction = { icon: '🦊', name: 'GitLab', shortcut: 'g' }
 
 // Figure out our actions based on our state
 const actionsForIcon: any = { 
   '✅': [{ icon: '✅', name: 'Complete', shortcut: 'C', isUndo: true },
          { icon: '✍️', name: 'Edit', shortcut: 'e'},
-         deleteAction],
+         deleteAction,
+         gitlabAction],
   '⏳': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
          { icon: '👓', name: 'Review', shortcut: 'r'},
          { icon: '⏳', name: 'Doing', shortcut: 'D', isUndo: true },
          /*{ icon: '⏸', name: 'Paused'},*/
          { icon: '🛑', name: 'Blocked'},
          { icon: '✍️', name: 'Edit', shortcut: 'e'},
-         deleteAction],
+         deleteAction,
+         gitlabAction],
   '👓': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
          { icon: '👓', name: 'Review', shortcut: 'R', isUndo: true },
          { icon: '⏳', name: 'Doing', shortcut: 'd'},
          { icon: '🛑', name: 'Blocked'},
          { icon: '✍️', name: 'Edit', shortcut: 'e'},
-         deleteAction],
+         deleteAction,
+         gitlabAction],
   '⏸': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
          { icon: '⏳', name: 'Doing', shortcut: 'd'},
          { icon: '⏸', name: 'Paused', isUndo: true },
          { icon: '🛑', name: 'Blocked'},
          { icon: '✍️', name: 'Edit', shortcut: 'e'},
-         deleteAction],
+         deleteAction,
+         gitlabAction],
   '🛑': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
          { icon: '⏳', name: 'Doing', shortcut: 'd'},
          { icon: '🛑', name: 'Blocked', isUndo: true },
          { icon: '✍️', name: 'Edit', shortcut: 'e'},
-         deleteAction],
+         deleteAction,
+         gitlabAction],
   '🧺': [...priorities, 
         { icon: '✍️', name: 'Edit', shortcut: 'e'},
-        deleteAction],
+        deleteAction,
+        gitlabAction],
 
   /* Handle default case */
   '❓': [{ icon: '✅', name: 'Complete', shortcut: 'c'},
          { icon: '⏳', name: 'Doing', shortcut: 'd'},
          ...priorities,
          { icon: '✍️', name: 'Edit', shortcut: 'e'},
-         deleteAction ],
+         deleteAction,
+         gitlabAction],
 
   /* Handle case for each priority */
   ...priorities.map(priority => {
