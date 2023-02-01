@@ -217,7 +217,8 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   }
 
   // Figure out title and where it goes if you click iot
-  const userUrl: string = `https://gitlab.com/${organization}/${props.project}/-/issues?scope=all&utf8=%E2%9C%93&assignee_username[]=${props.username}&milestone_title=${props.milestone.title}`
+  const milestoneTitleForGitLab = props.milestone.title === 'none' ? 'None' : props.milestone.title
+  const userUrl: string = `https://gitlab.com/${organization}/${props.project}/-/issues?scope=all&utf8=%E2%9C%93&assignee_username[]=${props.username}&milestone_title=${milestoneTitleForGitLab}`
 
   // Keep track of which issue we're editing (only allow 1 at a time)
   const [editingIssueId, setEditingIssueId] = useState<number | null>(null);
