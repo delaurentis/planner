@@ -204,7 +204,7 @@ export const ALL_PROJECT_ISSUES = gql`
 
 export const OPEN_ISSUES_NO_MILESTONE = gql`
   query GetOpenUserIssuesNoMilestone($username: String!, $labels: [String], $fullPath: ID!) {
-    project(fullPath: $fullPath) {
+    group(fullPath: $fullPath) {
       name,
       issues (assigneeUsernames: [$username], 
               milestoneWildcardId: NONE,
