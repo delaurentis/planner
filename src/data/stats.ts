@@ -38,15 +38,15 @@ const isEstimateInDays = (value: string | undefined) => {
 const estimateInHours = (value: string | undefined) => {
   if ( value ) {
     if ( isEstimateInHours(value) ) {
-      return parseFloat(value);
+      return Math.ceil(parseFloat(value));
     }
     else if ( isEstimateInMinutes(value) ) {
-      return parseFloat(value) / 60;
+      return Math.ceil(parseFloat(value) / 60);
     }
     else if ( isEstimateInDays(value) ) {
-      return parseFloat(value) * 24;
+      return Math.ceil(parseFloat(value) * 24);
     }
-    return parseFloat(value);
+    return Math.ceil(parseFloat(value));
   }
   return 0;
 }
