@@ -150,6 +150,7 @@
   text-align: right;
   display: flex;
   flex-direction: row;
+  white-space: nowrap;
 }
 
 .ExtraChild + .ExtraChild {
@@ -161,7 +162,7 @@
 
 .Input {
   border: none;
-  width: 50em;
+  width: 35em;
   outline: none;
   font-size: 1em;
   display: flex;
@@ -201,16 +202,6 @@
     max-width: 400px;
   }
 }
-
-@media only screen and (max-width: 1440px) {
-  .Link {
-    max-width: 500px;
-  }
-  .Input {
-    max-width: 700px;
-  }
-}
-
 
 @media only screen and (max-width: 480px) {
   .Chips {

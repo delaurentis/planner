@@ -20,11 +20,18 @@ const KeyWatcher: React.FC<KeyWatcherProps> = (props) => {
   // useCallback is important here because it creates a durable event handler
   // that we can reliably remove from the window when the mouse leaves
   // (even if the react component re-renders)
-  const handleKeyPress = useCallback((event: any) => { handleKeyRef.current(event.key); }, []);
+  const handleKeyPress = useCallback((event: any) => { 
+    if ( !window['ignoreKeyboardShortcuts'] ) {
+      handleKeyRef.current(event.key); 
+    }
+  }, []);
+
+  // Only key up and key down get special keys (not key press)
   const handleKeyDown = useCallback((event: any) => { 
-    // Only key up and key down get special keys (not key press)
-    if ( event.key === 'Escape' || event.key?.indexOf('Arrow') >= 0 ) {
-      handleKeyRef.current(event.key);
+    if ( !window['ignoreKeyboardShortcuts'] ) {
+      if ( event.key === 'Escape' || event.key?.indexOf('Arrow') >= 0 ) {
+        handleKeyRef.current(event.key);
+      }
     }
   }, []);
 
