@@ -5,24 +5,53 @@
 }
 
 .MainPane {
-  min-width: 1224px;
+  min-width: 1046px;
+  width: 1046px;
 }
 
+/* Large screen case and default behavior */
 .DetailPane {
   position: fixed;
-  left: 1220px;
   flex-direction: column;
-  width: calc(100vw - 1240px);
+  left: 1040px;
+  width: calc(100vw - 1056px);
+  max-width: 1024px;
   height: calc(100vh - 7em);
 }
 
-@media only screen and (max-width: 1440px) {
+/* Tiny screen case */
+@media only screen and (max-width: 1280px) {
+  .DetailPane { 
+    left: 606px !important;
+    width: calc(100vw - 620px) !important;
+    min-width: 440px;
+  } 
+}
+
+/* Smaller screen case */
+@media only screen and (min-width: 1281px) and (max-width: 1440px) {
   .MainPane {
     min-width: 1046px;
     max-width: 1046px;
+    width: 1046px;
   }
   .DetailPane {
     left: 1040px;
     width: calc(100vw - 1056px);
   }
 }
+
+/* Medium screen case */
+@media only screen and (min-width: 1441px) and (max-width: 2000px) {
+  .MainPane {
+    min-width: 1046px;
+    max-width: 1046px;
+    width: 1046px;
+  }
+  .DetailPane {
+    left: 1040px;
+    width: calc(100vw - 1056px);
+  }
+}
+
+

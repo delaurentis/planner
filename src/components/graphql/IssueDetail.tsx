@@ -40,7 +40,15 @@ const IssueDetail: React.FC<IssueDetailProps> = (props) => {
 
   // Transformations for links and images 
   const transformLinkUri = (href, children, title) => href?.indexOf('://') > 0 ? href : `https://gitlab.com/${href}`;
-  const transformImageUri = (src, alt, title) => `https://gitlab.com/${organization}/${projectName}${src}`;
+  const transformImageUri = (src, alt, title) => {
+    if ( src.includes('https://') ) {
+      return src
+    }
+    else
+    {
+      return `https://gitlab.com/${organization}/${projectName}${src}`
+    }
+  }
 
   // Filter out the user notes (not the system messages)
   const userNotes = issue?.notes?.nodes?.filter(note => !note.system)

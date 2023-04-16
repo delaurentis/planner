@@ -31,7 +31,7 @@
   display: block;
   font-size: 0.9em;
   margin-left: 1em;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis; 
   white-space: nowrap;
   overflow: hidden;
   height: 1.3em;
@@ -40,6 +40,14 @@
   margin-right: 2em;
   width: 100%;
 }
+
+/* If things get narrow enough, don't try to show title */
+@media only screen and (min-width: 1281px) and (max-width: 1440px) {
+  .DetailSubtitle {
+    display: none;
+  }
+}
+
 
 .DetailTitleColumns {
   display: flex;
@@ -113,8 +121,3 @@
   margin-top: 1em;
 }
 
-@media only screen and (max-width: 1280px) {
-  .DetailPane {
-    display: none !important;
-  } 
-}

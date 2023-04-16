@@ -14,6 +14,7 @@ import { Filter } from './data/types';
 import { vendors, requestVendorAccessToken, isStateTokenValid } from './data/vendors';
 import { teams } from './data/teams';
 import { currentYear, currentQuarter, currentSprint } from './data/milestones';
+import { setupKeyboardFiltering } from './setup/keyboard';
 import * as serviceWorker from './setup/serviceWorker';
 
 // Fonts
@@ -21,6 +22,10 @@ loadFonts();
 
 // Setup time formatting
 setupTimeFormatting();
+
+// Setup keyboard filtering - adds extra properties 
+// to suppress shortcuts when a field is focused
+setupKeyboardFiltering();
 
 // Was there a route the user was trying to go to?
 const afterSlash:string = window.location.href.split('/').slice(-1)[0].split('?')[0];
