@@ -39,7 +39,9 @@ export const ISSUE_ONLY_FRAGMENT = gql`
       },
       milestone {
         id,
-        title
+        title,
+        startDate,
+        dueDate
       },
       assignees {
         nodes {
@@ -68,7 +70,9 @@ export const ISSUE_WITH_EPIC_FRAGMENT = gql`
       humanTimeEstimate,
       milestone {
         id,
-        title
+        title,
+        startDate,
+        dueDate
       },
       assignees {
         nodes {
@@ -138,7 +142,9 @@ export const ISSUE_DETAIL = gql`
       },
       milestone {
         id,
-        title
+        title,
+        startDate,
+        dueDate
       },
       assignees {
         nodes {

@@ -33,10 +33,10 @@
 
 .CardSubtitle {
   color: #AEB6C0;
-  font-size: 1.5em;
-  font-weight: bold;
+  font-size: 0.95em;
+  font-weight: 500;
   justify-self: left;
-  padding-left: 0.5em;
+  padding-left: 0.75em;
 }
 
 .CardIcon {

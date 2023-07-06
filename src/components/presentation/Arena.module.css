@@ -25,6 +25,7 @@
     left: 606px !important;
     width: calc(100vw - 620px) !important;
     min-width: 440px;
+    pointer-events: none;
   } 
 }
 

@@ -6,6 +6,7 @@ import { extraColumns } from 'data/extras';
 import { polling } from 'data/polling';
 import { projects } from 'data/projects';
 import { organization } from 'data/customize';
+import { humanizeDateRange } from 'util/dates';
 import { useQuery, useMutation, useApolloClient } from '@apollo/client';
 import { ALL_ISSUES, 
          OPEN_ISSUES_NO_MILESTONE,
@@ -319,8 +320,6 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
 
       // Move to the next or previous view
       const index = extraColumns.findIndex((column: any) => column.title === extraQuery.data?.extraColumn);
-      console.log(extraQuery.data?.extraColumn);
-      console.log('index is ' + index);
       const isGoingForward = key === 'v';
       const nextIndex = (index + (isGoingForward ? 1 : -1)) % extraColumns.length;
       const protectedNextIndex = nextIndex < 0 ? extraColumns.length + nextIndex : nextIndex;
@@ -339,6 +338,14 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
 
   // Adjust the milestone title
   const milestoneTitle = props.milestone.title === 'none' ? 'Triage' : props.milestone.title; 
+
+  // An optional subtitle for the milestone
+  const milestoneSubtitle = () => {
+    if ( props.milestone.startDate && props.milestone.dueDate ) {
+      return humanizeDateRange(props.milestone.startDate, props.milestone.dueDate);
+    }
+    return undefined;
+  }
 
   // Show the right stats based on the last column type
   const stats = () => {
@@ -365,6 +372,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   return (
     <Card key={`user-${props.username}`} 
           title={milestoneTitle} 
+          subtitle={milestoneSubtitle()}
           titleUrl={userUrl} 
           isLoading={false}
           option={cardOption}

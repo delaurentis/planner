@@ -22,3 +22,6 @@
 .Input:focus {
     outline: none;
 }
+
+.Input[bigness='medium'] { width: 100px; } 
+.Input[bigness='large'] { width: 200px; }

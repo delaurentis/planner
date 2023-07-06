@@ -4,6 +4,7 @@ export const extraColumns = [
   { title: 'Surprises', metadata: {} },
   /*{ title: 'Estimate', metadata: {} },*/
   { title: 'Details', metadata: {} },
+  { title: 'Deadline', metadata: {} },
   { title: 'Epic', metadata: {} },
   { title: 'Project', metadata: {} },
   { title: 'People', metadata: {} },
