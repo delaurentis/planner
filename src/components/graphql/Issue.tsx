@@ -21,6 +21,7 @@ import IssueEnvironment from './IssueEnvironment';
 import IssueResolution from './IssueResolution';
 import IssueFlags from './IssueFlags';
 import IssueEstimate from './IssueEstimate';
+import IssueDeadline from './IssueDeadline';
 import IssueProject from './IssueProject';
 import IssueSchedule from './IssueSchedule';
 import { useApolloClient, useQuery } from '@apollo/client';
@@ -106,6 +107,7 @@ const Issue: React.FC<IssueProps> = (props) => {
 
   // The title we display might include an extra icon for bugs
   const displayTitle = (): string => {
+    const icons: string[] = [];
     if ( isBug ) {
       if ( needsResolution ) {
         return 'What changes did the fix involve?';
@@ -113,9 +115,15 @@ const Issue: React.FC<IssueProps> = (props) => {
       else {
         const doesTitleAlreadyContainBugIcon = issue.title?.charAt(0) === '🐞';
         if ( !doesTitleAlreadyContainBugIcon ) {
-          return `🐞 ${issue.title}`;
+          icons.push('🐞');
         }
       }
+    }
+    if ( issue.dueDate ) {
+      icons.push('📆');
+    }
+    if ( icons.length > 0 && issue.title) {
+      return `${icons.join('')} ${issue.title}`;
     }
     return issue.title || "";
   }
@@ -160,8 +168,6 @@ const Issue: React.FC<IssueProps> = (props) => {
 
   // Handle update of existing issue, or creation of new one
   const handleUpdate = (update: any, entity: any) => {
-
-    console.log('Update ', update)
 
     // If we're being asked to edit then request edit mode
     // and wait to focus for a beat to avoid the keystroke that 
@@ -308,6 +314,9 @@ const Issue: React.FC<IssueProps> = (props) => {
     else if ( props.extraColumn === 'Project' ) {
       return [<IssueProject issue={issue} onUpdating={setUpdating}/>]
     } 
+    else if ( props.extraColumn === 'Deadline' ) {
+      return [<IssueDeadline issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>]
+    }
     else if ( props.extraColumn === 'Estimate' ) {
       return [<IssueEstimate issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>]
     }

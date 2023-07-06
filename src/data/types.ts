@@ -131,6 +131,7 @@ export interface Issue {
   description?: string;
   milestone?: Milestone;
   humanTimeEstimate?: string;
+  dueDate?: string;
 }
 
 export interface Epic {

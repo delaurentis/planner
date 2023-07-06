@@ -3,6 +3,7 @@ import styles from './Input.module.css';
 
 interface InputProps {
   value?: string;
+  size?: string;
   onBlur?(value: string | undefined): void;
 }
 
@@ -25,7 +26,12 @@ const Input: React.FC<InputProps> = (props) => {
 
   return (
     <div className={styles.InputWrapper}>
-        <input className={styles.Input} value={editableValue} onChange={handleChange} onBlur={handleBlur}/>
+        <input className={styles.Input} 
+               value={editableValue} 
+               onChange={handleChange} 
+               onBlur={handleBlur}
+               {...{bigness: `${props.size || 'small'}`}} 
+               />
     </div>
   );
 }

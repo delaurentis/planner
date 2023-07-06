@@ -25,7 +25,10 @@ const Milestone: React.FC<MilestoneProps> = (props: MilestoneProps) => {
       if ( milestoneFound ) {
 
         // It returns an ID with a long string form and we need to extract the # to work with the REST api
-        return { title: milestoneFound.title, id: parseInt(milestoneFound.id.split('/').slice(-1)[0]) };
+        return { title: milestoneFound.title, 
+                 id: parseInt(milestoneFound.id.split('/').slice(-1)[0]), 
+                 startDate: milestoneFound.startDate, 
+                 dueDate: milestoneFound.dueDate };
       }
     }
     return { title: milestoneTitle };

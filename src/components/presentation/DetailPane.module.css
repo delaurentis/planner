@@ -15,6 +15,7 @@
   background-color: #EFEBFF;
   background-color: #f6f4ff;
   background-color: #f8f8ff;
+  pointer-events: all !important;
 }
 
 .DetailTitle {
