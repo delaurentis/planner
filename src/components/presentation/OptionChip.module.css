@@ -1,28 +1,37 @@
 .Chip {
-  display: inline-block;
+  display: inline-flex;
   margin-left: 0em;
   margin-right: 0.5em;
   cursor: pointer;
-  padding: 0.5em 1em 0.5em 1em;
+  height: 30px;
   background-color: clear;
+  padding-left: 0.9em;
+  padding-right: 0.9em;
   border-radius: 1em;
-  border: 1px solid rgba(0,0,0,0.25);
+  border: 1px solid rgba(0,0,0,0.15);
   user-select: none;
   font-weight: 500;
   color: rgba(0,0,0,0.5);
-  font-size: 0.95em;
+  font-size: 0.93em;
   position: relative;
+  align-items: center;
+}
+
+.Chip:last-child {
+  margin-right: 0em;
 }
 
 
 .Chip[isselectable='false'] {
-  padding: 0.5em 1em 0.5em 1em;
-  /*background-color: rgba(0,0,0,0.05);*/
+  /* Account for border disappearing */
+  height: 32px;
+  padding-left: calc(1em + 1px);
+  padding-right: calc(1em + 1px);
   border: none;
 }
 
 .Chip[isblank='true'] {
-  color: rgba(0,0,0,0.25);
+  color: rgba(0,0,0,0.15);
 }
 
 .Chip[isselected='true'] {
@@ -33,7 +42,7 @@
 }
 
 .Chip[issmall='true'] {
-  display: inline-block;
+  display: inline-flex;
   margin-top: -0.2em;
   border-radius: 20px;
   font-size: 0.9em;
@@ -50,7 +59,7 @@
   width: 2em;
   height: 1.9em;
   border-radius: 100%;
-  border: 1px solid rgba(0,0,0,0.25);
+  border: 1px solid rgba(0,0,0,0.15);
   color: black;
 }
 
@@ -72,15 +81,17 @@
 
 .Chip[ismultiselectable='true'] {
   background-color: rgba(0,0,0,0.07);
-  /*font-size: 0.8em;*/
   color:#777777;
-  padding: 0.5em;
   padding-left: 1em;
   padding-right: 1em;
   text-align: center;
   user-select: none;
   cursor: pointer;
   border: none;
+}
+
+.Chip span {
+  font-size: 0.95em;
 }
 
 .Chip[ismultiselectable='true'] span {
@@ -98,7 +109,7 @@
 }
 
 .Chip[issmall='true'] {
-  display: inline-block;
+  display: inline-flex;
   margin-top: -0.2em;
   border-radius: 20px;
   font-size: 0.9em;
@@ -120,3 +131,30 @@
   color: white;
 }
 */
+
+.Chip[isradio='true'] {
+  border-radius: 0em;
+  margin: 0em;
+}
+
+.Chip[isradio='true']:first-child {
+  border-radius: 1em 0em 0em 1em;
+}
+
+.Chip[isradio='true']:last-child {
+  border-radius: 0em 1em 1em 0em;
+}
+
+.Chip[isradio='true']:not(:first-child) {
+  border-left: none;
+}
+
+.Chip[isradio='true'][isselected='true']:not(:first-child) {
+  border-left: 1px solid  #DFD6FF;
+  margin-left: -1px;
+}
+
+.ChipIcon {
+  display: flex;
+  align-self: center;
+}

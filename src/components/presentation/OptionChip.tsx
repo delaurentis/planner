@@ -4,8 +4,9 @@ import Menu from './Menu';
 import styles from './OptionChip.module.css';
 import { Option, OptionChoice } from 'data/types';
 import Dropdown from './Dropdown';
+import Icon from '../icons/Icon';
 
-interface OptionChipProps {
+export interface OptionChipProps {
   option: Option
 }
 
@@ -81,12 +82,14 @@ const OptionChip: React.FC<OptionChipProps> = (props) => {
                            issmall: `${props.option.isSmall}`,
                            isiconic: `${props.option.isIconOnly}`,
                            isdimmable: `${props.option.isDimmable}`,
+                           isradio: `${props.option.isRadio}`,
                            ismultiselectable: `${props.option.isMultiSelectable}`,};
 
   return (
     <span className={styles.Chip} { ...optionalStyles } onClick={handleClick}>
       <span title={props.option.tip}>
-        <span>{props.option.title}</span>
+        {props.option.icon && <span className={styles.ChipIcon}><Icon name={props.option.icon} fill="currentColor" width="22" height="22"/></span>}
+        {props.option.title && <span>{props.option.title}</span>}
         <span><Caret caret={caretDirection}/></span>
       </span>
       {menu()}

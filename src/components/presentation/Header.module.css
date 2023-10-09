@@ -7,11 +7,14 @@
   left: 0px;
   right: 0px;
   padding-left: 1.25em;
-  padding-top: 0.7em;
-  padding-bottom: 0.7em;
+  height: 45px;
   box-shadow: rgba(0, 0, 0, 0.01) 0px 1px 1px 0px, rgba(0, 0, 0, 0.03) 0px 1px 2px 0px, rgba(0, 0, 0, 0.03) 0px 2px 8px 0px, rgba(0, 0, 0, 0.03) 0px 2px 16px 0px, rgba(0, 0, 0, 0.067) 0px 4px 32px 0px;
   white-space: nowrap;
   z-index: 10;
+
+  display: inline-flex;
+  align-items: center;
+
 }
 
 .HeaderLogo {
@@ -27,7 +30,6 @@
 }
 
 .HeaderContent {
-  display: inline-block;
 }
 
 @media only screen and (max-width: 480px) {

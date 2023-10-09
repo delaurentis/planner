@@ -1,0 +1,37 @@
+import IconCaretDown from "./IconCaretDown";
+import IconCaretUp from "./IconCaretUp";
+import IconRoadmap from "./IconRoadmap";
+import IconTickets from "./IconTickets";
+import IconCode from "./IconCode";
+import IconLink from "./IconLink";
+import IconX from "./IconX";
+import { IconProps } from "./types";
+
+export interface NamedIconProps extends IconProps {
+  name: string;
+}
+
+const Icon: React.FC<NamedIconProps> = ({ name, ...otherProps }) => {
+  // Select which icon to show based on name
+  // And pass down all props except for the icon name
+  switch (name) {
+    case 'caret-down':
+      return <IconCaretDown {...otherProps} />;
+    case 'caret-up':
+      return <IconCaretUp {...otherProps} />;
+    case 'roadmap':
+      return <IconRoadmap {...otherProps} />;
+    case 'tickets':
+      return <IconTickets {...otherProps} />;
+    case 'code':
+      return <IconCode {...otherProps} />;
+    case 'link':
+      return <IconLink {...otherProps} />;
+    case 'x':
+      return <IconX {...otherProps} />;
+    default:
+      return null; // or a default icon
+  }
+};
+
+export default Icon;
