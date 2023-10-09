@@ -4,6 +4,7 @@ import PlannerLogo from '../presentation/PlannerLogo';
 import styles from './Header.module.css';
 
 interface HeaderProps {
+  children?: React.ReactNode;
   isLogoPermanent?: boolean;
 }
 

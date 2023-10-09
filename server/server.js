@@ -23,10 +23,21 @@ const setupServer = async () => {
   let port;
   if (process.env.NODE_ENV === "production") {
     port = process.env.PORT ? +process.env.PORT : 3000;
-    app.use(express.static(path.join(__dirname, "../build")));
-    app.get("*", (request, response) => {
+
+    // The catch-all route should be placed after the API routes and static serving
+    app.get("*", (request, response, next) => {
+      if (request.path.startsWith('/api')) {
+        return next();
+      }
       response.sendFile(path.join(__dirname, "../build", "index.html"));
     });
+
+    // Server static files
+    app.use(express.static(path.join(__dirname, "../build")));
+
+    /*app.get("*", (request, response) => {
+      response.sendFile(path.join(__dirname, "../build", "index.html"));
+    });*/
   } else {
     port = 3001;
     console.log("⚠️ Not seeing your changes as you develop?");

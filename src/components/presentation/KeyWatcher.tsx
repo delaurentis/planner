@@ -1,6 +1,7 @@
 import React, { useRef, useCallback, useEffect } from 'react';
 
 interface KeyWatcherProps {
+  children?: React.ReactNode;
   disabled?: boolean;
   className?: string;
   onKey?(key: string): void;
