@@ -1,5 +1,6 @@
 import React from 'react';
 import Card from '../presentation/Card';
+import Listing from '../presentation/Listing';
 import Diff from './Diff';
 import { Option, OptionChoice, Diff as DiffType, Team } from 'data/types';
 import { extraDiffColumns } from 'data/extras';
@@ -122,6 +123,7 @@ const Diffs: React.FC<DiffsProps> = (props: DiffsProps) => {
             isLoading={false}
             option={cardOption}>
         {
+          reviewDiffs.length === 0 ? <Listing icon='⏳' title='Loading, this may take a minute...' />:
           reviewDiffs.map((diff: DiffType) => 
             <Diff key={diff.number} diff={diff} extraColumn={extraQuery.data?.extraDiffColumn}/>
           )

@@ -83,7 +83,7 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
       name: username, 
       isRadio: true,
       isSelected: username === filter?.username,
-      onSelectOption: onSelectUser 
+      onSelectOption: onSelectUser
     };
   }
 
@@ -139,7 +139,13 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
   //const epicsOption = {...optionForUser('epics'), title: 'Epics'};
 
   //const roadmapOption: Option = {...optionForMode('roadmap'), icon: 'roadmap'};
-  const ticketsOption: Option = {...optionForMode('tickets'), icon: 'tickets'};
+  const ticketsOption: Option = { 
+            name: 'tickets', 
+            isRadio: true,
+            icon: 'tickets',
+            isSelected: filter?.username !== 'diffs' && filter?.username !== 'links',
+            onSelectOption: (option: Option) => onSelectUser({ name: 'none' })
+          };
   const linksOption: Option = {...optionForMode('links'), icon: 'link'};
   const diffsOption: Option = {...optionForMode('diffs'), icon: 'code'};
   const modeOptions: Option[] = [ticketsOption, diffsOption, linksOption];
