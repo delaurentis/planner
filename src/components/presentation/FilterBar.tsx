@@ -77,11 +77,22 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
       onSelectOption: onSelectTeam }
   ];
 
+  // Make an option for each mode
+  const optionForMode = (username: string): Option => {
+    return { 
+      name: username, 
+      isRadio: true,
+      isSelected: username === filter?.username,
+      onSelectOption: onSelectUser 
+    };
+  }
+
   // Make option out of user
   const optionForUser = (username: string): Option => {
     return { 
       name: username, 
       title: titleForUsername(username), 
+      isRadio: true,
       isSelected: username === filter?.username,
       onSelectOption: onSelectUser 
     };
@@ -124,17 +135,21 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
   // (This is a very hacky way to get Epics functionality.
   // The justification for being hacky is we want a quick prototype
   // so we can validate teh UX of this feature)
-  const teamOption = optionForUser('team');
-  const linksOption = {...optionForUser('links'), title: 'Links'};
-  const epicsOption = {...optionForUser('epics'), title: 'Epics'};
-  const noneOption = {...optionForUser('none'), title: titleForUnassignedIssues()};
-  const fixesOptions = {...optionForUser('fixes'), title: titleForFixedIssues()};
-  const diffsOption = {...optionForUser('diffs'), title: titleForDiffs()};
-  const userOptions = team?.usernames?.map((username: string) => optionForUser(username)) || [];
-  const variableOptions = team?.hideUserTabs ? [noneOption, diffsOption, linksOption] : [noneOption, diffsOption, linksOption].concat(userOptions);
+  //const teamOption = optionForUser('team');
+  //const epicsOption = {...optionForUser('epics'), title: 'Epics'};
+
+  //const roadmapOption: Option = {...optionForMode('roadmap'), icon: 'roadmap'};
+  const ticketsOption: Option = {...optionForMode('tickets'), icon: 'tickets'};
+  const linksOption: Option = {...optionForMode('links'), icon: 'link'};
+  const diffsOption: Option = {...optionForMode('diffs'), icon: 'code'};
+  const modeOptions: Option[] = [ticketsOption, diffsOption, linksOption];
+
+  const noneOption: Option = {...optionForUser('none'), title: titleForUnassignedIssues()};
+  const userOptions: Option[] = team?.usernames?.map((username: string) => optionForUser(username)) || [];
+  const variableOptions = [noneOption].concat(userOptions);
 
   // Put all of our groups together
-  return <OptionChips options={[mainOptions, variableOptions]}/>
+  return <OptionChips options={[mainOptions, modeOptions, variableOptions]}/>;
 
 }
 

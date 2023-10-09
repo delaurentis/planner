@@ -84,7 +84,7 @@ export interface OptionChoice {
 }
 
 export interface Option {
-  title: string;
+  title?: string;
   name: string;
   isSelected?: boolean;
   isSelectable?: boolean;
@@ -92,6 +92,7 @@ export interface Option {
   isDimmable?: boolean;
   isExpanded?: boolean;
   isExpandable?: boolean;
+  isRadio?: boolean;
   isMultiSelectable?: boolean;
   isBlank?: boolean;
   isSmall?: boolean;
@@ -99,6 +100,7 @@ export interface Option {
   isAutoComplete?: boolean;
   choices?: OptionChoice[],
   tip?: string;
+  icon?: string;
   onSelectOption?(option: Option, choice?: OptionChoice | undefined): void;
 }
 
