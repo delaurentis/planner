@@ -52,6 +52,11 @@
   border: 1px solid #A78DFF;
 }
 
+.Button[isdisabled='true']:hover {
+  background-color: #BFC6D1;
+  border: 1px solid #BFC6D1;
+}
+
 .Button[secondary='true'] {
   font-weight: 500;
   background-color: rgba(0,0,0,0);

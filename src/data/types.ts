@@ -17,6 +17,7 @@ export interface Filter {
   sprint?: number;
   milestone: string;
   team: string;
+  mode: string;
   username?: string;
   showClosed?: boolean;
 }

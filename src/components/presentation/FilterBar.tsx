@@ -16,7 +16,17 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
   
   const filter: Filter = props.filter;
   const onSelectUser = (option: Option) => { 
-    props.onChangeFilter?.({ ...filter, username: option.name }) 
+    props.onChangeFilter?.({ ...filter, username: option.name, mode: 'tickets' }) 
+    if ( option.name !== 'none' ) {
+      window.history.pushState(null, '', `/tickets/${option.name}`);
+    }
+    else {
+      window.history.pushState(null, '', `/tickets`);
+    }
+  };
+
+  const onSelectMode = (option: Option) => {
+    props.onChangeFilter?.({ ...filter, mode: option.name, username: option.name === 'tickets' ? 'none' : '' }) 
     window.history.pushState(null, '', `/${option.name}`);
   };
  
@@ -78,12 +88,12 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
   ];
 
   // Make an option for each mode
-  const optionForMode = (username: string): Option => {
+  const optionForMode = (mode: string): Option => {
     return { 
-      name: username, 
+      name: mode, 
       isRadio: true,
-      isSelected: username === filter?.username,
-      onSelectOption: onSelectUser
+      isSelected: mode === filter?.mode,
+      onSelectOption: onSelectMode
     };
   }
 
@@ -93,7 +103,7 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
       name: username, 
       title: titleForUsername(username), 
       isRadio: true,
-      isSelected: username === filter?.username,
+      isSelected: filter?.mode === 'tickets' && username === filter?.username,
       onSelectOption: onSelectUser 
     };
   }
@@ -139,13 +149,7 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
   //const epicsOption = {...optionForUser('epics'), title: 'Epics'};
 
   //const roadmapOption: Option = {...optionForMode('roadmap'), icon: 'roadmap'};
-  const ticketsOption: Option = { 
-            name: 'tickets', 
-            isRadio: true,
-            icon: 'tickets',
-            isSelected: filter?.username !== 'diffs' && filter?.username !== 'links',
-            onSelectOption: (option: Option) => onSelectUser({ name: 'none' })
-          };
+  const ticketsOption: Option = {...optionForMode('tickets'), icon: 'tickets'};
   const linksOption: Option = {...optionForMode('links'), icon: 'link'};
   const diffsOption: Option = {...optionForMode('diffs'), icon: 'code'};
   const modeOptions: Option[] = [ticketsOption, diffsOption, linksOption];

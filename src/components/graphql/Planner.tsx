@@ -97,9 +97,7 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
 
   // Create our milestones based on the filter - if it's All, include multiple
   const milestones = (): React.ReactNode => {
-    if ( filter.milestone === 'All' && 
-         filter.username !== 'diffs' && 
-         filter.username !== 'links' ) {
+    if ( filter.milestone === 'All' && filter.mode === 'tickets' ) {
       return <div>
         {recentMilestones.map((milestoneName: string) => {
           return <Milestone key={`Milestone${milestoneName}`} filter={{ ...filter, milestone: milestoneName }} epics={epics} isHiddenWhenEmpty={true}/>
@@ -122,12 +120,14 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
   const details = (): React.ReactNode | undefined => {
 
     // Don't show for any non-issue panes
-    if ( filter.username === 'diffs' || filter.username === 'links' ) {
-      return undefined;
-    }
+    if ( filter.mode === 'tickets' ) {
 
-    // Let's see if there's a selected issue right now
-    return <IssueDetail issueId={selectedIssueId}/>
+      // Let's see if there's a selected issue right now
+      return <IssueDetail issueId={selectedIssueId}/>
+    }
+    else {
+      return undefined
+    }
   }
 
   return (
