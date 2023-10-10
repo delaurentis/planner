@@ -2,10 +2,12 @@ import React from 'react';
 import MilestoneEpics from './MilestoneEpics';
 import UserIssues from './UserIssues';
 import VendorDiffs from './VendorDiffs';
+import LabelCreationActuator from './LabelCreationActuator';
 import Diffs from './Diffs';
 import Card from 'components/presentation/Card';
 import Listing from 'components/presentation/Listing';
 import { teams } from 'data/teams';
+import { organization } from 'data/customize';
 import { vendors } from 'data/vendors';
 import { Team, TeamLink, Filter, Epic } from 'data/types';
 
@@ -62,8 +64,11 @@ const Users: React.FC<UsersProps> = (props: UsersProps) => {
              {team?.usernames?.map(username => issuesForUsername(username))}
            </div>;
   }
-  else if ( props.filter.username === 'links' && team ) {
+  else if ( props.filter.mode === 'links' && team ) {
     return <div>{links()}</div>;
+  }
+  else if ( props.filter.mode === 'advanced' && team ) {
+    return <Card title="Advanced" titleUrl="" isLoading={false}><LabelCreationActuator groupId={organization}/></Card>;
   }
   else if ( props.filter.username === 'epics' ) {
     return <MilestoneEpics milestone={props.milestone}
@@ -72,7 +77,7 @@ const Users: React.FC<UsersProps> = (props: UsersProps) => {
                            labels={team?.labels}
                            team={team}/>;
   }
-  else if ( props.filter.username === 'diffs' ) {
+  else if ( props.filter.mode === 'diffs' ) {
     return <Diffs team={team} project={team?.project}/>;
   }
   else {

@@ -67,3 +67,21 @@ export const SUBGROUPS = gql`
   }
 `;
 
+export const CREATE_GROUP_LABEL = gql`
+  mutation CreateGroupLabel($groupId: ID!, $input: Any!) {
+    createGroupLabel(groupId: $groupId, input: $input) 
+      @rest(type: "Label", path: "/groups/{args.groupId}/labels", method: "POST") {
+      NoResponse
+    }
+  }
+`;
+
+// Fetch existing labels query
+export const FETCH_EXISTING_LABELS = gql`
+  query FetchExistingLabels($groupId: ID!) {
+    groupLabels(groupId: $groupId) 
+      @rest(type: "Label", path: "/groups/{args.groupId}/labels?per_page=1000") {
+      name
+    }
+  }
+`;

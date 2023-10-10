@@ -1,0 +1,27 @@
+.Actuator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+/*  border-left: 1px solid rgba(0,0,0,0.15);
+  border-top: 1px solid rgba(0,0,0,0.15);
+  border-right: 1px solid rgba(0,0,0,0.15);*/
+  border-top: 1px solid rgba(0,0,0,0.15);
+  padding: 20px;
+}
+
+.Actuator:last-child {
+/*  border-bottom: 1px solid rgba(0,0,0,0.15);*/
+}
+
+.ActuatorInfo {
+  flex-grow: 1;
+}
+
+.ActuatorTitle {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.ActuatorDescription {
+  font-weight: normal;
+}
