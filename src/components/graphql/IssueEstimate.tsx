@@ -16,9 +16,7 @@ const IssueEstimate: React.FC<IssueEstimateProps> = (props) => {
 
   // Show both weeks
   return (
-    <span>
-        <Input value={props.issue.humanTimeEstimate} onBlur={handleBlur}/>
-    </span>
+    <Input value={props.issue.humanTimeEstimate} onBlur={handleBlur}/>
   );
 }
 

@@ -2,8 +2,7 @@
   margin-bottom: 2em;
   background: white;
   margin-bottom: 1em;
-  padding-top: 0.5em;
-  padding-bottom: 0.5em;
+  padding-top: 0em;
   margin-left: 20px;
   border-radius: 10px;
   max-width: 1200px;
@@ -15,8 +14,9 @@
   display: flex;
   justify-content: space-between;
   padding-top: 0.5em;
-  padding-bottom: 0.75em;
-  margin-left: 20px;
+  padding-left: 20px;
+  min-height: 28px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 
 .CardTitles {
@@ -27,13 +27,13 @@
   text-decoration: none;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
   "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",sans-serif;
-  font-size: 1.2em;
+  font-size: 1.1em;
   font-weight: bold;
 }
 
 .CardSubtitle {
   color: #AEB6C0;
-  font-size: 0.95em;
+  font-size: 0.875em;
   font-weight: 500;
   justify-self: left;
   padding-left: 0.75em;
@@ -79,6 +79,8 @@
 .CardContent {
   opacity: 1;
   transition: 0.5s linear;
+  border-radius: 0px 0px 10px 10px;
+  overflow: clip;
 }
 
 .CardContent[loading='true'] {

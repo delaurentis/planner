@@ -11,12 +11,12 @@
   transition: border-color 0.25s linear, background-color 0.25s linear, box-shadow 0.25s linear;
   cursor: pointer;
   user-select: none;
-  padding: 0em 1em 0em 1em;
+  padding: 0em 0.9em 0em 0.9em;
+  margin-top: 1px;
   vertical-align: middle;
-  line-height: 2.2em;
-  height: 2.2em;  
-  font-size: 0.95em;
-  font-size: 0.9em;
+  line-height: 24px;
+  height: 24px;  
+  font-size: 0.875em;
   font-weight: 500;
 }
 

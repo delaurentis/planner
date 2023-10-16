@@ -29,6 +29,7 @@ const Week: React.FC<WeekProps> = (props) => {
               isScheduled={props.dayLabels.includes(day.label)}
               onChangeSchedule={handleChangeSchedule}/>
        )}
+       <span className={styles.WeekSeparator}/>
     </span>
   );
 }

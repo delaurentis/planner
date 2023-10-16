@@ -148,11 +148,11 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
   //const teamOption = optionForUser('team');
   //const epicsOption = {...optionForUser('epics'), title: 'Epics'};
 
-  //const roadmapOption: Option = {...optionForMode('roadmap'), icon: 'roadmap'};
+  const roadmapOption: Option = {...optionForMode('roadmap'), icon: 'roadmap'};
   const ticketsOption: Option = {...optionForMode('tickets'), icon: 'tickets'};
   const linksOption: Option = {...optionForMode('links'), icon: 'link'};
   const diffsOption: Option = {...optionForMode('diffs'), icon: 'code'};
-  const modeOptions: Option[] = [ticketsOption, diffsOption, linksOption];
+  const modeOptions: Option[] = [roadmapOption, ticketsOption, diffsOption, linksOption];
 
   const noneOption: Option = {...optionForUser('none'), title: titleForUnassignedIssues()};
   const userOptions: Option[] = team?.usernames?.map((username: string) => optionForUser(username)) || [];

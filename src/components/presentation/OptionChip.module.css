@@ -9,10 +9,11 @@
   padding-right: 0.9em;
   border-radius: 1em;
   border: 1px solid rgba(0,0,0,0.15);
+  box-sizing: border-box;
   user-select: none;
   font-weight: 500;
   color: rgba(0,0,0,0.5);
-  font-size: 0.93em;
+  font-size: 0.875em;
   position: relative;
   align-items: center;
 }
@@ -42,14 +43,17 @@
 }
 
 .Chip[issmall='true'] {
+  height: 24px;
   display: inline-flex;
-  margin-top: -0.2em;
   border-radius: 20px;
+  padding-left: 0.7em;
+  padding-right: 0.7em;
   font-size: 0.9em;
   margin-bottom: 0.1em;
-  margin-left: 0.75em;
-  margin-right: 0em;
+  /*margin-left: 0.75em;
+  margin-right: 0em;*/
 }
+
 
 .Chip[isiconic='true'] {
   padding: 0.1em 0.1em 0em 0em;
@@ -108,15 +112,6 @@
   opacity: 1.0;
 }
 
-.Chip[issmall='true'] {
-  display: inline-flex;
-  margin-top: -0.2em;
-  border-radius: 20px;
-  font-size: 0.9em;
-  margin-bottom: 0.1em;
-  margin-left: 0.75em;
-  margin-right: 0em;
-}
 
 /*
 .Chip[istoggleable='true'] {
