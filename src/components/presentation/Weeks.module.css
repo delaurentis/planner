@@ -1,0 +1,6 @@
+.Weeks {
+  display: flex;
+  align-items: stretch;
+  flex-direction: row;
+  height: 32px;
+}

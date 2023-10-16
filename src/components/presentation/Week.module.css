@@ -1,10 +1,20 @@
 .Week {
-  border-radius: 20px;
   overflow: hidden;
   position: relative;
-  display: inline-block;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
 }
 
-.Week + .Week {
-  margin-left: 0.5em;
+.WeekSeparator {
+  border-left: 1px solid rgba(0,0,0,0.1);
+}
+
+.Week:not(:last-child) .WeekSeparator {
+  width: 10px;
+  background: #E0E0E255;
+}
+
+.Week:last-child .WeekSeparator {
+  width: 0px; 
 }

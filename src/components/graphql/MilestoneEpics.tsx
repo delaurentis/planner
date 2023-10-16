@@ -4,7 +4,7 @@ import Card from '../presentation/Card';
 import { Epic as EpicType, Team } from 'data/types';
 
 import { useQuery } from '@apollo/client';
-import { MILESTONE_EPICS } from 'data/queries';
+import { OPEN_EPICS } from 'data/queries';
 import { polling } from 'data/polling';
 import { organization } from 'data/customize';
 
@@ -33,12 +33,13 @@ const MilestoneEpics: React.FC<MilestoneEpicsProps> = (props: MilestoneEpicsProp
   }
   
   // Load open AND closed issues from cache, then API, and then refresh every second
-  const gqlOpen = MILESTONE_EPICS;
+  const gqlOpen = OPEN_EPICS;
   const open = useQuery(gqlOpen, { pollInterval: polling.frequency.epics, variables: variables() }) || {};
   // const closed = useQuery(CLOSED_ISSUES, { pollInterval: 1200, variables: variables() }) || {};
 
   // Extract our issues from the data returned
   const openNodes = open.data?.group?.epics?.nodes || [];
+  console.log('Open Nodes: ', open);
 
   const hash = openNodes.reduce((hash, node) => {
     hash[node.id] = node;
@@ -104,11 +105,11 @@ const MilestoneEpics: React.FC<MilestoneEpicsProps> = (props: MilestoneEpicsProp
 
   const openEpics = () => uniqueNodes.map((epic: any) => 
     <Epic key={epic.id} 
-           epic={epic} 
-           team={props.team}
-           milestone={props.milestone}
-           extraColumn={'Labels'} 
-           onUpdateEpic={handleUpdateEpic}/>
+          epic={epic} 
+          team={props.team}
+          milestone={props.milestone}
+          extraColumn={'Labels'} 
+          onUpdateEpic={handleUpdateEpic}/>
   );
 
   // Controls what we show in the right column

@@ -1,17 +1,19 @@
 .Listing {
   text-align: left;
-  padding-top: 0.75em;
-  border-top: 1px solid rgba(0, 0, 0, 0.07);
-  padding-bottom: 0.75em;
+  /*border-top: 1px solid rgba(0, 0, 0, 0.07);*/
+  /*box-sizing: border-box;*/
+  border: none;
   font-weight: 400;
-  font-size: 0.93em;
+  font-size: 0.875em;
   display: flex;
   justify-content: space-between;
   position: relative;
   background-color: white;
   transition: background-color 1s linear;
-  min-height: 1.9em;
+  min-height: 32px;
+  padding: 0;
   transition: none;
+  box-shadow: inset 0 -1px 0 0px rgba(0,0,0,0.1);
 }
 
 .Listing:hover {
@@ -20,12 +22,10 @@
 }
 
 .Listing[actions='true'] {
-  padding-top: 9px;
-  padding-bottom: 9px;
 }
 
 .Listing[highlighted='true'] {
-  box-shadow: inset 4px 0px 0px 0px rgba(126,87,255,1.0); 
+  box-shadow: inset 0 -1px 0 0px rgba(0,0,0,0.1), inset 4px 0px 0px 0px rgba(126,87,255,1.0); 
 }
 
 .Listing[new='true'] {
@@ -37,11 +37,16 @@
 }
 
 .Listing[selecting='true'] {
-  background-color: #EFEBFF;
+  background-color: #EFEBFFbb;
 }
 
+/*.Listing[selecting='true'] .Extra, .Listing:hover .Extra {
+  background-color: #ffffff;
+}*/
+
+
 .Listing[selecting='true']:hover {
-  background-color: #eae6fd;
+  background-color: #eae6fdbb;
 }
 
 .Listing[dimmed='true'] .Link {
@@ -109,28 +114,27 @@
 
 .IconAndTitle {
   white-space: nowrap;
-  padding-top: 0.2em;
-  padding-bottom: 0.2em;
   display: flex;
   align-content: top;
   justify-content: top;
-  margin-top: 4px;
+  margin-top: 5px;
 }
 
 .Link {
   display: inline-block;
   color: black;
   text-decoration: none;
-  white-space: normal;
   cursor: pointer;
-  max-width: 600px;
   margin-top: 2px;
+  max-width: 540px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .Listing[linking='true'] .Link:hover {
   color: #7E57FF;
 }
-
 
 .Chips {
   margin-top: 0.5em;
@@ -142,26 +146,35 @@
 }
 
 .Extra {
-  margin-top: 4px;
-  margin-left: 50px;
+  margin-left: 20px;
   justify-self: right;
   align-self: right;
-  margin-right: 2em;
+  margin-right: 16px;
   text-align: right;
-  display: flex;
+  display: inline-flex;
+  align-items: center;
   flex-direction: row;
   white-space: nowrap;
+  align-items: center;
+}
+
+.ExtraChild {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 .ExtraChild + .ExtraChild {
   display: flex;
-  margin-left: 20px;
+  margin-left: 0px;
   margin-top: 0px;
   margin-bottom: 0px;
 }
 
 .Input {
   border: none;
+  margin-top: -7px;
+  margin-left: -2px;
   width: 35em;
   outline: none;
   font-size: 1em;
@@ -169,6 +182,10 @@
   align-content: top;
   justify-content: top;
   background: rgba(0,0,0,0);
+}
+
+.Input::placeholder {
+  color: rgba(0,0,0,0.35);
 }
 
 .Buttons {
@@ -180,13 +197,13 @@
 .Button {
   position: absolute;
   right: 2.1em;
-  top: 0.8em;
+  top: 2px;
 }
 
 .Radio {
   position: absolute;
   right: 7.9em;
-  top: 0.8em;
+  top: 2px;
 }
 
 .EnvironmentOptions {
@@ -214,6 +231,11 @@
 
   .Link {
     max-width: 300px;
+    margin-top: 2px;
+    margin-bottom: 0.6em;
+    overflow: default;
+    white-space: normal;
+  
   }
 
   .Input {

@@ -270,6 +270,13 @@ const Issue: React.FC<IssueProps> = (props) => {
                                onUpdate={(update) => handleUpdate(update, issue)}
                                isPrompt={false}/>]
     }
+    else if ( props.extraColumn === 'Settings' ) {
+      return [<IssueFlags issue={issue} 
+                          flags={flagsFromLabelNames(labelNames)}
+                          categories={['Settings']}
+                          isIconOnly={false}
+                          onUpdate={(update) => handleUpdate(update, issue)}/>]
+    }
     else if ( props.extraColumn === 'Surprises' ) {
       return [<IssueFlags issue={issue} 
                           flags={flagsFromLabelNames(labelNames)}

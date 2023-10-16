@@ -14,7 +14,7 @@ import { CATEGORY_FEATURE, CATEGORY_BUG } from 'data/categories';
 import styles from './Listing.module.css';
 import { environments } from 'data/environments';
 
-interface ListingProps {
+export interface ListingProps {
   actions?: ActionType[];
   icon?: string;
   title?: string;
@@ -28,7 +28,7 @@ interface ListingProps {
   isShowingActionShortcuts?: boolean;
   isHighlighted?: boolean;
   isSelected?: boolean;
-  isDimmed?: Boolean;
+  isDimmed?: boolean;
   isNew?: boolean;
   isEditing?: boolean;
   isCreating?: boolean;

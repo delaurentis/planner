@@ -92,7 +92,8 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
   }
 
   // Get a list of epics (don't refresh as we go at the moment)
-  const epicsQuery = useQuery(OPEN_EPICS, { variables: { labels: team?.labels, groupPath: organization }});
+  //const epicsQuery = useQuery(OPEN_EPICS, { variables: { labels: team?.labels, groupPath: organization }});
+  const epicsQuery = useQuery(OPEN_EPICS, { variables: { labels: [], groupPath: organization }});
   const epics = epicsQuery.data?.group?.epics?.nodes || [];
 
   // Create our milestones based on the filter - if it's All, include multiple

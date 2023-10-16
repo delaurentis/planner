@@ -462,7 +462,7 @@ export const PROJECT = gql`
 `;
 
 export const SET_ISSUE_EPIC = gql`
-  mutation($projectPath: ID!, $iid: String!, $epicId: ID!) {
+  mutation($projectPath: ID!, $iid: String!, $epicId: EpicID!) {
     issueSetEpic(input: { 
         projectPath: $projectPath,
         iid: $iid,

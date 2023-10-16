@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { Issue as IssueType} from 'data/types';
-import Week from 'components/presentation/Week';
+import Weeks from 'components/presentation/Weeks';
 
 interface IssueScheduleProps {
   issue: IssueType;
@@ -29,11 +29,9 @@ const IssueSchedule: React.FC<IssueScheduleProps> = (props) => {
 
   // Show both weeks
   return (
-    <span>
-      <Week week={1} days={['W','Th','F']} dayLabels={labelNames} onChangeSchedule={handleChangeSchedule}/>
-      <Week week={2} dayLabels={labelNames} onChangeSchedule={handleChangeSchedule}/>
-      <Week week={3} days={['M','T']} dayLabels={labelNames} onChangeSchedule={handleChangeSchedule}/>
-    </span>
+    <Weeks weeks={[['W','Th','F'],['M','T','W','Th','F'], ['M','T']]} 
+           dayLabels={labelNames} 
+           onChangeSchedule={handleChangeSchedule}/>
   );
 }
 
