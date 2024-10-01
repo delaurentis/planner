@@ -126,7 +126,7 @@
   text-decoration: none;
   cursor: pointer;
   margin-top: 2px;
-  max-width: 540px;
+  max-width: 530px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -149,7 +149,7 @@
   margin-left: 20px;
   justify-self: right;
   align-self: right;
-  margin-right: 16px;
+  margin-right: 6px;
   text-align: right;
   display: inline-flex;
   align-items: center;
@@ -162,6 +162,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  
 }
 
 .ExtraChild + .ExtraChild {

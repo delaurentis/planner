@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Icon, { NamedIconProps } from 'components/icons/Icon';
 
-const iconNames = ['caret-up', 'caret-down', 'x', 'roadmap', 'tickets', 'code', 'link'];
+const iconNames = ['caret-up', 'caret-down', 'x', 'roadmap', 'tickets', 'code', 'link', 'design', 'build', 'launch'];
 
 export default {
   component: Icon,
@@ -77,6 +77,15 @@ export const Modes: StoryObj<NamedIconProps> = {
   render: (args) => {
     const modeIcons = ["roadmap", "tickets", "code", "link"];
     return <IconGallery iconNames={modeIcons} args={args} />;
+  },
+  args: {}
+};
+
+// Jobs Story
+export const Jobs: StoryObj<NamedIconProps> = {
+  render: (args) => {
+    const jobIcons = ["design", "build", "launch"];
+    return <IconGallery iconNames={jobIcons} args={args} />;
   },
   args: {}
 };

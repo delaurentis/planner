@@ -12,7 +12,8 @@ const Weeks: React.FC<WeekProps> = (props) => {
   return (
     <span className={styles.Weeks}>
        {props.weeks.map((week, index) => 
-         <Week week={index + 1} 
+         <Week key={`Week${index}`}
+               week={index + 1} 
                days={week}
                dayLabels={props.dayLabels} 
                onChangeSchedule={props.onChangeSchedule}/>
@@ -20,7 +21,5 @@ const Weeks: React.FC<WeekProps> = (props) => {
     </span>
   );
 }
-
-
 
 export default Weeks;

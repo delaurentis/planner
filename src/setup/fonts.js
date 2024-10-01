@@ -1,4 +1,4 @@
-const FONTS_URL = '/public/fonts';
+const FONTS_URL = '/fonts';
 const fontStack = `
 @font-face {
   font-family: 'Inter';
