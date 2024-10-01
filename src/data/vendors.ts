@@ -112,7 +112,6 @@ export const requestVendorAccessToken = async (vendorName: string, options: any)
 
     // Lookup the vendor code verifier
     const codeVerifier = window.localStorage.getItem(`${vendorName}CodeVerifier`);
-    console.log("Code verifier:", codeVerifier);
 
     // Compute the body differently if we're refreshing a token 
     // instead of getting one the first time
