@@ -1,0 +1,41 @@
+.Cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8em;
+  color: #D5D5D5;
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+  text-align: center;
+  user-select: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  border-left: 1px solid rgba(0,0,0,0.1);
+}
+
+.Cell:last-child {
+  border-right: 1px solid rgba(0,0,0,0.1);
+}
+
+.Cell:hover {
+  background-color: #DDD6FC88;
+  color: #AAAAAA;
+}
+
+.filled {
+  background-color: #DDD6FC;
+  color: #7859F6;
+  box-shadow: inset 0 -1px 0 0px rgba(0,0,0,0.1);
+}
+
+.filled:hover {
+  background-color: #D0C6FB;
+  color: #623DF5;
+}
+
+.tag {
+  display: inline-block;
+  margin-top: 8px;
+}
