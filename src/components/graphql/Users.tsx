@@ -9,12 +9,12 @@ import Listing from 'components/presentation/Listing';
 import { teams } from 'data/teams';
 import { organization } from 'data/customize';
 import { vendors } from 'data/vendors';
-import { Team, TeamLink, Filter, Epic } from 'data/types';
+import { Team, TeamLink, Filter, Epic, MilestoneLibrary } from 'data/types';
 
 interface UsersProps {
   filter: Filter;
   milestone?: any;
-  milestones?: any[];
+  milestones: MilestoneLibrary;
   epics?: Epic[];
   isHiddenWhenEmpty?: boolean;
 }
@@ -44,6 +44,7 @@ const Users: React.FC<UsersProps> = (props: UsersProps) => {
   const issuesForUsername = (username: string) => {
     return (
       <UserIssues milestone={props.milestone} 
+                  milestones={props.milestones}
                   showClosed={props.filter.showClosed || false} 
                   username={username}
                   epics={props.epics}

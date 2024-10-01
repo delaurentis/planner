@@ -1,42 +1,101 @@
-import { OptionChoice } from './types';
+import { OptionChoice, Milestone, MilestoneLibrary } from './types';
 
-const milestoneChoice = (quarter: number, sprint: number) => {
-  return { metadata: { milestone: `Q${quarter}S${sprint}`, quarter, sprint }, title: `Q${quarter}S${sprint}` };
+// How many past sprints with uncompleted tasks should we show
+const recentIncompleteSprintsToShow = 3;
+
+// Categorize our milestones into a quick to access library
+export const libraryFromMilestones = (milestones: Milestone[]): MilestoneLibrary => {
+
+  // Convert all milestones to apply: parseInt(milestoneFound.id.split('/').slice(-1)[0])
+  const milestonesWithIds: Milestone[] = milestones.map((milestone: Milestone) => {
+    return { ...milestone, id: milestone.id && milestone.id.split('/').slice(-1)[0] };
+  });
+
+  // Sort milestones in ascending order and filter out any milestones 
+  // without start and end dates because those aren't sprints!
+  const sortedSprints = milestonesWithIds
+    .filter(m => m.startDate && m.dueDate) 
+    .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime()); 
+
+  // What day is it?
+  const now = new Date();
+
+  // Find out when the current sprint is based on start and due dates
+  const currentSprintIndex = sortedSprints.findIndex(m => 
+    new Date(m.startDate!) <= now && new Date(m.dueDate!) >= now
+  );
+  
+  // Get the current sprint if our index is > -1
+  const currentSprint: Milestone | undefined = currentSprintIndex >= 0 ? sortedSprints[currentSprintIndex] : undefined;
+
+  // Our recent sprints is right now just 2 sprints back
+  // We could in the future do a certain # before
+  const recentSprints: Milestone[] = sortedSprints.slice(currentSprintIndex - recentIncompleteSprintsToShow, currentSprintIndex);
+  
+  //currentSprintIndex >= 1 ? [sortedSprints[currentSprintIndex - 1]]: []
+
+  // Remaining milestones are all the milestones that haven't finished yet (or may not have started yet)
+  const remainingSprints: Milestone[] = sortedSprints.filter(milestone => 
+    milestone.dueDate && new Date(milestone.dueDate) >= now);
+
+  // Put together our library data structure
+  return {
+    allMilestones: milestonesWithIds,
+    recentSprints: recentSprints,
+    remainingSprints: remainingSprints,
+    currentSprint: currentSprint
+  };
+};
+
+// Return a milestone object based on it's title only
+export const milestoneFromTitle = (title: string, milestones: MilestoneLibrary): Milestone => {
+  return milestones.allMilestones.find(milestone => milestone.title === title) || { title: title };
 }
 
-// TODO: Auto-compute these based on where we are in sprint calendar + automatic radius
-export const milestoneChoices = (): OptionChoice[] => [
-  { metadata: { milestone: 'All' }, title: 'All' },
-  milestoneChoice(3, 1),
-  milestoneChoice(3, 2),
-  milestoneChoice(3, 3),
-  milestoneChoice(3, 4),
-  milestoneChoice(3, 5),
-  milestoneChoice(3, 6),
-  milestoneChoice(3, 7),
-  milestoneChoice(4, 1),
-  milestoneChoice(4, 2),
-  milestoneChoice(4, 3),
-  { metadata: { milestone: 'Backlog' }, title: 'Backlog' },
-  { metadata: { isChoosingMilestone: true }, title: '⋯' },
-];
+// Give back sprints within a certain symmetric radius (in # of sprints) of the current sprint
+export const sprintsWithinRadius = (milestones: Milestone[], radius: number = 3): Milestone[] => {
+  const now = new Date();
+  const totalSprints = radius * 2 + 1; 
 
-// TODO: Switch this for a dynamic list
-export const recentMilestones: string[] = [
-  'Q3S3'
-];
+  const sortedMilestones = milestones
+    .filter(m => m.startDate && m.dueDate) // Filter out milestones without start or due dates
+    .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime()); // Sort in descending order
 
-// TODO: Switch this for a dynamic list
-export const currentMilestone: string = 'Q3S4';
-export const currentYear: number = 22;
-export const currentQuarter: number = 3;
-export const currentSprint: number = 4;
+  const currentSprintIndex = sortedMilestones.findIndex(m => 
+    new Date(m.startDate!) <= now && new Date(m.dueDate!) >= now
+  );
 
-// TODO: Switch this for a dynamic list
-export const upcomingMilestones: string[] = [
-  'Q3S4',
-  'Q3S5',
-  'Q3S6',
-  'Q3S7',
-];
+  if (currentSprintIndex === -1) {
+    // If no current sprint, return the 7 most recent sprints
+    return sortedMilestones.slice(-totalSprints);
+  } else {
+    // If there's a current sprint, return radius sprints before and after, plus the current sprint
+    const start = Math.max(0, currentSprintIndex - radius);
+    return sortedMilestones.slice(start, start + totalSprints);
+  }
+};
 
+// Return a list of choices to show in the dropdown in the \
+export const milestoneChoices = (milestones: MilestoneLibrary): OptionChoice[] => {
+  const relevantMilestones = sprintsWithinRadius(milestones.allMilestones, 3);
+  const relevantMilestoneChoices = relevantMilestones.map(milestone => ({
+    metadata: { 
+      milestone: milestone.title,
+      id: milestone.id,
+      startDate: milestone.startDate,
+      dueDate: milestone.dueDate
+    },
+    title: milestone.title
+  }));
+
+  const choices: OptionChoice[] = [
+    { metadata: { milestone: 'All' }, title: 'All' },
+    ...relevantMilestoneChoices,
+    { metadata: { milestone: 'Backlog' }, title: 'Backlog' },
+    { metadata: { milestone: 'Opportunities' }, title: 'Opportunities' },
+    { metadata: { milestone: 'Ideas' }, title: 'Ideas' },
+    { metadata: { isChoosingMilestone: true }, title: '⋯' },
+  ];
+
+  return choices;
+};

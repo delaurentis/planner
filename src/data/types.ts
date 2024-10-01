@@ -105,6 +105,12 @@ export interface Option {
   onSelectOption?(option: Option, choice?: OptionChoice | undefined): void;
 }
 
+export interface CellContents {
+  tag: string;
+  icon?: string;
+  isFilled?: boolean;
+}
+
 export interface Action {
   icon: string;
   name: string;
@@ -134,6 +140,7 @@ export interface Issue {
   description?: string;
   milestone?: Milestone;
   humanTimeEstimate?: string;
+  humanTotalTimeSpent?: string;
   dueDate?: string;
 }
 
@@ -152,6 +159,15 @@ export interface Milestone {
   iid?: number;
   id?: string;
   title: string;
+  startDate?: string;
+  dueDate?: string;
+}
+
+export interface MilestoneLibrary {
+  allMilestones: Milestone[];
+  recentSprints: Milestone[];
+  remainingSprints: Milestone[];
+  currentSprint?: Milestone;
 }
 
 export interface Resolution {

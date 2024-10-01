@@ -1,13 +1,14 @@
 import React from 'react';
 import OptionChips from './OptionChips';
 import { teams, titleForUsername } from 'data/teams';
-import { Team, Filter, FilterReadouts, Option, OptionChoice } from 'data/types';
+import { Team, Filter, FilterReadouts, Option, OptionChoice, MilestoneLibrary } from 'data/types';
 import { milestoneChoices } from 'data/milestones';
 import { capitalizeFirstLetter } from 'util/capitalize'
 
 interface FilterBarProps {
   filter: Filter;
   readouts: FilterReadouts;
+  milestones: MilestoneLibrary;
   onChangeFilter?(changedFilter: Filter): void;
   onChooseMilestone?(): void;
 }
@@ -28,7 +29,7 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
   const onSelectMode = (option: Option) => {
     props.onChangeFilter?.({ ...filter, mode: option.name, username: option.name === 'tickets' ? 'none' : '' }) 
     window.history.pushState(null, '', `/${option.name}`);
-  };
+  }
  
   const onSelectWhen = (option: Option, choice?: OptionChoice | undefined) => {
     if ( choice?.metadata.isChoosingMilestone ) {
@@ -75,7 +76,7 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
       isSelected: true, 
       isSelectable: true,
       isExpandable: true, 
-      choices: milestoneChoices(),
+      choices: milestoneChoices(props.milestones),
       onSelectOption: onSelectWhen },
     
     { title: filter.team, 

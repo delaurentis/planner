@@ -4,9 +4,9 @@ import Arena from '../presentation/Arena';
 import Header from '../presentation/Header';
 import Milestone from './Milestone';
 import { teams } from 'data/teams';
-import { upcomingMilestones, recentMilestones, currentMilestone } from 'data/milestones';
-import { Filter, FilterReadouts, Team, Milestone as MilestoneType } from 'data/types';
-import { FILTER, OPEN_UNASSIGNED_ISSUES, OPEN_EPICS, ALL_BUG_ISSUES, SELECTED_ISSUE } from 'data/queries';
+import { libraryFromMilestones } from 'data/milestones';
+import { Filter, FilterReadouts, Team, Milestone as MilestoneType, MilestoneLibrary } from 'data/types';
+import { FILTER, OPEN_UNASSIGNED_ISSUES, OPEN_EPICS, ALL_BUG_ISSUES, SELECTED_ISSUE, MILESTONES } from 'data/queries';
 import { useQuery, useApolloClient } from '@apollo/client';
 import { polling } from 'data/polling';
 import { organization } from 'data/customize';
@@ -34,7 +34,7 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
     if ( isChoosingMilestone ) {
       return (
         <span>
-          <IssueMilestones 
+         <IssueMilestones 
             onCancel={() => { setChoosingMilestone(false); }}
             onSelectMilestone={(milestone: MilestoneType) => { 
 
@@ -51,30 +51,35 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
     return undefined;
   }
 
-  // What milestone names should we query?
-  /*const milestoneNames = (): string[] => {
-    if ( filter.milestone === 'All' ) {
-      return upcomingMilestones;
-    }
-    return [filter.milestone];
-  }*/
+  // We'll use the team to display a list, but even if it's just one, we'll use it to get the right labels
+  const team: Team | undefined = filter.team ? teams[filter.team] : undefined;
+
+  // Lookup the team name to get the members
+  // const teamQuery = useQuery(GROUP_MEMBERS, { variables: { groupName: 'software-team' }});
+
+  // Get our milestones here, and interpret start and due dates to figure out which is current, past, future
+  // Pack all that info into the milestones library, to make it fast and efficient to work with in individual issues
+  const milestonesQuery = useQuery(MILESTONES, { variables: { groupPath: organization }});
+  const milestones: MilestoneLibrary = libraryFromMilestones(milestonesQuery.data?.group?.milestones?.nodes || []);
 
   // TODO: I put this up here so we could always have the unassigned count
   // but am not thrilled about it.  I'd like to move this logic elsewhere
-  //
+
   // If we have a milestone, we want to do another query to get # of unassigned issues
   // Figure out our variables for the query
-  // We'll use the team to display a list, but even if it's just one, we'll use it to get the right labels
-  const team: Team | undefined = filter.team ? teams[filter.team] : undefined;
-  
   const unassignedQuery = useQuery(OPEN_UNASSIGNED_ISSUES, { 
     pollInterval: polling.frequency.unassignedIssueCount, 
-    variables: { username: 'none', milestones: [currentMilestone], labels: team?.labels } });
-  
+    variables: { username: 'none', milestones: milestones.currentSprint, labels: team?.labels },
+    skip: !milestones.currentSprint
+  });
+
   const bugQuery = useQuery(ALL_BUG_ISSUES, { 
     pollInterval: polling.frequency.bugCount, 
-    variables: { milestones: [currentMilestone], labels: [...team?.labels || [], '🐞 Bug'] } });
+    variables: { milestones: milestones.currentSprint, labels: [...team?.labels || [], '🐞 Bug'] },
+    skip: !milestones.currentSprint
+  });
 
+  // Helper function to count the results of our unassigned and bug queries
   const countQueryResults = (query, state: string | undefined = undefined) => {
     const nodes = query.data?.group?.issues?.nodes || [];
     if ( state ) {
@@ -85,6 +90,9 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
     }
   }
 
+  // Added a comment
+
+  // Compute the counts for our different categories of issues
   const filterReadouts = (): FilterReadouts => {
     return { unassignedIssueCount: countQueryResults(unassignedQuery),
              fixedBugCount: countQueryResults(bugQuery, 'closed'),
@@ -92,25 +100,34 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
   }
 
   // Get a list of epics (don't refresh as we go at the moment)
-  //const epicsQuery = useQuery(OPEN_EPICS, { variables: { labels: team?.labels, groupPath: organization }});
   const epicsQuery = useQuery(OPEN_EPICS, { variables: { labels: [], groupPath: organization }});
   const epics = epicsQuery.data?.group?.epics?.nodes || [];
 
   // Create our milestones based on the filter - if it's All, include multiple
-  const milestones = (): React.ReactNode => {
+  const milestoneCards = (): React.ReactNode => {
     if ( filter.milestone === 'All' && filter.mode === 'tickets' ) {
       return <div>
-        {recentMilestones.map((milestoneName: string) => {
-          return <Milestone key={`Milestone${milestoneName}`} filter={{ ...filter, milestone: milestoneName }} epics={epics} isHiddenWhenEmpty={true}/>
+        {milestones.recentSprints.map((milestone: MilestoneType) => {
+          return <Milestone key={`Milestone${milestone.title}`} 
+                            filter={{ ...filter, milestone: milestone.title }} 
+                            milestones={milestones} 
+                            epics={epics} 
+                            isHiddenWhenEmpty={true}/>
         })}
-        {upcomingMilestones.map((milestoneName: string) => {
-          return <Milestone key={`Milestone${milestoneName}`} filter={{ ...filter, milestone: milestoneName }} epics={epics}/>
+        {milestones.remainingSprints.map((milestone: MilestoneType) => {
+          return <Milestone key={`Milestone${milestone.title}`} 
+                            filter={{ ...filter, milestone: milestone.title }} 
+                            milestones={milestones} 
+                            epics={epics} 
+                            isHiddenWhenEmpty={true}/>
         })}
-        <Milestone key="MilestoneNone" filter={{ ...filter, milestone: "none" }} epics={epics}/>
-        <Milestone key="MilestoneBacklog" filter={{ ...filter, milestone: "Backlog" }} epics={epics}/>
+        <Milestone key="MilestoneNone" filter={{ ...filter, milestone: "none" }} milestones={milestones} epics={epics}/>
+        <Milestone key="MilestoneBacklog" filter={{ ...filter, milestone: "Backlog" }} milestones={milestones} epics={epics}/>
+        <Milestone key="MilestoneOpportunities" filter={{ ...filter, milestone: "Opportunities" }} milestones={milestones} epics={epics}/>
+        <Milestone key="MilestoneIdeas" filter={{ ...filter, milestone: "Ideas" }} milestones={milestones} epics={epics}/>
       </div>
     }
-    return <Milestone filter={filter} epics={epics}/>
+    return <Milestone filter={filter} milestones={milestones} epics={epics}/>
   }
 
   // Lookup the selected issue ID, if there is one
@@ -136,11 +153,12 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
       <Header>
         <FilterBar filter={filter} 
                    readouts={filterReadouts()} 
+                   milestones={milestones}
                    onChangeFilter={handleChangeFilter}
                    onChooseMilestone={() => setChoosingMilestone(true)}/>
       </Header>
       <Arena detailPane={details()}>
-        {milestones()}
+        {milestoneCards()}
         {milestonePicker()}
       </Arena>
     </div>

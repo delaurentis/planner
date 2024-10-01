@@ -9,6 +9,7 @@ import { Issue as IssueType,
          Action as ActionType,
          Epic as EpicType, 
          Milestone as MilestoneType,
+         MilestoneLibrary,
          Team } from 'data/types';
 import Listing from 'components/presentation/Listing';
 import Chip from 'components/presentation/Chip';
@@ -21,6 +22,7 @@ import IssueEnvironment from './IssueEnvironment';
 import IssueResolution from './IssueResolution';
 import IssueFlags from './IssueFlags';
 import IssueEstimate from './IssueEstimate';
+import IssueTimeSpent from './IssueTimeSpent';
 import IssueDeadline from './IssueDeadline';
 import IssueProject from './IssueProject';
 import IssueSchedule from './IssueSchedule';
@@ -40,7 +42,7 @@ interface IssueProps {
   isShowingActionShortcuts?: boolean;
   extraColumn?: string;
   milestone?: MilestoneType,
-  milestones?: MilestoneType[],
+  milestones: MilestoneLibrary,
   epics?: EpicType[];
   team?: Team;
   defaultCategory?: string;
@@ -334,7 +336,8 @@ const Issue: React.FC<IssueProps> = (props) => {
       // It's a slightly different beast than the other typeahead entries above
       // which use different API calls to update GitLab
       return [<IssueSchedule issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>, 
-              <IssueEstimate issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>]
+              <IssueEstimate issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>,
+              <IssueTimeSpent issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>]
     }
     else if ( props.extraColumn === 'Ordering' ) {
       return [<Chip size='small' isCenteredVertically={true}><span>{orderingForIssue(issue)}</span></Chip>]
