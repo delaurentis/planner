@@ -1,4 +1,11 @@
 #!/bin/bash
+
+# Other scripts should be relatie to current path
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Move to the planner kubernetes context
+source ${DIR}/setup/use-planner
+
 export DOCKER_DEFAULT_PLATFORM=linux/amd64
 docker-compose -f docker-compose.prod.yml up -d --build
 
