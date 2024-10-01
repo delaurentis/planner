@@ -2,13 +2,12 @@
 # https://dev.to/mubbashir10/containerize-react-app-with-docker-for-production-572b
 
 # build environment
-FROM node:18-alpine as build
+FROM node:18.19-alpine as build
+RUN npm install -g npm@latest
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
-COPY package.json ./
-COPY package-lock.json ./
-RUN npm install --silent
-RUN npm install react-scripts@5.0.1 -g --silent
+COPY package.json package-lock.json ./
+RUN npm ci --verbose 
 COPY . ./
 RUN npm run build
 RUN npm run build-storybook 

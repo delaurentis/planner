@@ -1,0 +1,11 @@
+#!/bin/bash
+
+gcloud config set project planner-XX
+gcloud config set compute/region us-west4
+export CLUSTER_NAME=planner-cluster
+kubectl config set-cluster ${CLUSTER_NAME}
+
+GCP_PROJECT=$(gcloud config get-value project)
+REGION=$(gcloud config get compute/region)-a
+kubectl config use-context gke_${GCP_PROJECT}_${REGION}_${CLUSTER_NAME}
+gcloud container clusters get-credentials --zone $REGION $CLUSTER_NAME
