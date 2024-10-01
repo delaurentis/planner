@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Issue from './Issue';
 import Card from '../presentation/Card';
-import { Epic, Option, OptionChoice, Team, Issue as IssueType } from 'data/types';
+import { Epic, Option, OptionChoice, Team, Issue as IssueType, MilestoneLibrary } from 'data/types';
 import { extraColumns } from 'data/extras';
 import { polling } from 'data/polling';
 import { projects } from 'data/projects';
@@ -17,6 +17,9 @@ import { ALL_ISSUES,
          CREATE_ISSUE,
          DELETE_ISSUE, 
          ESTIMATE_ISSUE,
+         UNESTIMATE_ISSUE,
+         CLOCK_ISSUE,
+         UNCLOCK_ISSUE,
          USER,
          EXTRA_COLUMN,
          SELECTED_ISSUE } from 'data/queries';
@@ -29,7 +32,7 @@ import { durableOrder, DurableOrderSnapshot } from 'util/durableOrder';
 interface UserIssuesProps {
   username: string;
   milestone?: any;
-  milestones?: any[];
+  milestones: MilestoneLibrary;
   showClosed: boolean;
   labels?: string[];
   project?: string;
@@ -154,6 +157,9 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   const [createIssue] = useMutation(CREATE_ISSUE, { refetchQueries });
   const [deleteIssue] = useMutation(DELETE_ISSUE, { refetchQueries });
   const [estimateIssue] = useMutation(ESTIMATE_ISSUE, { refetchQueries });
+  const [unestimateIssue] = useMutation(UNESTIMATE_ISSUE, { refetchQueries });
+  const [clockIssue] = useMutation(CLOCK_ISSUE, { refetchQueries });
+  const [unclockIssue] = useMutation(UNCLOCK_ISSUE, { refetchQueries });
   const handleUpdateIssue = (update: any, issue: any) => {
   
     // We will re-fetch the query from apollo after any mutations
@@ -172,8 +178,31 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
       if ( update.delete ) {
         deleteIssue({ variables: { projectId: issueProjectId, id: issue.iid }});
       }
-      else if ( update.duration ) {
-        estimateIssue({ variables: { projectId: issueProjectId, id: issue.iid, input: update }});
+      else if ( update.estimateChanged ) {
+        if ( update.estimate ) {
+          try {
+            estimateIssue({ variables: { projectId: issueProjectId, id: issue.iid, input: { duration: update.estimate } }});
+          }
+          catch(error) {}
+        }
+        else {
+          unestimateIssue({ variables: { projectId: issueProjectId, id: issue.iid, input: {} }});
+        }
+      }
+      else if ( update.timeSpentChanged ) {
+        if ( update.timeSpent ) {
+          // Need to reset the timer first before adding more time
+          (async () => {
+            try {
+              await unclockIssue({ variables: { projectId: issueProjectId, id: issue.iid, input: {} }});
+              await clockIssue({ variables: { projectId: issueProjectId, id: issue.iid, input: { duration: update.timeSpent } }});
+            }
+            catch(error) {}
+          })();
+        }
+        else {
+          unclockIssue({ variables: { projectId: issueProjectId, id: issue.iid, input: {} }});
+        }
       }
       else {
         // Now update the issue within the right project!
@@ -207,7 +236,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
         { projectId: userProjectId, 
           input: {...updateWithoutMeta, 
                   ...optionalAssignee,
-                  milestone_id: props.milestone.id,
+                  milestone_id: parseInt(props.milestone.id),
                   labels: uniqueLabels.join(',') }}});
     }
 
@@ -385,6 +414,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
       
       <Issue key='new' 
              team={props.team} 
+             milestones={props.milestones}
              defaultCategory={props.username === 'fixes' ? CATEGORY_BUG : CATEGORY_FEATURE}
              isCreating={true} 
              onUpdateIssue={handleUpdateIssue} 

@@ -13,7 +13,6 @@ import './index.css';
 import { Filter } from './data/types';
 import { vendors, requestVendorAccessToken, isStateTokenValid } from './data/vendors';
 import { teams } from './data/teams';
-import { currentYear, currentQuarter, currentSprint } from './data/milestones';
 import { setupKeyboardFiltering } from './setup/keyboard';
 import * as serviceWorker from './setup/serviceWorker';
 
@@ -30,6 +29,8 @@ setupKeyboardFiltering();
 // Was there a route the user was trying to go to?
 const path: string = window.location.pathname.split('/').slice(1).join('/');
 const mode: string = path.split('/')[0] || 'tickets';
+//const afterSlash:string = window.location.href.split('/').slice(-1)[0].split('?')[0];
+//console.log('After slash: ', afterSlash);
 
 // If we're coming from an oauth-redirect, then let's store the user's token for future reference
 const afterPound:string = window.location.hash.split('#')[1];
@@ -56,14 +57,11 @@ const queryString:string = window.location.search;
 const queryParams:any = new URLSearchParams(queryString);
 const username:string = queryParams.get('username') || path.split('/')[1] || 'none';
 const team:string = queryParams.get('team') || window.localStorage.getItem('team') || Object.keys(teams)[0];
-const year:number = parseInt(queryParams.get('year')) || currentYear;
-const quarter:number = parseInt(queryParams.get('quarter')) || currentQuarter;
-const sprint:number = parseInt(queryParams.get('sprint')) || currentSprint;
-const milestone:string = 'All'; //`Q${quarter}S${sprint}`;
+const milestone:string = 'All'; 
 const showClosed:boolean = !(queryParams.get('closed') === 'false');
 const extraColumn:string = window.localStorage.getItem('extraColumn') || 'Schedule';
 const extraDiffColumn:string = window.localStorage.getItem('extraDiffColumn') || 'Overview';
-const filter:Filter = { mode, year, quarter, sprint, milestone, username, team, showClosed };
+const filter:Filter = { mode, milestone, username, team, showClosed };
 
 // Is there an oauth code?
 const oauthCode:string | undefined = queryParams.get('code');

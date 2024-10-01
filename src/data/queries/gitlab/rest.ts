@@ -31,9 +31,37 @@ export const CREATE_ISSUE = gql`
 `;
 
 export const ESTIMATE_ISSUE = gql`
-    mutation EstimateIssue($projectId: ID!, $id: ID!, $estimate: Int!, $input: Any!) {
+    mutation EstimateIssue($projectId: ID!, $id: ID!, $input: Any!) {
       estimateIssue(projectId: $projectId, id: $id, input: $input)
         @rest(type: "Issue", path: "/projects/{args.projectId}/issues/{args.id}/time_estimate", method: "POST") {
+          NoResponse
+      }
+    }
+`;
+
+export const UNESTIMATE_ISSUE = gql`
+    mutation UnestimateIssue($projectId: ID!, $id: ID!, $input: Any!) {
+      unestimateIssue(projectId: $projectId, id: $id, input: $input)
+        @rest(type: "Issue", path: "/projects/{args.projectId}/issues/{args.id}/reset_time_estimate", method: "POST") {
+          NoResponse
+      }
+    }
+`;
+
+
+export const CLOCK_ISSUE = gql`
+    mutation ClockIssue($projectId: ID!, $id: ID!, $input: Any!) {
+      clockIssue(projectId: $projectId, id: $id, input: $input)
+        @rest(type: "Issue", path: "/projects/{args.projectId}/issues/{args.id}/add_spent_time", method: "POST") {
+          NoResponse
+      }
+    }
+`;
+
+export const UNCLOCK_ISSUE = gql`
+    mutation UnclockIssue($projectId: ID!, $id: ID!, $input: Any!) {
+      unclockIssue(projectId: $projectId, id: $id, input: $input)
+        @rest(type: "Issue", path: "/projects/{args.projectId}/issues/{args.id}/reset_spent_time", method: "POST") {
           NoResponse
       }
     }

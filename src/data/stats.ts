@@ -9,7 +9,7 @@ export const priorityStatsFromIssues = (issues: Issue[]) => {
     const labelNames = issue.labels.nodes.map(node => node.title);
     const priority = priorityFromLabels(labelNames);
     if ( priority ) {
-      stats[priority.icon] = (stats[priority.icon] || 0) + (estimateInHours(issue.humanTimeEstimate) || 0.0);
+      stats[priority.icon] = (stats[priority.icon] || 0) + (estimateInHours(issue.humanTotalTimeSpent || issue.humanTimeEstimate) || 0.0);
     }
     return stats;
   }, orderedPriorityStats);
@@ -35,7 +35,7 @@ const isEstimateInDays = (value: string | undefined) => {
 }
 
 // Compute the total estimate in fractional floating point hours
-const estimateInHours = (value: string | undefined) => {
+export const estimateInHours = (value: string | undefined) => {
   if ( value ) {
     if ( isEstimateInHours(value) ) {
       return Math.ceil(parseFloat(value));
@@ -64,7 +64,7 @@ export const hourlyStatsFromIssues = (issues: Issue[], icons: string[]) => {
     icons.filter(icon => labelNames.filter(label => label.indexOf(icon) !== -1).length > 0).forEach(icon => {
       
       // We found this icon was included in the label name, so let's add it to the stats
-      stats[icon] = (stats[icon] || 0.0) + (estimateInHours(issue.humanTimeEstimate) || 0.0);
+      stats[icon] = (stats[icon] || 0.0) + (estimateInHours(issue.humanTotalTimeSpent || issue.humanTimeEstimate) || 0.0);
     });
     return stats;
   }, orderedStats);

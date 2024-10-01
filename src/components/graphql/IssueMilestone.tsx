@@ -5,17 +5,18 @@
 import React, { useState } from 'react';
 import { Issue as IssueType, 
          Milestone as MilestoneType, 
-         Option as OptionType } from 'data/types';
+         Option as OptionType,
+         MilestoneLibrary } from 'data/types';
 import OptionChips from 'components/presentation/OptionChips';
 import IssueMilestones from './IssueMilestones';
-import { upcomingMilestones } from 'data/milestones';
 import { useMutation, gql, useApolloClient } from '@apollo/client';
 import { SET_ISSUE_MILESTONE } from 'data/queries';
+import { milestoneFromTitle } from 'data/milestones';
 
 interface IssueMilestoneProps {
   issue: IssueType;
   milestone?: MilestoneType;
-  milestones?: MilestoneType[];
+  milestones: MilestoneLibrary;
   onUpdating?(updating: boolean): void;
 }
 
@@ -30,7 +31,7 @@ const IssueMilestone: React.FC<IssueMilestoneProps> = (props) => {
       data: { __typename: 'Issue', milestone: { '__ref': `Milestone:${milestone.id}` }, updatedAt } 
     });  
   }
-  
+
   // Controls whether or not the popup is showing because
   // if we are editing the project we need to show it
   const [isEditing, setEditing] = useState<boolean>(false);
@@ -50,7 +51,7 @@ const IssueMilestone: React.FC<IssueMilestoneProps> = (props) => {
     setMilestone({ update: updatedMilestone,
                    variables: { projectPath: projectPath, 
                                  iid: props.issue?.iid, 
-                                 milestoneId: milestone?.id?.split('/').slice(-1)[0]}, 
+                                 milestoneId: milestone?.id}, 
                 });
 
 
@@ -61,14 +62,8 @@ const IssueMilestone: React.FC<IssueMilestoneProps> = (props) => {
   // We need milestone IDs to be able to write to GitLab
   // So let's find all the milestone objects from GraphQL  
   // corresponding to the milestone names we know and love
-  const firstThreeMilestones = upcomingMilestones.slice(0, 3);
-  const suggestedMilestones: MilestoneType[] = [...firstThreeMilestones, 'Backlog'].reduce((array: MilestoneType[], milestoneTitle: string) => {
-    const milestone: MilestoneType | undefined = props.milestones?.find(milestone => milestone.title === milestoneTitle);
-    if ( milestone ) {
-      array.push(milestone);
-    }
-    return array;
-  }, []);
+  const firstThreeMilestones = props.milestones.remainingSprints.slice(0, 3);
+  const suggestedMilestones: MilestoneType[] = [...firstThreeMilestones, milestoneFromTitle('Backlog', props.milestones)]
   
   // Generate a list of tabs based on upcoming milestones
   const options: OptionType[] = suggestedMilestones.map((milestone: MilestoneType) => {
