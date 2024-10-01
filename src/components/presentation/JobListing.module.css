@@ -1,0 +1,19 @@
+.container {
+  padding: 10px;
+  border: 1px solid #e1e4e8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-weight: bold;
+}
+
+.icon {
+  margin-right: 10px;
+}
+
+.owner {
+  font-style: italic;
+}
