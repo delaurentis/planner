@@ -28,6 +28,14 @@
 .Input:focus {
     outline: none;
 }
+.Input::placeholder {
+    opacity: 0.3;
+}
+
+.Input:focus::placeholder {
+    opacity: 0;
+}
 
 .Input[bigness='medium'] { width: 100px; } 
 .Input[bigness='large'] { width: 200px; }
+.Input[bigness='compact'] { width: 34px; }

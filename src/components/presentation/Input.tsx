@@ -4,6 +4,7 @@ import styles from './Input.module.css';
 interface InputProps {
   value?: string;
   size?: string;
+  placeholder?: string;
   onBlur?(value: string | undefined): void;
 }
 
@@ -19,7 +20,7 @@ const Input: React.FC<InputProps> = (props) => {
 
   // On blur, notify parent of changed text
   const handleBlur = () => {
-    if ( editableValue?.length && props.value !== editableValue ) {
+    if ( props.value !== editableValue ) {
       props.onBlur?.(editableValue);
     }
   }
@@ -28,6 +29,7 @@ const Input: React.FC<InputProps> = (props) => {
     <div className={styles.InputWrapper}>
         <input className={styles.Input} 
                value={editableValue} 
+               placeholder={props.placeholder}
                onChange={handleChange} 
                onBlur={handleBlur}
                {...{bigness: `${props.size || 'small'}`}} 

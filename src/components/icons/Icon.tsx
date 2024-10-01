@@ -4,6 +4,9 @@ import IconRoadmap from "./IconRoadmap";
 import IconTickets from "./IconTickets";
 import IconCode from "./IconCode";
 import IconLink from "./IconLink";
+import IconDesign from "./IconDesign";
+import IconBuild from "./IconBuild";
+import IconLaunch from "./IconLaunch";
 import IconX from "./IconX";
 import { IconProps } from "./types";
 
@@ -27,6 +30,12 @@ const Icon: React.FC<NamedIconProps> = ({ name, ...otherProps }) => {
       return <IconCode {...otherProps} />;
     case 'link':
       return <IconLink {...otherProps} />;
+    case 'design':
+      return <IconDesign {...otherProps} />;
+    case 'build':
+      return <IconBuild {...otherProps} />;
+    case 'launch':
+      return <IconLaunch {...otherProps} />;
     case 'x':
       return <IconX {...otherProps} />;
     default:
