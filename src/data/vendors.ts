@@ -112,6 +112,7 @@ export const requestVendorAccessToken = async (vendorName: string, options: any)
 
     // Lookup the vendor code verifier
     const codeVerifier = window.localStorage.getItem(`${vendorName}CodeVerifier`);
+    console.log("Code verifier:", codeVerifier);
 
     // Compute the body differently if we're refreshing a token 
     // instead of getting one the first time
@@ -149,10 +150,18 @@ export const requestVendorAccessToken = async (vendorName: string, options: any)
 
     // Store the access token and refresh token we get back
     const data = await response.json();
-    window.localStorage.setItem(vendor.tokenName, data.access_token);
-    window.localStorage.setItem(vendor.refreshTokenName, data.refresh_token);
-    const expiresAt = Date.now() + (parseInt(data.expires_in || '0') * 1000)
-    window.localStorage.setItem(`${vendorName}TokenExpiration`, `${expiresAt}`);
+    if ( data ) {
+      if ( data.access_token ) {
+        window.localStorage.setItem(vendor.tokenName, data.access_token);
+      }
+      if ( data.refresh_token ) {
+        window.localStorage.setItem(vendor.refreshTokenName, data.refresh_token);
+      }
+
+      // Set the expiration time (or assume it expires now if we don't get one)
+      const expiresAt = Date.now() + (parseInt(data.expires_in || '0') * 1000)
+      window.localStorage.setItem(`${vendorName}TokenExpiration`, `${expiresAt}`);
+    }
 
     // Redirect back to the main page now that we've stored that
     if ( !options.refreshing ) {
@@ -169,7 +178,10 @@ export const refreshVendorToken = async (vendorName: string, callback: any) => {
     // Make sure there is a refresh token and se when we are supposed to refresh
     const refreshToken = window.localStorage.getItem(vendor.refreshTokenName);
     const refreshAt = parseInt(window.localStorage.getItem(`${vendorName}TokenExpiration`) || '0');
-    if ( refreshToken && refreshAt > 0) {
+
+    // Catch a bug where "undefined" text can be stuck in local storage
+    // preventing the app from refreshing the token successfully (it keeps trying forever)
+    if ( refreshToken && refreshToken !== 'undefined' && refreshAt > 0 ) {
       
       // How long is left until the token expires
       const secondsOfTokenLifeLeft = (refreshAt - Date.now()) / 1000;
