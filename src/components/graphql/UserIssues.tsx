@@ -77,7 +77,6 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   
   // Figure out our variables for the query
   const variables = () => {
-    const fullPath = `${organization}/${props.project}`;
     if ( props.username === 'none' ) {
 
       // If there is no user, we need to use team labels to filter down the unassigned issues
@@ -85,14 +84,14 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
         username: 'none', 
         milestones: [props.milestone.title],  
         labels: props.labels,
-        fullPath,
+        fullPath: organization, // for Requests tab return all issues in the organization
       };
     }
     else if ( props.username === 'fixes' ) {
       return { 
         milestones: [props.milestone.title], 
         labels: [...props.labels || [], '🐞 Bug'],
-        fullPath,
+        fullPath: organization, // for Fixes tab return all issues in the organization
       };
     }
     else {
@@ -143,6 +142,10 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
 
   // Extract our issues from the data returned
   const issueNodes = issuesQuery.data?.group?.issues?.nodes || issuesQuery.data?.project?.issues?.nodes || [];
+
+  // Get the IDs of all of our projects
+  const projectIds: number[] =  Object.values(projects)
+  const projectIssueNodes = issueNodes.filter(node => projectIds.includes((node as any).projectId))
 
   // Get any epics associated with these issues
   // ...
@@ -275,7 +278,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   }
 
   // Determine if we've set orderings before... only happens once data gets loaded the first time
-  const { sortedItems, orderingSnapshot } = durableOrder(issueNodes, orderingForIssue, orderingsRef.current);
+  const { sortedItems, orderingSnapshot } = durableOrder(projectIssueNodes, orderingForIssue, orderingsRef.current);
   orderingsRef.current = orderingSnapshot;
   
   const issuesToShow = () => sortedItems.map((issue: any) => 
