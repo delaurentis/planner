@@ -1,5 +1,11 @@
 import { OptionChoice, Milestone, MilestoneLibrary } from './types';
 
+
+// What day is it? (convert to ISO and strip out the time to avoid comparison issues!)
+const startOfToday = (): Date => {
+  return new Date(new Date().toISOString().split('T')[0]);
+}
+
 // How many past sprints with uncompleted tasks should we show
 const recentIncompleteSprintsToShow = 3;
 
@@ -17,8 +23,9 @@ export const libraryFromMilestones = (milestones: Milestone[]): MilestoneLibrary
     .filter(m => m.startDate && m.dueDate) 
     .sort((a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime()); 
 
-  // What day is it?
-  const now = new Date();
+  // What day is it?  Avoid time-zone issues and keep a 
+  // consistent experience by using start of the day
+  const now = startOfToday();
 
   // Find out when the current sprint is based on start and due dates
   const currentSprintIndex = sortedSprints.findIndex(m => 
@@ -32,9 +39,8 @@ export const libraryFromMilestones = (milestones: Milestone[]): MilestoneLibrary
   // We could in the future do a certain # before
   const recentSprints: Milestone[] = sortedSprints.slice(currentSprintIndex - recentIncompleteSprintsToShow, currentSprintIndex);
   
-  //currentSprintIndex >= 1 ? [sortedSprints[currentSprintIndex - 1]]: []
-
   // Remaining milestones are all the milestones that haven't finished yet (or may not have started yet)
+  // including the current sprint milestone
   const remainingSprints: Milestone[] = sortedSprints.filter(milestone => 
     milestone.dueDate && new Date(milestone.dueDate) >= now);
 
@@ -54,7 +60,7 @@ export const milestoneFromTitle = (title: string, milestones: MilestoneLibrary):
 
 // Give back sprints within a certain symmetric radius (in # of sprints) of the current sprint
 export const sprintsWithinRadius = (milestones: Milestone[], radius: number = 3): Milestone[] => {
-  const now = new Date();
+  const now = startOfToday();
   const totalSprints = radius * 2 + 1; 
 
   const sortedMilestones = milestones
