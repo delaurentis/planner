@@ -1,11 +1,11 @@
 import { ProjectMap } from './types';
-import { teams as teamsList } from './customize';
+import { teams as teamsList, projects as projectsList } from './customize';
 
 // Convert list of teams into projectName and productId name value pairs
-export const projects: ProjectMap = teamsList.reduce((projects: ProjectMap, team: any) => {
-  const project = team.project;
+export const projects: ProjectMap = projectsList.reduce((projects: ProjectMap, item: any) => {
+  const project = item.project;
   if (project) {
-    projects[project] = team.projectId;
+    projects[project] = item.projectId;
   }
   return projects;
 }, {})

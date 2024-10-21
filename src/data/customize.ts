@@ -1,4 +1,4 @@
-import { TeamLink, Team, User } from './types'
+import { TeamLink, Team, User, Project } from './types'
 
 export const organization = 'companyname'
 
@@ -9,6 +9,11 @@ const sharedLinks: TeamLink[] = [
 export const teams: Team[] = [
   { name: 'Team 1', project: 'project1', projectId: 1, labels: [], links: sharedLinks },
   { name: 'Team 2', project: 'project2', projectId: 2, labels: [], links: sharedLinks },
+]
+
+export const projects: Project[] = [
+  { name: 'Project 1', project: 'project1', projectId: 1, labels: [] },
+  { name: 'Project 2', project: 'project2', projectId: 2, labels: [] },
 ]
 
 export const users: User[] = [

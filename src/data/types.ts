@@ -38,6 +38,13 @@ export interface Team {
   links?: TeamLink[];
 }
 
+export interface Project {
+  name: string;
+  labels: string[];
+  project: string;
+  projectId?: number;
+}
+
 export interface User {
   name: string;
   username: string;

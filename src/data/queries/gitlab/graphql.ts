@@ -234,7 +234,7 @@ export const OPEN_ISSUES_NO_MILESTONE = gql`
 
 export const ALL_BUG_ISSUES = gql`
   query GetAllBugs($milestones: [String], $labels: [String], $fullPath: ID!) {
-    project(fullPath: $fullPath) {
+    group(fullPath: $fullPath) {
       id,
       name,
       issues (milestoneTitle: $milestones,
@@ -251,7 +251,7 @@ export const ALL_BUG_ISSUES = gql`
 
 export const ALL_FIXED_BUG_ISSUES = gql`
   query GetAllFixedBugs($milestones: [String], $labels: [String], $fullPath: ID!) {
-    project(fullPath: $fullPath) {
+    group(fullPath: $fullPath) {
       id,
       name,
       issues (milestoneTitle: $milestones,
@@ -269,7 +269,7 @@ export const ALL_FIXED_BUG_ISSUES = gql`
 
 export const ALL_OPEN_BUG_ISSUES = gql`
   query GetAllOpenBugs($milestones: [String], $labels: [String], $fullPath: ID!) {
-    project(fullPath: $fullPath) {
+    group(fullPath: $fullPath) {
       id,
       name,
       issues (milestoneTitle: $milestones,
@@ -326,7 +326,7 @@ export const CLOSED_ISSUES = gql`
 
 export const OPEN_UNASSIGNED_ISSUES = gql`
   query GetOpenUserIssues($milestones: [String], $labels: [String], $fullPath: ID!) {
-    project(fullPath: $fullPath) {
+    group(fullPath: $fullPath) {
       id,
       name,
       issues (assigneeId: "None", 
@@ -345,7 +345,7 @@ export const OPEN_UNASSIGNED_ISSUES = gql`
 
 export const OPEN_UNASSIGNED_ISSUES_NO_MILESTONE = gql`
   query GetOpenUserIssuesNoMilestone($labels: [String], $fullPath: ID!) {
-    project(fullPath: $fullPath) {
+    group(fullPath: $fullPath) {
       id,
       name,
       issues (assigneeId: "None", 
