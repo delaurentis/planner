@@ -17,11 +17,11 @@ interface PlannerProps {
 }
 
 const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
-  
+
   // Show the current filter
   const filterQuery = useQuery(FILTER);
   const filter: Filter = filterQuery.data?.filter;
-  
+
   // Update the globally accessible filter
   const client = useApolloClient();
   const handleChangeFilter = (filter: Filter) => {
@@ -34,9 +34,9 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
     if ( isChoosingMilestone ) {
       return (
         <span>
-         <IssueMilestones 
+         <IssueMilestones
             onCancel={() => { setChoosingMilestone(false); }}
-            onSelectMilestone={(milestone: MilestoneType) => { 
+            onSelectMilestone={(milestone: MilestoneType) => {
 
               // Hide the picker
               setChoosingMilestone(false);
@@ -67,14 +67,14 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
 
   // If we have a milestone, we want to do another query to get # of unassigned issues
   // Figure out our variables for the query
-  const unassignedQuery = useQuery(OPEN_UNASSIGNED_ISSUES, { 
-    pollInterval: polling.frequency.unassignedIssueCount, 
+  const unassignedQuery = useQuery(OPEN_UNASSIGNED_ISSUES, {
+    pollInterval: polling.frequency.unassignedIssueCount,
     variables: { username: 'none', milestones: milestones.currentSprint, labels: team?.labels },
     skip: !milestones.currentSprint
   });
 
-  const bugQuery = useQuery(ALL_BUG_ISSUES, { 
-    pollInterval: polling.frequency.bugCount, 
+  const bugQuery = useQuery(ALL_BUG_ISSUES, {
+    pollInterval: polling.frequency.bugCount,
     variables: { milestones: milestones.currentSprint, labels: [...team?.labels || [], '🐞 Bug'] },
     skip: !milestones.currentSprint
   });
@@ -96,7 +96,7 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
   const filterReadouts = (): FilterReadouts => {
     return { unassignedIssueCount: countQueryResults(unassignedQuery),
              fixedBugCount: countQueryResults(bugQuery, 'closed'),
-             openBugCount: countQueryResults(bugQuery, 'opened') }      
+             openBugCount: countQueryResults(bugQuery, 'opened') }
   }
 
   // Get a list of epics (don't refresh as we go at the moment)
@@ -107,18 +107,34 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
   const milestoneCards = (): React.ReactNode => {
     if ( filter.milestone === 'All' && filter.mode === 'tickets' ) {
       return <div>
+        {/*non-empty past sprints*/}
         {milestones.recentSprints.map((milestone: MilestoneType) => {
-          return <Milestone key={`Milestone${milestone.title}`} 
-                            filter={{ ...filter, milestone: milestone.title }} 
-                            milestones={milestones} 
-                            epics={epics} 
+          return <Milestone key={`Milestone${milestone.title}`}
+                            filter={{ ...filter, milestone: milestone.title }}
+                            milestones={milestones}
+                            epics={epics}
                             isHiddenWhenEmpty={true}/>
         })}
-        {milestones.remainingSprints.map((milestone: MilestoneType) => {
-          return <Milestone key={`Milestone${milestone.title}`} 
-                            filter={{ ...filter, milestone: milestone.title }} 
-                            milestones={milestones} 
-                            epics={epics} 
+        {/*current sprint*/}
+        <Milestone key={`Milestone${milestones.currentSprint?.title}`}
+                          filter={{ ...filter, milestone: milestones.currentSprint?.title! }}
+                          milestones={milestones}
+                          epics={epics}
+                          isHiddenWhenEmpty={false}/>
+        {/*upcoming sprints*/}
+        {milestones.upcomingSprints.map((milestone: MilestoneType) => {
+          return <Milestone key={`Milestone${milestone.title}`}
+                            filter={{ ...filter, milestone: milestone.title }}
+                            milestones={milestones}
+                            epics={epics}
+                            isHiddenWhenEmpty={false}/>
+        })}
+        {/*remaining non-empty sprints*/}
+        {milestones.laterSprints.map((milestone: MilestoneType) => {
+          return <Milestone key={`Milestone${milestone.title}`}
+                            filter={{ ...filter, milestone: milestone.title }}
+                            milestones={milestones}
+                            epics={epics}
                             isHiddenWhenEmpty={true}/>
         })}
         <Milestone key="MilestoneNone" filter={{ ...filter, milestone: "none" }} milestones={milestones} epics={epics}/>
@@ -151,8 +167,8 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
   return (
     <div>
       <Header>
-        <FilterBar filter={filter} 
-                   readouts={filterReadouts()} 
+        <FilterBar filter={filter}
+                   readouts={filterReadouts()}
                    milestones={milestones}
                    onChangeFilter={handleChangeFilter}
                    onChooseMilestone={() => setChoosingMilestone(true)}/>

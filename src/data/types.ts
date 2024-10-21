@@ -173,7 +173,8 @@ export interface Milestone {
 export interface MilestoneLibrary {
   allMilestones: Milestone[];
   recentSprints: Milestone[];
-  remainingSprints: Milestone[];
+  upcomingSprints: Milestone[];
+  laterSprints: Milestone[];
   currentSprint?: Milestone;
 }
 
