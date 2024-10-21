@@ -1,10 +1,10 @@
-// NOTE: I hope to use this file soon but right now when I 
+// NOTE: I hope to use this file soon but right now when I
 // separate this from the listing it's no longer updating the UI
 // when we change the apollo cache
 
 import React, { useState } from 'react';
-import { Issue as IssueType, 
-         Milestone as MilestoneType, 
+import { Issue as IssueType,
+         Milestone as MilestoneType,
          Option as OptionType,
          MilestoneLibrary } from 'data/types';
 import OptionChips from 'components/presentation/OptionChips';
@@ -28,8 +28,8 @@ const IssueMilestone: React.FC<IssueMilestoneProps> = (props) => {
     client.writeFragment({
       id: `Issue:${props.issue.id}`,
       fragment: gql`fragment IssueWithNewMilestone on Issue { milestone, updatedAt }`,
-      data: { __typename: 'Issue', milestone: { '__ref': `Milestone:${milestone.id}` }, updatedAt } 
-    });  
+      data: { __typename: 'Issue', milestone: { '__ref': `Milestone:${milestone.id}` }, updatedAt }
+    });
   }
 
   // Controls whether or not the popup is showing because
@@ -42,16 +42,16 @@ const IssueMilestone: React.FC<IssueMilestoneProps> = (props) => {
 
     // When the milestone is updated on the server, cache locally
     const updatedMilestone = (cache) => { props.onUpdating?.(false); }
-    
+
     // Feed the new milestone into the cache
     cacheIssueWithMilestone(milestone, new Date());
 
     // To update the milestone, we need the project path
     const projectPath: string | undefined = props.issue.webPath?.split('/-')?.[0].slice(1);
     setMilestone({ update: updatedMilestone,
-                   variables: { projectPath: projectPath, 
-                                 iid: props.issue?.iid, 
-                                 milestoneId: milestone?.id}, 
+                   variables: { projectPath: projectPath,
+                                 iid: props.issue?.iid,
+                                 milestoneId: milestone?.id},
                 });
 
 
@@ -60,46 +60,46 @@ const IssueMilestone: React.FC<IssueMilestoneProps> = (props) => {
   }
 
   // We need milestone IDs to be able to write to GitLab
-  // So let's find all the milestone objects from GraphQL  
+  // So let's find all the milestone objects from GraphQL
   // corresponding to the milestone names we know and love
-  const firstThreeMilestones = props.milestones.remainingSprints.slice(0, 3);
-  const suggestedMilestones: MilestoneType[] = [...firstThreeMilestones, milestoneFromTitle('Backlog', props.milestones)]
-  
+  const nextTwoMilestones = props.milestones.upcomingSprints.slice(0, 2);
+  const suggestedMilestones: MilestoneType[] = [props.milestones.currentSprint!, ...nextTwoMilestones, milestoneFromTitle('Backlog', props.milestones)]
+
   // Generate a list of tabs based on upcoming milestones
   const options: OptionType[] = suggestedMilestones.map((milestone: MilestoneType) => {
     return { title: milestone.title,
-             name: milestone.title, 
-             isSelected: (props.milestone?.title === milestone.title), 
+             name: milestone.title,
+             isSelected: (props.milestone?.title === milestone.title),
              isSelectable: true,
-             isExpandable: false, 
+             isExpandable: false,
              isSmall: true,
-             onSelectOption: () => { handleSelectMilestone(milestone); } 
+             onSelectOption: () => { handleSelectMilestone(milestone); }
     };
   })
 
   // Generate an extra ... option
-  const moreOption: OptionType = { 
+  const moreOption: OptionType = {
     title: '⋯',
     name: 'More',
     isSelected: false,
     isSelectable: true,
     isExpandable: false,
-    isSmall: true, 
-    onSelectOption: () => { 
-      setEditing(true); 
+    isSmall: true,
+    onSelectOption: () => {
+      setEditing(true);
     }
   }
-  
+
   // Only show the project picker if we're editing
   const picker = () => {
     if ( isEditing ) {
       return (
         <span>
-          <IssueMilestones 
+          <IssueMilestones
             milestone={props.issue.milestone}
             onCancel={() => { setEditing(false); }}
-            onSelectMilestone={(milestone: MilestoneType) => { 
-              handleSelectMilestone(milestone); 
+            onSelectMilestone={(milestone: MilestoneType) => {
+              handleSelectMilestone(milestone);
               setEditing(false);
             }}
           />
