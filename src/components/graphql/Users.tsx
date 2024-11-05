@@ -60,7 +60,7 @@ const Users: React.FC<UsersProps> = (props: UsersProps) => {
     return <div>{links()}</div>;
   }
   else if ( props.filter.mode === 'roadmap' && team ) {
-    return <div><iframe style={{ marginTop: '-24px', width: '98vw', height: '90vh' }} src='https://docs.google.com/spreadsheets/d/1tRubiCgg6SjBglakfRkRRV45ylG_O7OJIi-j37m380o/edit?rm=minimal#gid=208689150'></iframe></div>
+    return <div><iframe style={{ marginTop: '-24px', width: '98vw', height: '90vh' }} src='<link here>'></iframe></div>
   }
   else if ( props.filter.mode === 'advanced' && team ) {
     return <Card title="Advanced" titleUrl="" isLoading={false}><LabelCreationActuator groupId={organization}/></Card>;
