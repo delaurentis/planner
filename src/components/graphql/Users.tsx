@@ -48,6 +48,7 @@ const Users: React.FC<UsersProps> = (props: UsersProps) => {
                   showClosed={props.filter.showClosed || false} 
                   username={username}
                   epics={props.epics}
+                  epicName={props.filter.mode === 'epics' ? props.filter.epicName : undefined}
                   labels={team?.labels}
                   team={team}
                   project={team?.project}
@@ -56,7 +57,7 @@ const Users: React.FC<UsersProps> = (props: UsersProps) => {
   }
 
   // Are we showing a list or individual?
-  if ( props.filter.username === 'team' && team ) {
+  /*if ( props.filter.username === 'team' && team ) {
 
     // Show the right team
     return <div>
@@ -64,35 +65,34 @@ const Users: React.FC<UsersProps> = (props: UsersProps) => {
              {links()}
              {team?.usernames?.map(username => issuesForUsername(username))}
            </div>;
-  }
-  else if ( props.filter.mode === 'links' && team ) {
+  }*/
+  if ( props.filter.mode === 'links' && team ) {
     return <div>{links()}</div>;
   }
   else if ( props.filter.mode === 'roadmap' && team ) {
     return <div><iframe style={{ marginTop: '-24px', width: '98vw', height: '90vh' }} src='https://docs.google.com/spreadsheets/d/1tRubiCgg6SjBglakfRkRRV45ylG_O7OJIi-j37m380o/edit?rm=minimal#gid=208689150'></iframe></div>
   }
-  else if ( props.filter.mode === 'roadmap2' && team ) {
-    return <div><iframe style={{ marginTop: '-24px', width: '98vw', height: '90vh' }} src='https://docs.google.com/spreadsheets/d/1tRubiCgg6SjBglakfRkRRV45ylG_O7OJIi-j37m380o/edit?rm=minimal#gid=208689150'></iframe></div>
-  }
   else if ( props.filter.mode === 'advanced' && team ) {
     return <Card title="Advanced" titleUrl="" isLoading={false}><LabelCreationActuator groupId={organization}/></Card>;
   }
-  else if ( props.filter.username === 'epics' ) {
+  /*else if ( props.filter.username === 'epics' ) {
     return <MilestoneEpics milestone={props.milestone}
                            showClosed={props.filter.showClosed || false}
                            epics={props.epics}
                            labels={['Roadmap Epic']}
                            team={team}/>;
-  }
+  }*/
   else if ( props.filter.mode === 'diffs' ) {
     return <Diffs team={team} project={team?.project}/>;
   }
   else {
 
+    // If we're on issues or epics modes, this will show issues below
     return <UserIssues milestone={props.milestone} 
                        milestones={props.milestones}
                        showClosed={props.filter.showClosed || false} 
-                       username={props.filter.username || 'Team'}
+                       username={props.filter.mode === 'epics' ? 'all' : props.filter.username || 'none'}
+                       epicName={props.filter.mode === 'epics' ? props.filter.epicName : undefined}
                        epics={props.epics}
                        labels={team?.labels}
                        team={team}

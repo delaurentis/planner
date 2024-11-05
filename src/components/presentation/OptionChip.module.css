@@ -96,6 +96,9 @@
 
 .Chip span {
   font-size: 0.95em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .Chip[ismultiselectable='true'] span {

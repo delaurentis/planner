@@ -9,12 +9,13 @@ import { organization } from 'data/customize';
 import { humanizeDateRange } from 'util/dates';
 import { useQuery, useMutation, useApolloClient } from '@apollo/client';
 import { ALL_ISSUES, 
+         ALL_EPIC_ISSUES,
          OPEN_ISSUES_NO_MILESTONE,
          OPEN_UNASSIGNED_ISSUES,
          OPEN_UNASSIGNED_ISSUES_NO_MILESTONE,
          ALL_BUG_ISSUES, 
          UPDATE_ISSUE, 
-         CREATE_ISSUE,
+         CREATE_ISSUE, 
          DELETE_ISSUE, 
          ESTIMATE_ISSUE,
          UNESTIMATE_ISSUE,
@@ -39,6 +40,7 @@ interface UserIssuesProps {
   team?: Team;
   epics?: Epic[];
   isHiddenWhenEmpty?: boolean;
+  epicName?: string;
 }
 
 const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
@@ -77,21 +79,29 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   
   // Figure out our variables for the query
   const variables = () => {
-    if ( props.username === 'none' ) {
+    if ( props.epicName ) {
+      return { 
+        epicId: props.epics?.find(epic => epic.title === props.epicName)?.id?.match(/\d+$/)?.[0],
+        milestones: [props.milestone.title],  
+        labels: props.labels,
+        fullPath: organization, 
+      };
+    }
+    else if ( props.username === 'none' ) {
 
       // If there is no user, we need to use team labels to filter down the unassigned issues
       return { 
         username: 'none', 
         milestones: [props.milestone.title],  
         labels: props.labels,
-        fullPath: organization, // for Requests tab return all issues in the organization
+        fullPath: organization, 
       };
     }
     else if ( props.username === 'fixes' ) {
       return { 
         milestones: [props.milestone.title], 
         labels: [...props.labels || [], '🐞 Bug'],
-        fullPath: organization, // for Fixes tab return all issues in the organization
+        fullPath: organization, 
       };
     }
     else {
@@ -99,13 +109,16 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
         username: props.username, 
         milestones: [props.milestone.title],
         path: props.project,
-        fullPath: organization, // for users return all issues in the organization
+        fullPath: organization, 
        };
     }
   }
   
   const gqlForIssues = () => {
-    if ( props.username === 'none' ) {
+    if ( props.epicName ) {
+      return ALL_EPIC_ISSUES;
+    }
+    else if ( props.username === 'none' ) {
       if ( props.milestone.title === 'none' ) { 
         return OPEN_UNASSIGNED_ISSUES_NO_MILESTONE;
       }
@@ -235,12 +248,19 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
       const allLabels: string[] = standardAndCustomLabels.concat(categoryLabels).concat(environmentLabels).concat(titleGeneratedLabels);
       const uniqueLabels = [...new Set(allLabels)];
 
+      // Add epic if one is specified in props
+      const epicId = props.epicName ? props.epics?.find(epic => epic.title === props.epicName)?.id?.match(/\d+$/)?.[0] : undefined;
+      const optionalEpic = epicId ? { epic_id: epicId } : {};
+
       createIssue({ variables: 
         { projectId: userProjectId, 
-          input: {...updateWithoutMeta, 
-                  ...optionalAssignee,
-                  milestone_id: parseInt(props.milestone.id),
-                  labels: uniqueLabels.join(',') }}});
+          input: {
+            ...updateWithoutMeta, 
+            ...optionalAssignee,
+            ...optionalEpic, 
+            milestone_id: parseInt(props.milestone.id),
+            labels: uniqueLabels.join(',') 
+          }}});
     }
 
     // Revert to slower timeouts after N seconds

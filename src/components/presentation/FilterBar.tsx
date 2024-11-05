@@ -1,20 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import OptionChips from './OptionChips';
 import { teams, titleForUsername } from 'data/teams';
-import { Team, Filter, FilterReadouts, Option, OptionChoice, MilestoneLibrary } from 'data/types';
+import { Team, Filter, FilterReadouts, Option, OptionChoice, MilestoneLibrary, Epic } from 'data/types';
 import { milestoneChoices } from 'data/milestones';
 import { capitalizeFirstLetter } from 'util/capitalize'
+import IssueEpics from 'components/graphql/IssueEpics';
+import Chip from './Chip';
 
 interface FilterBarProps {
   filter: Filter;
   readouts: FilterReadouts;
   milestones: MilestoneLibrary;
+  epics: Epic[];
   onChangeFilter?(changedFilter: Filter): void;
   onChooseMilestone?(): void;
 }
 
 const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
   
+  // When the epic gets clicked, show our autocomplete
+  const [isEditingEpic, setEditingEpic] = useState<boolean>(false);
+
   const filter: Filter = props.filter;
   const onSelectUser = (option: Option) => { 
     props.onChangeFilter?.({ ...filter, username: option.name, mode: 'tickets' }) 
@@ -53,16 +59,38 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
     else if ( filter?.username === 'fixes' ) {
       props.onChangeFilter?.({ ...filter, team: newTeam, username: 'fixes' });
     }
+    else if ( filter?.username === 'epics' ) {
+      props.onChangeFilter?.({ ...filter, team: newTeam, username: 'epics' });
+    }
     else {
-      // If the username isn't none, then make sure it's none (and not a member from another team)
-      const optionalUsername = { username: 'none' };
-      props.onChangeFilter?.({ ...filter, team: newTeam, ...optionalUsername });
+      // Reset username to 'none' when switching teams (unless in diffs/fixes mode)
+      props.onChangeFilter?.({ ...filter, team: newTeam, username: 'none' });
     }
 
     // Store it so when we refresh page we keep the same team
     window.localStorage.setItem('team', choice?.metadata);
   }
 
+  // Only show epic picker if we're editing
+  const epicPicker = () => {
+    if (isEditingEpic) {
+      return (
+        <span>
+          <IssueEpics 
+            epics={props.epics}
+            currentEpic={props.epics?.find(e => e.title === filter.epicName)}
+            onSelectEpic={(epic) => {
+              props.onChangeFilter?.({ ...filter, epicName: epic?.title || undefined });
+              setEditingEpic(false);
+            }}
+            onCancel={() => setEditingEpic(false)}
+          />
+        </span>
+      );
+    }
+    return undefined;
+  }
+  
   const teamChoices: OptionChoice[] = Object.keys(teams).map(team => { 
     return { metadata: team, 
              title: `${teams[team].parentTeam ? '• ' : ''}${capitalizeFirstLetter(team)}`,
@@ -86,6 +114,7 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
       isExpandable: true, 
       choices: teamChoices, 
       onSelectOption: onSelectTeam }
+
   ];
 
   // Make an option for each mode
@@ -150,18 +179,47 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
   //const epicsOption = {...optionForUser('epics'), title: 'Epics'};
 
   const roadmapOption: Option = {...optionForMode('roadmap'), icon: 'roadmap'};
+  const epicsOption: Option = {...optionForMode('epics'), icon: 'epics'};
   const ticketsOption: Option = {...optionForMode('tickets'), icon: 'tickets'};
   const linksOption: Option = {...optionForMode('links'), icon: 'link'};
   const diffsOption: Option = {...optionForMode('diffs'), icon: 'code'};
-  const modeOptions: Option[] = [roadmapOption, ticketsOption, diffsOption, linksOption];
+  const modeOptions: Option[] = [roadmapOption, epicsOption, ticketsOption, diffsOption, linksOption];
+
+  const epicOption: Option = {
+    title: filter.epicName || 'None',
+    name: 'epic',
+    isSelected: true,
+    isBlank: !filter.epicName,
+    onSelectOption: (option) => setEditingEpic(true)
+  };
 
   const noneOption: Option = {...optionForUser('none'), title: titleForUnassignedIssues()};
   const userOptions: Option[] = team?.usernames?.map((username: string) => optionForUser(username)) || [];
-  const variableOptions = [noneOption].concat(userOptions);
+  const variableOptions = props.filter.mode == 'epics' ? [epicOption] : [noneOption].concat(userOptions);
 
   // Put all of our groups together
-  return <OptionChips options={[mainOptions, modeOptions, variableOptions]}/>;
+  return (
+    <div>
+      <OptionChips options={[mainOptions, modeOptions, variableOptions]}/>
+
+      {filter.mode === 'epics' && (
+        <span>
+          {epicPicker()}
+        </span>
+      )}
+    </div>
+  );
 
 }
+
+/*
+          <Chip size='medium'
+                isSelected={true}
+                isCenteredVertically={true}
+                isBlank={!filter.epicName}
+                onClick={() => setEditingEpic(true)}>
+            {filter.epicName || 'None'}
+          </Chip>
+*/
 
 export default FilterBar;
