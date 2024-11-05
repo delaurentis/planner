@@ -56,16 +56,6 @@ const Users: React.FC<UsersProps> = (props: UsersProps) => {
     );
   }
 
-  // Are we showing a list or individual?
-  /*if ( props.filter.username === 'team' && team ) {
-
-    // Show the right team
-    return <div>
-             {issuesForUsername('none')}
-             {links()}
-             {team?.usernames?.map(username => issuesForUsername(username))}
-           </div>;
-  }*/
   if ( props.filter.mode === 'links' && team ) {
     return <div>{links()}</div>;
   }
@@ -75,13 +65,6 @@ const Users: React.FC<UsersProps> = (props: UsersProps) => {
   else if ( props.filter.mode === 'advanced' && team ) {
     return <Card title="Advanced" titleUrl="" isLoading={false}><LabelCreationActuator groupId={organization}/></Card>;
   }
-  /*else if ( props.filter.username === 'epics' ) {
-    return <MilestoneEpics milestone={props.milestone}
-                           showClosed={props.filter.showClosed || false}
-                           epics={props.epics}
-                           labels={['Roadmap Epic']}
-                           team={team}/>;
-  }*/
   else if ( props.filter.mode === 'diffs' ) {
     return <Diffs team={team} project={team?.project}/>;
   }
