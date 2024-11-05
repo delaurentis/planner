@@ -5,7 +5,7 @@ import Header from '../presentation/Header';
 import Milestone from './Milestone';
 import { teams } from 'data/teams';
 import { libraryFromMilestones } from 'data/milestones';
-import { Filter, FilterReadouts, Team, Milestone as MilestoneType, MilestoneLibrary } from 'data/types';
+import { Filter, FilterReadouts, Team, Milestone as MilestoneType, MilestoneLibrary, Epic as EpicType } from 'data/types';
 import { FILTER, OPEN_UNASSIGNED_ISSUES, OPEN_EPICS, ALL_BUG_ISSUES, SELECTED_ISSUE, MILESTONES } from 'data/queries';
 import { useQuery, useApolloClient } from '@apollo/client';
 import { polling } from 'data/polling';
@@ -101,11 +101,11 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
 
   // Get a list of epics (don't refresh as we go at the moment)
   const epicsQuery = useQuery(OPEN_EPICS, { variables: { labels: [], groupPath: organization }});
-  const epics = epicsQuery.data?.group?.epics?.nodes || [];
+  const epics: EpicType[] = epicsQuery.data?.group?.epics?.nodes || [];
 
   // Create our milestones based on the filter - if it's All, include multiple
   const milestoneCards = (): React.ReactNode => {
-    if ( filter.milestone === 'All' && filter.mode === 'tickets' ) {
+    if ( filter.milestone === 'All' && (filter.mode === 'tickets' || filter.mode == 'epics') ) {
       return <div>
         {/*non-empty past sprints*/}
         {milestones.recentSprints.map((milestone: MilestoneType) => {
@@ -154,7 +154,7 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
   const details = (): React.ReactNode | undefined => {
 
     // Don't show for any non-issue panes
-    if ( filter.mode === 'tickets' ) {
+    if ( filter.mode === 'tickets' || filter.mode === 'epics' ) {
 
       // Let's see if there's a selected issue right now
       return <IssueDetail issueId={selectedIssueId}/>
@@ -170,6 +170,7 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
         <FilterBar filter={filter}
                    readouts={filterReadouts()}
                    milestones={milestones}
+                   epics={epics}
                    onChangeFilter={handleChangeFilter}
                    onChooseMilestone={() => setChoosingMilestone(true)}/>
       </Header>

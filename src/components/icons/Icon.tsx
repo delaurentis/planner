@@ -1,6 +1,7 @@
 import IconCaretDown from "./IconCaretDown";
 import IconCaretUp from "./IconCaretUp";
 import IconRoadmap from "./IconRoadmap";
+import IconEpics from "./IconEpics";
 import IconTickets from "./IconTickets";
 import IconCode from "./IconCode";
 import IconLink from "./IconLink";
@@ -24,6 +25,8 @@ const Icon: React.FC<NamedIconProps> = ({ name, ...otherProps }) => {
       return <IconCaretUp {...otherProps} />;
     case 'roadmap':
       return <IconRoadmap {...otherProps} />;
+    case 'epics':
+      return <IconEpics {...otherProps} />;
     case 'tickets':
       return <IconTickets {...otherProps} />;
     case 'code':

@@ -20,6 +20,7 @@ export interface Filter {
   mode: string;
   username?: string;
   showClosed?: boolean;
+  epicName?: string;
 }
 
 export type TeamLink = {
