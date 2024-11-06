@@ -105,7 +105,7 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
 
   // Create our milestones based on the filter - if it's All, include multiple
   const milestoneCards = (): React.ReactNode => {
-    if ( filter.milestone === 'All' && (filter.mode === 'tickets' || filter.mode == 'epics') ) {
+    if ( filter.milestone === 'All' && (filter.mode === 'tickets' || (filter.mode == 'epics' && filter.epicName)) ) {
       return <div>
         {/*non-empty past sprints*/}
         {milestones.recentSprints.map((milestone: MilestoneType) => {
@@ -142,6 +142,9 @@ const Planner: React.FC<PlannerProps> = (props: PlannerProps) => {
         <Milestone key="MilestoneOpportunities" filter={{ ...filter, milestone: "Opportunities" }} milestones={milestones} epics={epics}/>
         <Milestone key="MilestoneIdeas" filter={{ ...filter, milestone: "Ideas" }} milestones={milestones} epics={epics}/>
       </div>
+    }
+    else if ( filter.mode === 'epics' && !filter.epicName ) {
+      return <div/>
     }
     return <Milestone filter={filter} milestones={milestones} epics={epics}/>
   }

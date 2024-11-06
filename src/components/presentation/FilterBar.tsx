@@ -186,10 +186,10 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
   const modeOptions: Option[] = [roadmapOption, epicsOption, ticketsOption, diffsOption, linksOption];
 
   const epicOption: Option = {
-    title: filter.epicName || 'None',
+    title: filter.epicName || 'Choose Epic...',
     name: 'epic',
-    isSelected: true,
-    isBlank: !filter.epicName,
+    isSelected: !!filter.epicName,
+    isBlank: false,
     onSelectOption: (option) => setEditingEpic(true)
   };
 
@@ -211,15 +211,5 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
   );
 
 }
-
-/*
-          <Chip size='medium'
-                isSelected={true}
-                isCenteredVertically={true}
-                isBlank={!filter.epicName}
-                onClick={() => setEditingEpic(true)}>
-            {filter.epicName || 'None'}
-          </Chip>
-*/
 
 export default FilterBar;
