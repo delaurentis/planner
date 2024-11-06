@@ -1,5 +1,4 @@
 import React from 'react';
-import MilestoneEpics from './MilestoneEpics';
 import UserIssues from './UserIssues';
 import VendorDiffs from './VendorDiffs';
 import LabelCreationActuator from './LabelCreationActuator';
