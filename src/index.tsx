@@ -1,6 +1,6 @@
 // React
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import Planner from './components/graphql/Planner';
 import Connection from './components/graphql/Connection';
 
@@ -61,7 +61,8 @@ const milestone:string = 'All';
 const showClosed:boolean = !(queryParams.get('closed') === 'false');
 const extraColumn:string = window.localStorage.getItem('extraColumn') || 'Schedule';
 const extraDiffColumn:string = window.localStorage.getItem('extraDiffColumn') || 'Overview';
-const filter:Filter = { mode, milestone, username, team, showClosed };
+const epicName:string = queryParams.get('epic') || window.localStorage.getItem('epic');
+const filter:Filter = { mode, milestone, username, team, showClosed, epicName };
 
 // Is there an oauth code?
 const oauthCode:string | undefined = queryParams.get('code');
@@ -105,7 +106,8 @@ const app = (
 );
 
 // React
-ReactDOM.render(app, document.getElementById('root'));
+const root = createRoot(document.getElementById('root')!);
+root.render(app);
 
 // Offline Mode (enable in production with .register)
 serviceWorker.unregister();

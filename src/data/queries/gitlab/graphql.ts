@@ -46,12 +46,15 @@ export const ISSUE_ONLY_FRAGMENT = gql`
       },
       assignees {
         nodes {
-          username
+          name,
+          username,
+          avatarUrl
         }
       },
       author {
         name,
-        username
+        username,
+        avatarUrl
       },
       createdAt,
       updatedAt
@@ -78,7 +81,9 @@ export const ISSUE_WITH_EPIC_FRAGMENT = gql`
       },
       assignees {
         nodes {
-          username
+          name,
+          username,
+          avatarUrl
         }
       },
       labels {
@@ -92,7 +97,8 @@ export const ISSUE_WITH_EPIC_FRAGMENT = gql`
       },
       author {
         name,
-        username
+        username,
+        avatarUrl
       },
       createdAt,
       updatedAt
@@ -151,12 +157,15 @@ export const ISSUE_DETAIL = gql`
       },
       assignees {
         nodes {
-          username
+          name,
+          username,
+          avatarUrl
         }
       },
       author {
         name,
-        username
+        username,
+        avatarUrl
       },
       createdAt,
       updatedAt,
@@ -165,7 +174,8 @@ export const ISSUE_DETAIL = gql`
         nodes {
           author {
             name,
-            username
+            username,
+            avatarUrl
           },
           createdAt,
           body,

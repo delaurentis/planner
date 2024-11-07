@@ -8,6 +8,7 @@ import IconLink from "./IconLink";
 import IconDesign from "./IconDesign";
 import IconBuild from "./IconBuild";
 import IconLaunch from "./IconLaunch";
+import IconPerson from "./IconPerson";
 import IconX from "./IconX";
 import { IconProps } from "./types";
 
@@ -39,6 +40,8 @@ const Icon: React.FC<NamedIconProps> = ({ name, ...otherProps }) => {
       return <IconBuild {...otherProps} />;
     case 'launch':
       return <IconLaunch {...otherProps} />;
+    case 'person':
+      return <IconPerson {...otherProps} />;
     case 'x':
       return <IconX {...otherProps} />;
     default:

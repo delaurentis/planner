@@ -19,8 +19,9 @@ interface IssueDetailProps {
 
 const IssueDetail: React.FC<IssueDetailProps> = (props) => {
 
-  // Lookup the given issue
-  const issueDetailQuery = useQuery(ISSUE_DETAIL, { variables: { id: props.issueId } });
+  // Only query if we have an issueId
+  const issueDetailQuery = useQuery(ISSUE_DETAIL, { variables: { id: props.issueId }, skip: !props.issueId });
+    
   const issue: IssueType = issueDetailQuery.data?.issue; 
   const primaryLabel = issue ? primaryLabelForIssue(issue) : {};
 
@@ -55,7 +56,7 @@ const IssueDetail: React.FC<IssueDetailProps> = (props) => {
   const sortedUserNotes = userNotes?.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 
   // Update the issue if anything is changed
-  const refetchQueries = [{ query: ISSUE_DETAIL, variables: { id: props.issueId } }];
+  const refetchQueries = props.issueId ? [{ query: ISSUE_DETAIL, variables: { id: props.issueId } }] : [];
 
   // Mutation to create a note (and re-fetch the issue right after)
   // We also will re-focus on the note after the new one is received so the user can type the next comment

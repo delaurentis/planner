@@ -22,6 +22,7 @@ const Week: React.FC<WeekProps> = (props) => {
   
   return (
     <span className={styles.Week}>
+       <span className={styles.BeforeWeek}/>
        {days.map(day => 
          <Day key={day.label} 
               title={day.title}
@@ -29,7 +30,7 @@ const Week: React.FC<WeekProps> = (props) => {
               isScheduled={props.dayLabels.includes(day.label)}
               onChangeSchedule={handleChangeSchedule}/>
        )}
-       <span className={styles.WeekSeparator}/>
+       <span className={styles.AfterWeek}/>
     </span>
   );
 }
