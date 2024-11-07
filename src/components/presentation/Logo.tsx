@@ -6,18 +6,13 @@ interface LogoProps {
   isInverted?: number;
 }
 
-const defaultProps = {
-  height: 28,
-  isInverted: false
-};
-
-const Logo: React.FC<LogoProps> = (props) => {
-  const color = props.isInverted ? '#fff' : '#7E57FF';
-  const width = Math.round(993 / 161 * (props.height || 28));
+const Logo: React.FC<LogoProps> = ({ height = 28, isInverted = false, ...props }) => {
+  const color = isInverted ? '#fff' : '#7E57FF';
+  const width = Math.round(993 / 161 * (height || 28));
 
   return (
     <svg
-      height={`${props.height}px`}
+      height={`${height}px`}
       width={`${width}px`}
       aria-labelledby='logo_planner'
       viewBox='0 0 993 161'

@@ -81,6 +81,10 @@ const FilterBar:React.FC<FilterBarProps> = (props: FilterBarProps) => {
             currentEpic={props.epics?.find(e => e.title === filter.epicName)}
             onSelectEpic={(epic) => {
               props.onChangeFilter?.({ ...filter, epicName: epic?.title || undefined });
+              if ( epic?.title ) {
+                window.localStorage.setItem('epic', epic.title);
+                //window.history.pushState(null, '', `/epics/${epic?.title}`);
+              }
               setEditingEpic(false);
             }}
             onCancel={() => setEditingEpic(false)}

@@ -6,15 +6,22 @@
   align-items: stretch;
 }
 
-.WeekSeparator {
-  border-left: 1px solid rgba(0,0,0,0.1);
+.Week .BeforeWeek {
+  border-left: 1px solid rgba(0,0,0,0.05);
 }
 
-.Week:not(:last-child) .WeekSeparator {
-  width: 10px;
+.Week:not(:last-child) .AfterWeek {
+  width: 0px;
+}
+
+.Week:last-child .AfterWeek {
+  border-left: 1px solid rgba(0,0,0,0.05);
+  border-right: 1px solid rgba(0,0,0,0.05);
+  width: 7px;
   background: #E0E0E255;
 }
 
-.Week:last-child .WeekSeparator {
-  width: 0px; 
+.Week .BeforeWeek {
+  width: 7px;
+  background: #E0E0E255;
 }

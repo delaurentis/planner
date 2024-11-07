@@ -9,15 +9,21 @@ import IssueAssignees from './IssueAssignees';
 import { titleForUsername } from 'data/teams';
 import { useMutation } from '@apollo/client';
 import { SET_ISSUE_ASSIGNEES } from 'data/queries';
+import Avatar from '../presentation/Avatar';
 
 interface IssueAssigneeProps {
   issue: IssueType;
   team?: Team;
   username?: string;
+  filteredByUsername?: string;
+  useAvatar?: boolean;
   onUpdating?(updating: boolean): void;
 }
 
-const IssueAssignee: React.FC<IssueAssigneeProps> = (props) => {
+const IssueAssignee: React.FC<IssueAssigneeProps> = ({ 
+  useAvatar = false,
+  ...props 
+}) => {
 
   const [isEditing, setEditing] = useState<boolean>(false);
   
@@ -62,18 +68,46 @@ const IssueAssignee: React.FC<IssueAssigneeProps> = (props) => {
     return undefined;
   }
 
-  // Our chip and hidden assignee picker
-  const firstAssigneeUsername = props.issue.assignees?.nodes?.[0]?.username;
+  // Our chip and hidden assignee picker.  We use to show the symbol:  
+  const firstAssignee = props.issue.assignees?.nodes?.[0];
+  const firstAssigneeUsername = firstAssignee?.username;
+  const firstAssigneeName = firstAssignee?.name || firstAssigneeUsername || '';
+  const initials = firstAssigneeName
+    .split(' ')
+    .map(name => name[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
+  const firstAssigneeAvatarUrl = firstAssignee?.avatarUrl 
+    ? (firstAssignee.avatarUrl.startsWith('http') 
+        ? firstAssignee.avatarUrl 
+        : `https://gitlab.com${firstAssignee.avatarUrl}?size=32`) 
+    : undefined;
+
   return (
     <span>
-      <Chip size='medium' 
-            isCenteredVertically={true}
-            isAlerting={firstAssigneeUsername === undefined}
-            isLoading={assigneeMutation.loading} 
-            isBlank={props.issue.assignees?.length === 0} 
-            onClick={() => setEditing(true)}>
-        <span title={`Click to change the person assigned to this issue`}>🛠 {titleForUsername(firstAssigneeUsername || '') || 'None'}</span>
-      </Chip>
+      {useAvatar ? (
+        <Avatar
+          imageUrl={firstAssigneeAvatarUrl}
+          name={firstAssigneeName}
+          username={firstAssigneeUsername}
+          initials={initials}
+          onClick={() => setEditing(true)}
+          isMe={props.filteredByUsername === firstAssigneeUsername}
+        />
+      ) : (
+        <Chip size='medium' 
+              isCenteredVertically={true}
+              isAlerting={firstAssigneeUsername === undefined}
+              isLoading={assigneeMutation.loading} 
+              isBlank={props.issue.assignees?.nodes?.length === 0} 
+              onClick={() => setEditing(true)}>
+          <span title={`Click to change the person assigned to this issue`}>
+            🛠 {titleForUsername(firstAssigneeUsername || '') || 'None'}
+          </span>
+        </Chip>
+      )}
       {picker()}
     </span>
   );

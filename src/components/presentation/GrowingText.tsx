@@ -50,8 +50,8 @@ const GrowingText:React.FC<GrowingTextProps> = (props: GrowingTextProps) => {
         ref={textAreaRef}
         className={styles.Input} 
         placeholder={props.placeholder}
-        onChange={handleChange}>
-        {editableText}
+        onChange={handleChange}
+        value={editableText}>
       </textarea>
       <div className={styles.Replica}>{`${editableText} `}</div>
     </div>
