@@ -1,5 +1,6 @@
 import React from 'react';
 import { Issue as IssueType} from 'data/types';
+import { humanTimeInSingleUnit } from 'data/stats';
 import Input from 'components/presentation/Input';
 
 interface IssueTimeSpentProps {
@@ -17,7 +18,7 @@ const IssueTimeSpent: React.FC<IssueTimeSpentProps> = (props) => {
   // Show both weeks
   return (
     <span style={{borderLeft: '1px solid rgba(0,0,0,0.1)', marginTop: '-2px', paddingTop: '2px'}}>
-      <Input value={props.issue.humanTotalTimeSpent} placeholder='Act' onBlur={handleBlur} size='compact'/>
+      <Input value={humanTimeInSingleUnit(props.issue.humanTotalTimeSpent)} placeholder='Act' onBlur={handleBlur} size='compact'/>
     </span>
   );
 }

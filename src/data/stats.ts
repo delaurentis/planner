@@ -34,21 +34,52 @@ const isEstimateInDays = (value: string | undefined) => {
   return value?.endsWith('d');
 }
 
-// Compute the total estimate in fractional floating point hours
+// Parse a time string like "2h 30m" into total hours
 export const estimateInHours = (value: string | undefined) => {
-  if ( value ) {
-    if ( isEstimateInHours(value) ) {
-      return Math.ceil(parseFloat(value));
-    }
-    else if ( isEstimateInMinutes(value) ) {
-      return Math.ceil(parseFloat(value) / 60);
-    }
-    else if ( isEstimateInDays(value) ) {
-      return Math.ceil(parseFloat(value) * 24);
-    }
-    return Math.ceil(parseFloat(value));
+  if (value) {
+    const hourMatch = value.match(/(\d+\.?\d*)h/);
+    const minuteMatch = value.match(/(\d+\.?\d*)m/);
+    const dayMatch = value.match(/(\d+\.?\d*)d/);
+
+    const hours = hourMatch ? parseFloat(hourMatch[1]) : 0;
+    const minutes = minuteMatch ? parseFloat(minuteMatch[1]) / 60 : 0;
+    const days = dayMatch ? parseFloat(dayMatch[1]) * 24 : 0;
+
+    return Math.ceil(hours + minutes + days);
   }
   return 0;
+}
+
+// Parse a time string like "2h 30m" into total minutes
+export const estimateInMinutes = (value: string | undefined) => {
+  if (value) {
+    const hourMatch = value.match(/(\d+\.?\d*)h/);
+    const minuteMatch = value.match(/(\d+\.?\d*)m/);
+    const dayMatch = value.match(/(\d+\.?\d*)d/);
+
+    const hours = hourMatch ? parseFloat(hourMatch[1]) * 60 : 0;
+    const minutes = minuteMatch ? parseFloat(minuteMatch[1]) : 0;
+    const days = dayMatch ? parseFloat(dayMatch[1]) * 24 * 60 : 0;
+
+    return Math.ceil(hours + minutes + days);
+  }
+  return 0;
+}
+
+// Get a human readable string for the estimate.  
+// If >= 1 hour, show a decimal value of hours, without unnecessary trailing zeros
+// If < 1 hour, show number of minutes as a whole number
+export const humanTimeInSingleUnit = (value: string | undefined) => {
+  if (value) {
+    const minutes = estimateInMinutes(value);
+    if (minutes >= 60) {
+      const hours = minutes / 60;
+      return `${parseFloat(hours.toFixed(2))}h`;
+    } else {
+      return `${Math.ceil(minutes)}m`;
+    }
+  }
+  return '';
 }
 
 // Count the # of total hours 

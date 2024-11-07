@@ -1,7 +1,7 @@
 import React from 'react';
 import { Issue as IssueType} from 'data/types';
 import Input from 'components/presentation/Input';
-import { estimateInHours } from 'data/stats';
+import { estimateInHours, humanTimeInSingleUnit } from 'data/stats';
 
 interface IssueEstimateProps {
   issue: IssueType;
@@ -33,11 +33,25 @@ const IssueEstimate: React.FC<IssueEstimateProps> = (props) => {
         return { backgroundColor: '#FDCEED55', color: '#FB74CD' };
       }
     }
-    return <div style={{...colors(), cursor: 'not-allowed', width: '44px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '0', margin: '0', marginTop: '-1px', textAlign: 'center', height: '31px'}}>{props.issue.humanTimeEstimate}</div>
+    return <div style={{
+      ...colors(), 
+      cursor: 'not-allowed', 
+      width: '44px', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      padding: '0', 
+      margin: '0', 
+      marginTop: '-1px', 
+      textAlign: 'center', 
+      height: '31px'}}>
+        {humanTimeInSingleUnit(props.issue.humanTimeEstimate)}
+      </div>
   }
   else {
     return (
-      <Input value={props.issue.humanTimeEstimate} placeholder='Est' onBlur={handleBlur} size='compact'/>
+      <Input value={humanTimeInSingleUnit(props.issue.humanTimeEstimate)} placeholder='Est' onBlur={handleBlur} size='compact'/>
     );
   }
 }
