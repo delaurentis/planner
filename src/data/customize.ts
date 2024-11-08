@@ -6,6 +6,8 @@ const sharedLinks: TeamLink[] = [
   { title: 'Link 1', url: 'https://google.com'},
 ]
 
+export const roadmapUrl = 'roadmap link here'
+
 export const teams: Team[] = [
   { name: 'Team 1', project: 'project1', projectId: 1, labels: [], links: sharedLinks },
   { name: 'Team 2', project: 'project2', projectId: 2, labels: [], links: sharedLinks },
