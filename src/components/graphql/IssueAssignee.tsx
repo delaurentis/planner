@@ -15,7 +15,7 @@ interface IssueAssigneeProps {
   issue: IssueType;
   team?: Team;
   username?: string;
-  filteredByUsername?: string;
+  filterUsername?: string;
   useAvatar?: boolean;
   onUpdating?(updating: boolean): void;
 }
@@ -94,7 +94,7 @@ const IssueAssignee: React.FC<IssueAssigneeProps> = ({
           username={firstAssigneeUsername}
           initials={initials}
           onClick={() => setEditing(true)}
-          isMe={props.filteredByUsername === firstAssigneeUsername}
+          isShowingGenericIcon={props.filterUsername === firstAssigneeUsername}
         />
       ) : (
         <Chip size='medium' 
