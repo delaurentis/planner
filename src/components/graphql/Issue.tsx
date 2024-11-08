@@ -45,7 +45,7 @@ interface IssueProps {
   milestones: MilestoneLibrary,
   epics?: EpicType[];
   team?: Team;
-  filteredByUsername?: string;
+  filterUsername?: string;
   defaultCategory?: string;
   stats?: any[];
   disableShortcuts?: boolean;
@@ -336,7 +336,7 @@ const Issue: React.FC<IssueProps> = (props) => {
       // and uses the same functionality as the actions in the popup menu
       // It's a slightly different beast than the other typeahead entries above
       // which use different API calls to update GitLab
-      return [<IssueAssignee issue={issue} team={props.team} onUpdating={setUpdating} useAvatar={true} filteredByUsername={props.filteredByUsername}/>,
+      return [<IssueAssignee issue={issue} team={props.team} onUpdating={setUpdating} useAvatar={true} filterUsername={props.filterUsername}/>,
               <IssueSchedule issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>, 
               <IssueEstimate issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>,
               <IssueTimeSpent issue={issue} onUpdate={(update) => handleUpdate(update, issue)}/>]

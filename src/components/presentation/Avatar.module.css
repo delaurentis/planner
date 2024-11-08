@@ -7,23 +7,6 @@
   transition: opacity 0.2s ease;
 }
 
-.Container[data-dimmed="true"] {
-  opacity: 0.25;
-  border-radius: 50%;
-  /*filter: grayscale(80%);*/
-  /*border: 1px solid rgba(0, 0, 0, 0.2);
-  width: 18px;
-  height: 18px;*/
-}
-
-.Container[data-dimmed="true"]:hover {
-  opacity: 1;
-  filter: none;
-  border: none;
-  width: 20px;
-  height: 20px;
-}
-
 .Image,
 .Overlay {
   width: 100%;

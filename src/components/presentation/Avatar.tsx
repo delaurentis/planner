@@ -8,8 +8,7 @@ interface AvatarProps {
   username?: string;
   initials?: string;
   onClick?: () => void;
-  isDimmed?: boolean;
-  isMe?: boolean;
+  isShowingGenericIcon?: boolean;
 }
 
 const Avatar: React.FC<AvatarProps> = (props) => {
@@ -54,9 +53,8 @@ const Avatar: React.FC<AvatarProps> = (props) => {
       className={styles.Container}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      data-dimmed={props.isDimmed}
     >
-      {props.isMe ? (
+      {props.isShowingGenericIcon ? (
         <Icon 
           fill='rgba(0,0,0,0.1)'
           name="person"
