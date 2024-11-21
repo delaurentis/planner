@@ -210,11 +210,7 @@ export const ALL_EPIC_ISSUES = gql`
       id,
       name,
       issues(
-        epicId: $epicId,
-        milestoneTitle: $milestones,
-        labelName: $labels,
-        sort: CREATED_ASC
-      ) {
+        epicId: $epicId, milestoneTitle: $milestones, labelName: $labels, sort: CREATED_ASC) {
         nodes {
           ...issueWithEpicResult
         }
@@ -224,6 +220,20 @@ export const ALL_EPIC_ISSUES = gql`
   ${ISSUE_WITH_EPIC_FRAGMENT}
 `;
 
+export const ALL_EPIC_ISSUES_NO_MILESTONE = gql`
+  query GetEpicIssuesNoMilestone($epicId: String, $labels: [String], $fullPath: ID!) {
+    group(fullPath: $fullPath) {
+      id,
+      name,
+      issues(epicId: $epicId, milestoneWildcardId: NONE, labelName: $labels, sort: CREATED_ASC) {
+        nodes {
+          ...issueWithEpicResult
+        }
+      }
+    }
+  }
+  ${ISSUE_WITH_EPIC_FRAGMENT}
+`;
 
 export const ALL_PROJECT_ISSUES = gql`
   query GetAllUserProjectIssues($username: String!, $milestones: [String], $labels: [String], $fullPath: ID!) {

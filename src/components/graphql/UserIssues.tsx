@@ -10,6 +10,7 @@ import { humanizeDateRange } from 'util/dates';
 import { useQuery, useMutation, useApolloClient } from '@apollo/client';
 import { ALL_ISSUES, 
          ALL_EPIC_ISSUES,
+         ALL_EPIC_ISSUES_NO_MILESTONE,
          OPEN_ISSUES_NO_MILESTONE,
          OPEN_UNASSIGNED_ISSUES,
          OPEN_UNASSIGNED_ISSUES_NO_MILESTONE,
@@ -116,7 +117,12 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
   
   const gqlForIssues = () => {
     if ( props.epicName ) {
-      return ALL_EPIC_ISSUES;
+      if ( props.milestone.title === 'none' ) {
+        return ALL_EPIC_ISSUES_NO_MILESTONE;
+      }
+      else {
+        return ALL_EPIC_ISSUES;
+      }
     }
     else if ( props.username === 'none' ) {
       if ( props.milestone.title === 'none' ) { 
