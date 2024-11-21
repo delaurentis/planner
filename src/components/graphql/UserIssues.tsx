@@ -312,7 +312,7 @@ const UserIssues: React.FC<UserIssuesProps> = (props: UserIssuesProps) => {
            issue={issue} 
            epics={props.epics} 
            team={props.team}
-           filterUsername={props.username}
+           filteredByUsername={props.username}
            milestone={props.milestone}
            milestones={props.milestones}
            extraColumn={extraQuery.data?.extraColumn} 
