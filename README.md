@@ -1,10 +1,12 @@
 # Overview
 
-Planner is a front-end for GitLab that makes it significantly faster for teams to create, estimate, and manage tickets.  
+Planner is a front-end for GitLab, GitHub, and Jira that makes it significantly faster for teams to create, estimate, and manage tickets.  
 
 It incorporates over a decade of agile software management learnings, to increase both velocity and collaboration for teams.
 
-Merge requests can also be explored, with statistics on response time and a view that encourages faster code review turnaround times.  
+Merge requests can also be explored, with statistics on response time and a view that encourages faster code review turnaround times.
+
+Planner is distributed under the [MIT License](LICENSE.md) and is designed to be self-hosted on your organization's own infrastructure.
 
 <br>
 
@@ -81,13 +83,25 @@ This project is currently designed for deployment using Google Cloud and Kuberne
 
 # Setting up OAuth 
 
-To setup OAuth:
+## GitLab OAuth Setup
+
+To setup OAuth for GitLab:
 
 - Go to your user Preferences in GitLab, and then select Applications.  
 - Add a new Application in GitLab with a redirect URI of `https://planner.companyname.com`
 - Copy the clientID and paste in `src/data/customize.ts` under `production`
 - Add a second Application in GitLab with a redirect URI of `http://localhost:3000` for local development
-- Copy the clientID and paste in `src/data/customize.ts` under `development` 
+- Copy the clientID and paste in `src/data/customize.ts` under `development`
+
+## Jira OAuth Setup
+
+To setup OAuth for Jira:
+
+- Go to [Atlassian Developer Console](https://developer.atlassian.com/)
+- Create a new OAuth 2.0 (3LO) app
+- Add redirect URIs for both development (`http://localhost:3001/api/jira/callback`) and production (`https://planner.companyname.com/api/jira/callback`)
+- Copy the client ID and paste in `src/data/customize.ts` under both `development` and `production`
+- Store the client secret securely as an environment variable (`JIRA_CLIENT_SECRET`) on your server
 
 <br>
 
@@ -101,11 +115,32 @@ For local development, you can create an Application in GitLab and point it to `
 
 <br>
 
-# GitHub API Integraton
+# API Integrations
 
-Pull request viewing was supported for GitHub in a prior version of the Planner app.  This version is still available in the `github-tickets-only` branch, which will show tickets from GitLab and pull requests from GitHub.  
+## GitLab API
 
-In the future, it would be great to add full support for GitHub in the same branch for both Issues and Pull Requests, by adding an abstraction layer that sits in front of both GitLab and GitHub APIs.
+Planner uses GitLab's GraphQL API for querying data and REST API for mutations.
+
+All API calls require an authorization token in the HTTP header of form `Authorization: Bearer <token>`. This token can either be retrieved using OAuth, or by getting a personal access token from GitLab.
+
+## GitHub API
+
+Pull request viewing was supported for GitHub in a prior version of the Planner app. This version is still available in the `github-tickets-only` branch, which will show tickets from GitLab and pull requests from GitHub.
+
+## Jira API
+
+Planner integrates with Jira's REST API through a server-side proxy to handle the OAuth 2.0 code flow requirements. This integration provides similar functionality to the GitLab integration, allowing you to manage Jira issues through the same interface.
+
+<br>
+
+# Legal and Policy Documentation
+
+Planner includes the following legal and policy documents:
+
+- [Privacy Policy](docs/PRIVACY_POLICY.md) - Details how Planner handles user data
+- [Terms of License](docs/TERMS_OF_LICENSE.md) - Explains the MIT License terms and usage guidelines
+
+These documents are provided as templates and should be reviewed and customized by each organization deploying Planner.
 
 <br>
 
@@ -122,4 +157,8 @@ Planner is officially published as an open source project, with his employer's b
 ## 2022
 
 Pete continues to maintain the app in his spare time, including updates to make sure it continues to work with the latest version of GitLab.
+
+## 2025
+
+Jira integration was added to Planner, expanding its capabilities to support multiple ticket management systems through a common interface.
 
